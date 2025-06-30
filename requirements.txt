@@ -1,0 +1,124 @@
+# Web框架
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# 数据处理
+pandas==2.1.4
+numpy==1.24.3
+xarray==2023.12.0
+dask[complete]==2023.12.1
+netcdf4==1.6.5
+h5py==3.10.0
+scipy==1.11.4
+
+# 机器学习框架
+torch==2.1.2
+torchvision==0.16.2
+tensorflow==2.15.0
+scikit-learn==1.3.2
+lightgbm==4.1.0
+xgboost==2.0.3
+
+# 时间序列分析
+prophet==1.1.5
+statsmodels==0.14.1
+
+# 生成式AI
+diffusers==0.25.0
+transformers==4.36.2
+huggingface-hub==0.19.4
+accelerate==0.25.0
+
+# 图像处理
+Pillow==10.1.0
+opencv-python==4.8.1.78
+matplotlib==3.8.2
+plotly==5.17.0
+seaborn==0.13.0
+
+# 数据库连接
+psycopg2-binary==2.9.9
+asyncpg==0.29.0
+influxdb-client==1.39.0
+redis==5.0.1
+aioredis==2.0.1
+pymongo==4.6.1
+sqlalchemy==2.0.23
+alembic==1.13.1
+
+# 消息队列
+kafka-python==2.0.2
+
+# Web框架
+flask==3.0.0
+flask-cors==4.0.0
+flask-login==0.6.3
+werkzeug==3.0.1
+
+# 异步处理
+aiofiles==23.2.1
+
+# 数据验证
+marshmallow==3.20.2
+
+# 配置管理
+python-dotenv==1.0.0
+PyYAML==6.0.1
+
+# 日志
+loguru==0.7.2
+
+# 气候数据API
+cdsapi==0.6.1
+eccodes==1.6.1
+cfgrib==0.9.10.4
+
+# 地理空间数据
+rasterio==1.3.9
+geopandas==0.14.1
+shapely==2.0.2
+fiona==1.9.5
+pyproj==3.6.1
+cartopy==0.22.0
+
+# HTTP客户端
+httpx==0.25.2
+requests==2.31.0
+aiohttp==3.9.1
+
+# 测试
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+
+# 代码质量
+black==23.12.0
+flake8==6.1.0
+isort==5.13.2
+
+# 文档
+sphinx==7.2.6
+
+# 安全认证
+cryptography==41.0.7
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.6
+
+# 时间处理
+pytz==2023.3
+python-dateutil==2.8.2
+
+# 监控
+prometheus-client==0.19.0
+psutil==5.9.6
+
+# 其他工具
+tqdm==4.66.1
+joblib==1.3.2
+click==8.1.7
+rich==13.7.0
+celery==5.3.4
+bokeh==3.3.2

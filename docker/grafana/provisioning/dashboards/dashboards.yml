@@ -1,0 +1,25 @@
+# Grafana仪表板配置
+apiVersion: 1
+
+providers:
+  # 气候数据仪表板
+  - name: 'climate-dashboards'
+    orgId: 1
+    folder: '气候数据分析'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/climate
+
+  # 系统监控仪表板
+  - name: 'system-dashboards'
+    orgId: 1
+    folder: '系统监控'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/system

@@ -1,0 +1,50 @@
+# Grafana数据源配置
+apiVersion: 1
+
+datasources:
+  # InfluxDB数据源 - 时序数据
+  - name: InfluxDB-Climate
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    database: climate-data
+    user: admin
+    secureJsonData:
+      password: climate_influx_2024
+    jsonData:
+      version: Flux
+      organization: climate-org
+      defaultBucket: climate-data
+      tlsSkipVerify: true
+    secureJsonFields:
+      token: climate_token_2024_very_long_secure_token
+    isDefault: true
+    editable: true
+
+  # PostgreSQL数据源 - 元数据
+  - name: PostgreSQL-Metadata
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    database: climate_metadata
+    user: postgres
+    secureJsonData:
+      password: climate_password_2024
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 10
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+    editable: true
+
+  # Prometheus数据源 - 系统监控
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: false
+    editable: true
+    jsonData:
+      timeInterval: 15s
+      queryTimeout: 60s
+      httpMethod: POST
