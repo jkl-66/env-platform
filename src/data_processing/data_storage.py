@@ -130,17 +130,18 @@ class DataStorage:
         """初始化数据存储"""
         logger.info("初始化数据存储系统...")
         
+        # 设置PostgreSQL
         try:
-            # 设置PostgreSQL
-            try:
-                self.engine = create_engine(settings.postgres_url)
-                self.session_factory = sessionmaker(bind=self.engine)
-                
-                # 创建表
-                Base.metadata.create_all(self.engine)
-                logger.info("PostgreSQL数据库连接建立，表创建完成")
-            except Exception as e:
-                logger.warning(f"PostgreSQL连接失败: {e}")
+            self.engine = create_engine(settings.postgres_url, connect_args={'connect_timeout': 5})
+            self.session_factory = sessionmaker(bind=self.engine)
+            
+            # 创建表
+            Base.metadata.create_all(self.engine)
+            logger.info("PostgreSQL数据库连接建立，表创建完成")
+        except Exception as e:
+            logger.warning(f"PostgreSQL连接失败，元数据将不会被保存: {e}")
+            self.engine = None
+            self.session_factory = None
             
             # 设置InfluxDB
             if settings.INFLUXDB_TOKEN and InfluxDBClient:
@@ -200,14 +201,18 @@ class DataStorage:
         self,
         source: str,
         data_type: str,
-        file_path: str,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None,
+        file_path: Optional[str] = None,
+        file_format: Optional[str] = None,
+        file_size: Optional[int] = None,
         location: Optional[str] = None,
-        coordinates: Optional[Tuple[float, float]] = None,
-        time_range: Optional[Tuple[datetime, datetime]] = None,
+        latitude: Optional[float] = None,
+        longitude: Optional[float] = None,
         variables: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        data_metadata: Optional[Dict[str, Any]] = None,
         quality_score: Optional[float] = None
-    ) -> str:
+    ) -> Optional[uuid.UUID]:
         """保存数据记录元数据
         
         Args:
@@ -225,38 +230,36 @@ class DataStorage:
             数据记录ID
         """
         if not self.session_factory:
-            raise RuntimeError("PostgreSQL未初始化")
+            logger.warning("PostgreSQL未连接，跳过保存数据记录")
+            return None
         
         session = self.session_factory()
         try:
-            # 获取文件信息
-            file_path_obj = Path(file_path)
-            file_size = file_path_obj.stat().st_size if file_path_obj.exists() else 0
-            file_format = file_path_obj.suffix.lower().lstrip('.')
-            
             # 创建记录
             record = ClimateDataRecord(
                 source=source,
                 data_type=data_type,
                 location=location,
-                latitude=coordinates[0] if coordinates else None,
-                longitude=coordinates[1] if coordinates else None,
-                start_time=time_range[0] if time_range else None,
-                end_time=time_range[1] if time_range else None,
-                file_path=str(file_path),
+                latitude=latitude,
+                longitude=longitude,
+                start_time=start_time,
+                end_time=end_time,
+                file_path=file_path,
                 file_format=file_format,
                 file_size=file_size,
                 variables=variables,
-                metadata=metadata or {},
+                data_metadata=data_metadata,
                 quality_score=quality_score
             )
             
             session.add(record)
             session.commit()
             
-            record_id = str(record.id)
-            logger.info(f"数据记录已保存: {record_id}")
+            session.flush() # 获取生成的ID
+            record_id = record.id
+            session.commit()
             
+            logger.info(f"数据记录已保存: {record_id}")
             return record_id
             
         except Exception as e:
@@ -312,6 +315,86 @@ class DataStorage:
         finally:
             session.close()
     
+    async def get_data_sources(
+        self,
+        source_type: Optional[str] = None,
+        is_active: Optional[bool] = None
+    ) -> List[Dict[str, Any]]:
+        """获取可用的数据源列表"""
+        # 在实际应用中，这些信息应该来自数据库或配置文件
+        sources = [
+            {
+                "id": "noaa-ghcn-daily",
+                "name": "NOAA GHCN-Daily",
+                "type": "noaa",
+                "description": "NOAA全球历史气候网络日度数据",
+                "is_active": True,
+                "created_at": datetime.now(),
+                "last_updated": datetime.now()
+            },
+            {
+                "id": "noaa-oisst-avhrr",
+                "name": "NOAA OISST AVHRR-Only",
+                "type": "noaa",
+                "description": "NOAA最优插值海表温度数据",
+                "is_active": True,
+                "created_at": datetime.now(),
+                "last_updated": datetime.now()
+            },
+            {
+                "id": "ecmwf-era5",
+                "name": "ECMWF ERA5",
+                "type": "ecmwf",
+                "description": "ECMWF第五代全球气候再分析数据",
+                "is_active": True,
+                "created_at": datetime.now(),
+                "last_updated": datetime.now()
+            }
+        ]
+
+        if source_type:
+            sources = [s for s in sources if s.type == source_type]
+        if is_active is not None:
+            sources = [s for s in sources if s.is_active == is_active]
+
+        return sources
+
+    async def get_datasets(
+        self,
+        dataset_type: Optional[str] = None,
+        data_source: Optional[str] = None,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        limit: int = 100
+    ) -> List[Dict[str, Any]]:
+        """获取数据集列表"""
+        records = self.search_data_records(
+            source=data_source,
+            data_type=dataset_type,
+            time_range=(start_date, end_date) if start_date and end_date else None,
+            limit=limit
+        )
+
+        datasets = []
+        for record in records:
+            datasets.append({
+                "id": record.get("id"),
+                "name": f"{record.get('source')} - {record.get('data_type')}",
+                "description": f"Dataset for {record.get('location')}",
+                "data_source": record.get("source"),
+                "dataset_type": record.get("data_type"),
+                "variables": record.get("variables", []),
+                "temporal_resolution": record.get("metadata", {}).get("temporal_resolution"),
+                "spatial_resolution": record.get("metadata", {}).get("spatial_resolution"),
+                "start_date": record.get("start_time"),
+                "end_date": record.get("end_time"),
+                "file_size": record.get("file_size"),
+                "record_count": record.get("metadata", {}).get("record_count"),
+                "is_processed": record.get("metadata", {}).get("is_processed", False),
+                "created_at": record.get("created_at")
+            })
+        return datasets
+
     def search_data_records(
         self,
         source: Optional[str] = None,
@@ -699,75 +782,65 @@ class DataStorage:
     async def store_weather_data(
         self,
         data: pd.DataFrame,
-        data_source: str,
-        data_type: str = "daily"
-    ) -> bool:
-        """存储气象数据
+        source: str,
+        station_id: str,
+        tags: Optional[Dict[str, Any]] = None
+    ) -> Optional[str]:
+        """存储天气数据到时序数据库和文件系统"""
+        if data.empty:
+            logger.warning("接收到空的数据框，不进行存储")
+            return None
+
+        logger.info(f"开始存储来自 {source} 的气象数据，站点: {station_id}")
+
+        # 1. 保存为Parquet文件
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        file_name = f"{source.lower()}_{station_id}_{timestamp}"
         
-        Args:
-            data: 气象数据DataFrame
-            data_source: 数据源（如noaa_daily, noaa_monthly等）
-            data_type: 数据类型
-            
-        Returns:
-            是否成功存储
-        """
         try:
-            if data.empty:
-                logger.warning("数据为空，跳过存储")
-                return False
-            
-            # 1. 保存原始数据文件
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"{data_source}_{timestamp}"
-            file_path = self.save_dataframe(data, filename, "raw", "csv")
-            
-            # 2. 处理数据并存储到时序数据库
-            if self.influx_client and self._prepare_weather_timeseries(data, data_source):
-                logger.info(f"气象数据已存储到时序数据库: {data_source}")
-            
-            # 3. 保存元数据记录
-            variables = list(data.columns)
-            time_range = None
-            
-            # 尝试从数据中提取时间范围
-            if 'date' in data.columns:
-                try:
-                    dates = pd.to_datetime(data['date'])
-                    time_range = (dates.min().to_pydatetime(), dates.max().to_pydatetime())
-                except:
-                    pass
-            
-            # 提取位置信息
-            location = None
-            coordinates = None
-            if 'station' in data.columns and not data['station'].empty:
-                location = str(data['station'].iloc[0])
-            
-            metadata = {
-                "record_count": len(data),
-                "columns": variables,
-                "data_source": data_source,
-                "processing_timestamp": timestamp
-            }
-            
-            record_id = self.save_data_record(
-                source=data_source,
-                data_type=data_type,
-                file_path=file_path,
-                location=location,
-                coordinates=coordinates,
-                time_range=time_range,
-                variables=variables,
-                metadata=metadata
-            )
-            
-            logger.info(f"气象数据存储完成: {record_id}, 文件: {file_path}")
-            return True
-            
+            file_path_str = self.save_dataframe(data, file_name, data_category="processed", format="parquet")
         except Exception as e:
-            logger.error(f"存储气象数据失败: {e}")
-            return False
+            logger.error(f"保存Parquet文件失败: {e}")
+            return None
+
+        # 2. 存储元数据记录
+        if self.session_factory:
+            try:
+                start_time = data['DATE'].min().to_pydatetime()
+                end_time = data['DATE'].max().to_pydatetime()
+                variables = [col for col in data.columns if col not in ['DATE', 'STATION']]
+                
+                self.save_data_record(
+                    source=source,
+                    data_type="time_series_observation",
+                    location=station_id,
+                    start_time=start_time,
+                    end_time=end_time,
+                    file_path=file_path_str,
+                    file_format="parquet",
+                    file_size=Path(file_path_str).stat().st_size,
+                    variables=variables,
+                    data_metadata=tags
+                )
+                logger.info(f"成功在PostgreSQL中创建数据记录")
+
+            except Exception as e:
+                logger.error(f"在PostgreSQL中创建数据记录失败: {e}")
+
+        # 3. (可选) 存储到时序数据库 (InfluxDB)
+        if self.influx_client and 'DATE' in data.columns:
+            try:
+                data_for_influx = data.set_index('DATE')
+                influx_tags = {k: str(v) for k, v in tags.items()} if tags else None
+                self.save_time_series_data(
+                    data=data_for_influx,
+                    measurement=source,
+                    tags=influx_tags
+                )
+            except Exception as e:
+                logger.warning(f"存储到InfluxDB失败: {e}")
+        
+        return file_path_str
     
     def _prepare_weather_timeseries(
         self,

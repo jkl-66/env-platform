@@ -184,6 +184,52 @@ class PredictionEngine:
             logger.error(f"创建预测任务失败: {e}")
             raise
     
+    async def get_prediction_tasks(
+        self,
+        status: Optional[str] = None,
+        prediction_type: Optional[str] = None,
+        created_by: Optional[str] = None, # This is not used, but kept for API compatibility
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        limit: int = 100
+    ) -> List[Dict[str, Any]]:
+        """获取预测任务列表"""
+        tasks = list(self.tasks.values())
+
+        if status:
+            tasks = [t for t in tasks if t.status == status]
+        if prediction_type:
+            tasks = [t for t in tasks if t.config.prediction_type == prediction_type]
+        if start_date:
+            tasks = [t for t in tasks if t.created_at >= start_date]
+        if end_date:
+            tasks = [t for t in tasks if t.created_at <= end_date]
+
+        # Convert to dicts for API response
+        task_dicts = []
+        for task in tasks[:limit]:
+            task_dicts.append({
+                "task_id": task.task_id,
+                "name": f"{task.config.target_variable} Prediction",
+                "description": f"Prediction task for {task.config.target_variable}",
+                "model_id": ",".join(task.model_ids),
+                "model_name": "Ensemble Model" if len(task.model_ids) > 1 else task.model_ids[0],
+                "prediction_type": task.config.prediction_type,
+                "target_variables": [task.config.target_variable],
+                "prediction_horizon": task.config.prediction_horizon,
+                "status": task.status,
+                "progress": int(task.progress * 100),
+                "priority": "normal",
+                "created_at": task.created_at,
+                "started_at": task.started_at,
+                "completed_at": task.completed_at,
+                "created_by": "system",
+                "error_message": task.error_message,
+                "result_summary": task.result.metrics if task.result else None
+            })
+
+        return task_dicts
+
     async def run_prediction_task(self, task_id: str) -> PredictionResult:
         """执行预测任务"""
         try:

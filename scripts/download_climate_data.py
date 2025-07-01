@@ -120,6 +120,71 @@ class NOAADataDownloader:
             logger.warning("未下载到任何NOAA数据")
             return pd.DataFrame()
     
+    def download_ghcn_daily(self, station_id: str, start_year: int, end_year: int) -> Optional[pd.DataFrame]:
+        """下载单个气象站的GHCN-Daily数据"""
+        logger.info(f"下载GHCN-Daily数据: 站点 {station_id}, 年份 {start_year}-{end_year}")
+        
+        all_data = []
+        for year in range(start_year, end_year + 1):
+            try:
+                url = f"https://www.ncei.noaa.gov/data/global-historical-climatology-network-daily/access/{station_id}.csv"
+                # 由于数据文件可能很大，使用流式下载
+                response = self.session.get(url, stream=True)
+                response.raise_for_status()
+                
+                # 逐块读取并解析CSV
+                # 注意：GHCN-Daily的CSV格式是固定的，需要根据文档进行解析
+                # 这里我们使用pandas的read_csv进行简化处理，可能需要根据实际情况调整
+                df = pd.read_csv(response.raw, header=None, names=[
+                    'STATION', 'DATE', 'ELEMENT', 'VALUE', 'M_FLAG', 'Q_FLAG', 'S_FLAG', 'OBS_TIME'
+                ], dtype={'DATE': str}) # Read DATE as string to handle errors
+
+                # 过滤掉无效行
+                df['DATE'] = pd.to_datetime(df['DATE'], format='%Y%m%d', errors='coerce')
+                df.dropna(subset=['DATE'], inplace=True)
+                all_data.append(df)
+                logger.debug(f"成功下载并解析站点 {station_id} 年份 {year} 的数据")
+                
+            except Exception as e:
+                logger.error(f"下载站点 {station_id} 年份 {year} 数据失败: {e}")
+                continue
+        
+        if all_data:
+            result_df = pd.concat(all_data, ignore_index=True)
+            logger.info(f"成功下载站点 {station_id} 的 {len(result_df)} 条GHCN-Daily数据记录")
+            return result_df
+        else:
+            logger.warning(f"未下载到站点 {station_id} 的任何GHCN-Daily数据")
+            return None
+
+    def download_oisst_avhrr_data(self, year: int, month: int, day: int) -> Optional[str]:
+        """下载OISST AVHRR-Only日度海表温度数据"""
+        logger.info(f"下载OISST数据: {year}-{month:02d}-{day:02d}")
+        
+        try:
+            date_str = f"{year}{month:02d}{day:02d}"
+            url = f"https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/{year}{month:02d}/oisst-avhrr-v02r01.{date_str}.nc"
+            
+            # 确定保存路径
+            output_dir = settings.DATA_ROOT_PATH / "raw" / "oisst_avhrr"
+            output_dir.mkdir(parents=True, exist_ok=True)
+            output_file = output_dir / f"oisst-avhrr-v02r01.{date_str}.nc"
+            
+            # 下载文件
+            response = self.session.get(url, stream=True)
+            response.raise_for_status()
+            
+            with open(output_file, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+            
+            logger.info(f"成功下载OISST数据到: {output_file}")
+            return str(output_file)
+            
+        except Exception as e:
+            logger.error(f"下载OISST数据失败: {e}")
+            return None
+
     def download_monthly_summary(
         self,
         start_date: str,
@@ -174,8 +239,8 @@ class ECMWFDataDownloader:
     
     def __init__(self, api_key: str):
         self.api_key = api_key
-        # 创建CDS API客户端
-        self.client = cdsapi.Client()
+        # CDS API客户端将在需要时创建
+        self.client = None
     
     def download_era5_reanalysis(
         self,
@@ -186,6 +251,9 @@ class ECMWFDataDownloader:
         output_file: str = None
     ) -> str:
         """下载ERA5再分析数据"""
+        
+        if self.client is None:
+            self.client = cdsapi.Client()
         
         if variables is None:
             variables = [
@@ -391,31 +459,62 @@ class ClimateDataManager:
 
 
 async def main():
-    """主函数"""
-    logger.info("气候数据下载脚本启动")
+    """主函数，用于执行数据下载和处理"""
+    logger.info("开始执行气候数据下载和处理任务")
     
-    # 检查API密钥
-    if not settings.NOAA_API_KEY and not settings.ECMWF_API_KEY:
-        logger.error("未配置任何API密钥，请检查.env文件")
-        return
+    storage = DataStorage()
+    await storage.initialize()
+    noaa_downloader = NOAADataDownloader(api_key=settings.NOAA_API_KEY)
     
-    # 创建数据管理器
-    manager = ClimateDataManager()
+    # --- 1. 下载并处理GHCN-Daily数据 ---
+    # 示例：下载一个特定气象站的数据
+    # 在实际应用中，您可能需要一个气象站列表
+    ghcn_station_id = "USW00094728"  # 纽约中央公园
+    ghcn_data = noaa_downloader.download_ghcn_daily(ghcn_station_id, 2022, 2023)
     
-    # 初始化数据存储系统
-    await manager.initialize()
-    
-    # 设置下载时间范围（最近3年）
-    end_date = datetime.now().strftime("%Y-%m-%d")
-    start_date = (datetime.now() - timedelta(days=3*365)).strftime("%Y-%m-%d")
-    
-    logger.info(f"下载时间范围: {start_date} 到 {end_date}")
-    
-    # 开始下载
-    await manager.download_all_data(start_date, end_date)
-    
-    logger.info("气候数据下载脚本完成")
+    if ghcn_data is not None and not ghcn_data.empty:
+        logger.info("处理GHCN-Daily数据...")
+        # 数据类型转换和清理
+        ghcn_data['DATE'] = pd.to_datetime(ghcn_data['DATE'], format='%Y%m%d')
+        ghcn_data['VALUE'] = pd.to_numeric(ghcn_data['VALUE']) / 10.0  # 根据数据文档，数值需要除以10
+        
+        # 将不同类型的观测数据透视为列
+        ghcn_pivot = ghcn_data.pivot_table(index='DATE', columns='ELEMENT', values='VALUE').reset_index()
+        ghcn_pivot.columns.name = None
+        ghcn_pivot = ghcn_pivot.rename(columns={'TMAX': 'max_temp', 'TMIN': 'min_temp', 'PRCP': 'precipitation'})
+        
+        # 存储数据
+        await storage.store_weather_data(
+            data=ghcn_pivot,
+            source="NOAA_GHCN_DAILY",
+            station_id=ghcn_station_id,
+            tags={"station": ghcn_station_id, "type": "daily_observation"}
+        )
 
+    # --- 2. 下载并处理OISST数据 ---
+    # 示例：下载一天的数据
+    oisst_file_path = noaa_downloader.download_oisst_avhrr_data(2023, 10, 26)
+    if oisst_file_path:
+        logger.info(f"处理OISST数据: {oisst_file_path}")
+        # OISST数据是NetCDF格式，可以使用xarray进行处理
+        # 这里我们只记录元数据，实际处理可以更复杂
+        await storage.save_data_record(
+            source="NOAA_OISST_AVHRR",
+            data_type="reanalysis_surface_temperature",
+            start_time=datetime(2023, 10, 26),
+            end_time=datetime(2023, 10, 26),
+            file_path=oisst_file_path,
+            file_format="nc",
+            file_size=Path(oisst_file_path).stat().st_size if oisst_file_path and Path(oisst_file_path).exists() else None,
+            data_metadata={"format": "NetCDF", "resolution": "0.25_degree"}
+        )
+
+    # --- 3. 下载并处理ECMWF ERA5数据 ---
+    # ... (这部分将在后续实现)
+
+    # 关闭数据库连接
+    storage.close()
+    logger.info("气候数据下载和处理任务完成")
 
 if __name__ == "__main__":
     asyncio.run(main())

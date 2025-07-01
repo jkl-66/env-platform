@@ -61,7 +61,7 @@ class Settings(BaseSettings):
     
     # 文件存储配置
     DATA_ROOT_PATH: Path = Field(
-        default=Path("data"),
+        default=Path("e:/py codebase/env-platform/data"),
         description="数据根目录"
     )
     MODEL_ROOT_PATH: Path = Field(

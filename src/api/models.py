@@ -61,11 +61,11 @@ class TimeRangeModel(BaseModel):
     start_date: date = Field(..., description="开始日期")
     end_date: date = Field(..., description="结束日期")
     
-    @validator('end_date')
-    def end_date_must_be_after_start_date(cls, v, values):
-        if 'start_date' in values and v < values['start_date']:
-            raise ValueError('结束日期必须晚于开始日期')
-        return v
+    @model_validator(mode='after')
+    def check_dates(self) -> 'TimeRangeModel':
+        if self.start_date and self.end_date and self.end_date < self.start_date:
+            raise ValueError('结束日期必须晚于或等于开始日期')
+        return self
 
 
 # ==================== 气候数据API模型 ====================

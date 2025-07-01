@@ -159,45 +159,23 @@ async def get_prediction_tasks(
     start_date: Optional[date] = Query(None, description="开始日期过滤"),
     end_date: Optional[date] = Query(None, description="结束日期过滤"),
     limit: int = Query(100, ge=1, le=1000, description="返回条数限制"),
-    current_user: dict = Depends(get_current_active_user)
+    current_user: dict = Depends(get_current_active_user),
+    prediction_engine: PredictionEngine = Depends(get_prediction_engine)
 ):
     """获取预测任务列表"""
     try:
-        # 这里应该从数据库查询预测任务
-        tasks = [
-            PredictionTask(
-                task_id="pred-task-1",
-                name="未来7天温度预测",
-                description="基于历史数据预测未来一周的温度变化",
-                model_id="model-1",
-                model_name="温度预测模型",
-                prediction_type="temperature_forecast",
-                target_variables=["temperature", "humidity"],
-                prediction_horizon=7,
-                status="completed",
-                progress=100,
-                priority="normal",
-                created_at=datetime.now() - timedelta(hours=2),
-                started_at=datetime.now() - timedelta(hours=2),
-                completed_at=datetime.now() - timedelta(minutes=30),
-                created_by="admin",
-                result_summary={
-                    "total_predictions": 168,
-                    "average_temperature": 22.5,
-                    "temperature_range": [18.2, 26.8]
-                }
-            )
-        ]
-        
-        # 应用过滤器
-        if status:
-            tasks = [t for t in tasks if t.status == status]
-        if prediction_type:
-            tasks = [t for t in tasks if t.prediction_type == prediction_type]
-        if created_by:
-            tasks = [t for t in tasks if t.created_by == created_by]
-        
-        return tasks[:limit]
+        tasks = await prediction_engine.get_prediction_tasks(
+            status=status,
+            prediction_type=prediction_type,
+            created_by=created_by,
+            start_date=start_date,
+            end_date=end_date,
+            limit=limit
+        )
+        return tasks
+    except Exception as e:
+        logger.error(f"获取预测任务列表失败: {e}")
+        raise HTTPException(status_code=500, detail="无法获取预测任务列表")
         
     except Exception as e:
         logger.error(f"获取预测任务列表失败: {e}")

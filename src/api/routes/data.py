@@ -112,8 +112,10 @@ async def get_data_collector() -> DataCollector:
 
 async def get_data_storage() -> DataStorage:
     """获取数据存储实例"""
-    # 这里应该从应用状态中获取
-    return None
+    storage = DataStorage()
+    if not storage.is_initialized():
+        await storage.initialize()
+    return storage
 
 
 # API路由
@@ -121,40 +123,16 @@ async def get_data_storage() -> DataStorage:
 async def get_data_sources(
     source_type: Optional[str] = Query(None, description="数据源类型过滤"),
     is_active: Optional[bool] = Query(None, description="是否激活过滤"),
-    current_user: dict = Depends(get_current_active_user)
+    current_user: dict = Depends(get_current_active_user),
+    data_storage: DataStorage = Depends(get_data_storage)
 ):
     """获取可用的数据源列表"""
     try:
-        # 这里应该从数据库查询数据源
-        sources = [
-            DataSourceInfo(
-                id="noaa-source",
-                name="NOAA Climate Data",
-                type="noaa",
-                description="NOAA国家气候数据中心",
-                is_active=True,
-                created_at=datetime.now(),
-                last_updated=datetime.now()
-            ),
-            DataSourceInfo(
-                id="ecmwf-source",
-                name="ECMWF ERA5",
-                type="ecmwf",
-                description="ECMWF ERA5再分析数据",
-                is_active=True,
-                created_at=datetime.now(),
-                last_updated=datetime.now()
-            )
-        ]
-        
-        # 应用过滤器
-        if source_type:
-            sources = [s for s in sources if s.type == source_type]
-        if is_active is not None:
-            sources = [s for s in sources if s.is_active == is_active]
-        
+        sources = await data_storage.get_data_sources(
+            source_type=source_type,
+            is_active=is_active
+        )
         return sources
-        
     except Exception as e:
         logger.error(f"获取数据源列表失败: {e}")
         raise HTTPException(status_code=500, detail="无法获取数据源列表")
@@ -194,72 +172,73 @@ async def get_datasets(
     start_date: Optional[date] = Query(None, description="开始日期过滤"),
     end_date: Optional[date] = Query(None, description="结束日期过滤"),
     limit: int = Query(100, ge=1, le=1000, description="返回条数限制"),
-    current_user: dict = Depends(get_current_active_user)
+    current_user: dict = Depends(get_current_active_user),
+    data_storage: DataStorage = Depends(get_data_storage)
 ):
     """获取数据集列表"""
     try:
-        # 这里应该从数据库查询数据集
-        datasets = [
-            DatasetInfo(
-                id="dataset-1",
-                name="NOAA日气象数据",
-                description="NOAA全球日气象观测数据",
-                data_source="noaa",
-                dataset_type="timeseries",
-                variables=["temperature", "humidity", "precipitation"],
-                temporal_resolution="daily",
-                spatial_resolution="station",
-                start_date=date(2020, 1, 1),
-                end_date=date(2024, 12, 31),
-                file_size=1024*1024*100,  # 100MB
-                record_count=1000000,
-                is_processed=True,
-                created_at=datetime.now()
-            )
-        ]
-        
-        return datasets[:limit]
-        
+        datasets = await data_storage.get_datasets(
+            dataset_type=dataset_type,
+            data_source=data_source,
+            start_date=start_date,
+            end_date=end_date,
+            limit=limit
+        )
+        return datasets
     except Exception as e:
         logger.error(f"获取数据集列表失败: {e}")
         raise HTTPException(status_code=500, detail="无法获取数据集列表")
 
 
 @router.post("/collect", response_model=CollectionTask, summary="启动数据收集任务")
-async def start_data_collection(
-    collection_request: DataCollectionRequest,
+async def collect_data(
+    request: DataCollectionRequest,
     background_tasks: BackgroundTasks,
-    current_user: dict = Depends(get_current_active_user),
-    data_collector: DataCollector = Depends(get_data_collector)
+    data_collector: DataCollector = Depends(get_data_collector),
+    data_storage: DataStorage = Depends(get_data_storage),
+    current_user: dict = Depends(get_current_active_user)
 ):
-    """启动数据收集任务"""
+    """启动一个异步的数据收集任务"""
     try:
-        task_id = f"task-{datetime.now().timestamp()}"
-        
-        # 创建收集任务
-        task = CollectionTask(
+        task_id = await data_storage.create_task(
+            task_type="data_collection",
+            name=f"Collect {request.data_source} data",
+            params=request.dict()
+        )
+
+        async def collection_task():
+            try:
+                await data_storage.update_task_status(task_id, "running")
+                if request.data_source == "noaa":
+                    await data_collector.collect_noaa_data(
+                        start_date=request.start_date,
+                        end_date=request.end_date,
+                        stations=request.stations,
+                        data_types=request.variables
+                    )
+                elif request.data_source == "ecmwf":
+                    # ... ecmwf collection logic
+                    pass
+                await data_storage.update_task_status(task_id, "completed")
+            except Exception as e:
+                logger.error(f"Data collection task {task_id} failed: {e}")
+                await data_storage.update_task_status(task_id, "failed", error_message=str(e))
+
+        background_tasks.add_task(collection_task)
+
+        logger.info(f"User {current_user['username']} started data collection task: {task_id}")
+
+        return CollectionTask(
             task_id=task_id,
             status="pending",
             progress=0,
-            message="任务已创建，等待开始",
+            message="任务已提交",
             created_at=datetime.now()
         )
-        
-        # 添加后台任务
-        background_tasks.add_task(
-            run_data_collection,
-            task_id,
-            collection_request,
-            data_collector
-        )
-        
-        logger.info(f"启动数据收集任务: {task_id} by {current_user['username']}")
-        
-        return task
-        
+
     except Exception as e:
         logger.error(f"启动数据收集任务失败: {e}")
-        raise HTTPException(status_code=500, detail="启动数据收集任务失败")
+        raise HTTPException(status_code=500, detail="无法启动数据收集任务")
 
 
 @router.get("/tasks/{task_id}", response_model=CollectionTask, summary="获取任务状态")
