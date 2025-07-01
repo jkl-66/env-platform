@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 import hashlib
 import time
 
-from ..utils.database import DatabaseManager, get_db_session, get_redis_client, get_influxdb_client
+from ..utils.database import DatabaseManager, db_manager
 from ..utils.config import get_settings
 from ..utils.logger import logger
 from .models import PaginationParams
@@ -24,9 +24,9 @@ from .models import PaginationParams
 
 def get_database_manager() -> DatabaseManager:
     """获取数据库管理器"""
-    return DatabaseManager()
+    return db_manager
 
-
+# PostgreSQL 会话依赖建议直接通过 db_manager.async_session_maker 获取
 def get_db() -> Generator[Session, None, None]:
     """获取PostgreSQL数据库会话"""
     with get_db_session() as session:

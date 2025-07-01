@@ -6,7 +6,7 @@
 from datetime import datetime, date
 from typing import Dict, List, Optional, Any, Union, Literal
 from enum import Enum
-from pydantic import BaseModel, Field, validator, root_validator
+from pydantic import BaseModel, Field, validator, root_validator, model_validator
 import uuid
 
 
@@ -44,12 +44,10 @@ class PaginatedResponse(BaseResponse):
     size: int = Field(description="每页大小")
     pages: int = Field(description="总页数")
     
-    @root_validator
-    def calculate_pages(cls, values):
-        total = values.get('total', 0)
-        size = values.get('size', 20)
-        values['pages'] = (total + size - 1) // size if size > 0 else 0
-        return values
+    @model_validator(mode="after")
+    def calculate_pages(self) -> "Self":
+        self.pages = (self.total + self.size - 1) // self.size if self.size > 0 else 0
+        return self
 
 
 class CoordinateModel(BaseModel):

@@ -24,7 +24,7 @@ from .models import (
     HeatmapRequest, HeatmapResponse, HeatmapData,
     BaseResponse, ResponseStatus, ErrorResponse,
     ClimateScenario, PredictionModel, RiskLevel,
-    GlobalIndicators, RegionalFeatures, Coordinates
+    GlobalIndicators, RegionalFeatures, CoordinateModel as Coordinates
 )
 from .dependencies import (
     DBSession, RedisClient, CurrentUser, AuthenticatedUser,
