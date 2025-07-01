@@ -6,7 +6,8 @@
 import asyncio
 from typing import Optional
 import asyncpg
-import aioredis
+# import aioredis  # 暂时注释掉，使用redis替代
+import redis.asyncio as aioredis
 from influxdb_client.client.influxdb_client_async import InfluxDBClientAsync
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker

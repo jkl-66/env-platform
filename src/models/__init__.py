@@ -4,7 +4,7 @@
 """
 
 from .climate_analysis import ClimateAnalysisModel
-from .image_generation import EcologyImageGenerator
+from .ecology_image_generator import EcologyImageGenerator
 from .regional_prediction import RegionalPredictionModel
 from .base_model import BaseModel
 

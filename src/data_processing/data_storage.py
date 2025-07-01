@@ -64,7 +64,7 @@ class ClimateDataRecord(Base):
     file_format = Column(String(20))  # 文件格式
     file_size = Column(Integer)  # 文件大小（字节）
     variables = Column(JSON)  # 变量列表
-    metadata = Column(JSON)  # 元数据
+    data_metadata = Column(JSON)  # 元数据
     quality_score = Column(Float)  # 数据质量评分
     created_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
@@ -298,7 +298,7 @@ class DataStorage:
                     "file_format": record.file_format,
                     "file_size": record.file_size,
                     "variables": record.variables,
-                    "metadata": record.metadata,
+                    "metadata": record.data_metadata,
                     "quality_score": record.quality_score,
                     "created_at": record.created_at.isoformat(),
                     "updated_at": record.updated_at.isoformat()
@@ -693,6 +693,158 @@ class DataStorage:
         except Exception as e:
             logger.error(f"加载xarray数据集失败: {e}")
             return None
+    
+    # ==================== 气象数据存储 ====================
+    
+    async def store_weather_data(
+        self,
+        data: pd.DataFrame,
+        data_source: str,
+        data_type: str = "daily"
+    ) -> bool:
+        """存储气象数据
+        
+        Args:
+            data: 气象数据DataFrame
+            data_source: 数据源（如noaa_daily, noaa_monthly等）
+            data_type: 数据类型
+            
+        Returns:
+            是否成功存储
+        """
+        try:
+            if data.empty:
+                logger.warning("数据为空，跳过存储")
+                return False
+            
+            # 1. 保存原始数据文件
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"{data_source}_{timestamp}"
+            file_path = self.save_dataframe(data, filename, "raw", "csv")
+            
+            # 2. 处理数据并存储到时序数据库
+            if self.influx_client and self._prepare_weather_timeseries(data, data_source):
+                logger.info(f"气象数据已存储到时序数据库: {data_source}")
+            
+            # 3. 保存元数据记录
+            variables = list(data.columns)
+            time_range = None
+            
+            # 尝试从数据中提取时间范围
+            if 'date' in data.columns:
+                try:
+                    dates = pd.to_datetime(data['date'])
+                    time_range = (dates.min().to_pydatetime(), dates.max().to_pydatetime())
+                except:
+                    pass
+            
+            # 提取位置信息
+            location = None
+            coordinates = None
+            if 'station' in data.columns and not data['station'].empty:
+                location = str(data['station'].iloc[0])
+            
+            metadata = {
+                "record_count": len(data),
+                "columns": variables,
+                "data_source": data_source,
+                "processing_timestamp": timestamp
+            }
+            
+            record_id = self.save_data_record(
+                source=data_source,
+                data_type=data_type,
+                file_path=file_path,
+                location=location,
+                coordinates=coordinates,
+                time_range=time_range,
+                variables=variables,
+                metadata=metadata
+            )
+            
+            logger.info(f"气象数据存储完成: {record_id}, 文件: {file_path}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"存储气象数据失败: {e}")
+            return False
+    
+    def _prepare_weather_timeseries(
+        self,
+        data: pd.DataFrame,
+        measurement: str
+    ) -> bool:
+        """准备气象数据用于时序存储
+        
+        Args:
+            data: 气象数据DataFrame
+            measurement: 测量名称
+            
+        Returns:
+            是否成功
+        """
+        try:
+            # 检查必要的列
+            if 'date' not in data.columns:
+                logger.warning("数据中缺少date列，跳过时序存储")
+                return False
+            
+            # 转换日期列
+            data_copy = data.copy()
+            data_copy['date'] = pd.to_datetime(data_copy['date'])
+            data_copy = data_copy.set_index('date')
+            
+            # 准备数值列
+            numeric_columns = []
+            for col in data_copy.columns:
+                if col in ['value', 'datatype', 'station', 'attributes']:
+                    continue
+                try:
+                    data_copy[col] = pd.to_numeric(data_copy[col], errors='coerce')
+                    if not data_copy[col].isna().all():
+                        numeric_columns.append(col)
+                except:
+                    continue
+            
+            if not numeric_columns:
+                # 处理NOAA标准格式
+                if 'value' in data_copy.columns and 'datatype' in data_copy.columns:
+                    pivot_data = data_copy.pivot_table(
+                        index='date',
+                        columns='datatype',
+                        values='value',
+                        aggfunc='first'
+                    )
+                    
+                    # 转换数值
+                    for col in pivot_data.columns:
+                        pivot_data[col] = pd.to_numeric(pivot_data[col], errors='coerce')
+                    
+                    # 准备标签
+                    tags = {"source": measurement}
+                    if 'station' in data_copy.columns:
+                        station = data_copy['station'].iloc[0] if not data_copy['station'].empty else "unknown"
+                        tags["station"] = str(station)
+                    
+                    return self.save_time_series_data(measurement, pivot_data, tags)
+                else:
+                    logger.warning("无法识别数据格式，跳过时序存储")
+                    return False
+            else:
+                # 直接使用数值列
+                numeric_data = data_copy[numeric_columns]
+                
+                # 准备标签
+                tags = {"source": measurement}
+                if 'station' in data_copy.columns:
+                    station = data_copy['station'].iloc[0] if not data_copy['station'].empty else "unknown"
+                    tags["station"] = str(station)
+                
+                return self.save_time_series_data(measurement, numeric_data, tags)
+            
+        except Exception as e:
+            logger.error(f"准备时序数据失败: {e}")
+            return False
     
     # ==================== 缓存管理 ====================
     

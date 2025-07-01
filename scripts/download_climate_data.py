@@ -302,6 +302,11 @@ class ClimateDataManager:
         else:
             logger.warning("ECMWF API密钥未配置")
     
+    async def initialize(self):
+        """初始化数据存储系统"""
+        await self.storage.initialize()
+        logger.info("数据存储系统初始化完成")
+    
     async def download_all_data(
         self,
         start_date: str = "2020-01-01",
@@ -336,13 +341,12 @@ class ClimateDataManager:
             )
             
             if not daily_data.empty:
-                # 保存到文件
-                output_file = settings.DATA_ROOT_PATH / "raw" / f"noaa_daily_{start_date}_{end_date}.csv"
-                daily_data.to_csv(output_file, index=False)
-                logger.info(f"NOAA日数据保存到: {output_file}")
-                
-                # 存储到数据库
-                await self.storage.store_weather_data(daily_data, "noaa_daily")
+                # 存储到数据库和文件系统
+                success = await self.storage.store_weather_data(daily_data, "noaa_daily", "daily")
+                if success:
+                    logger.info(f"NOAA日数据存储成功: {len(daily_data)}条记录")
+                else:
+                    logger.error("NOAA日数据存储失败")
             
             # 下载月度汇总数据
             monthly_data = self.noaa_downloader.download_monthly_summary(
@@ -350,13 +354,12 @@ class ClimateDataManager:
             )
             
             if not monthly_data.empty:
-                # 保存到文件
-                output_file = settings.DATA_ROOT_PATH / "raw" / f"noaa_monthly_{start_date}_{end_date}.csv"
-                monthly_data.to_csv(output_file, index=False)
-                logger.info(f"NOAA月度数据保存到: {output_file}")
-                
-                # 存储到数据库
-                await self.storage.store_weather_data(monthly_data, "noaa_monthly")
+                # 存储到数据库和文件系统
+                success = await self.storage.store_weather_data(monthly_data, "noaa_monthly", "monthly")
+                if success:
+                    logger.info(f"NOAA月度数据存储成功: {len(monthly_data)}条记录")
+                else:
+                    logger.error("NOAA月度数据存储失败")
             
         except Exception as e:
             logger.error(f"下载NOAA数据失败: {e}")
@@ -398,6 +401,9 @@ async def main():
     
     # 创建数据管理器
     manager = ClimateDataManager()
+    
+    # 初始化数据存储系统
+    await manager.initialize()
     
     # 设置下载时间范围（最近3年）
     end_date = datetime.now().strftime("%Y-%m-%d")

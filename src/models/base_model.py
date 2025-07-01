@@ -37,7 +37,7 @@ class BaseModel(ABC):
         self.model = None
         self.is_trained = False
         self.training_history = []
-        self.metadata = {
+        self.model_metadata = {
             "created_at": datetime.now().isoformat(),
             "model_name": model_name,
             "model_type": model_type,
@@ -110,13 +110,13 @@ class BaseModel(ABC):
         
         try:
             # 更新元数据
-            self.metadata["saved_at"] = datetime.now().isoformat()
-            self.metadata["is_trained"] = self.is_trained
+            self.model_metadata["saved_at"] = datetime.now().isoformat()
+            self.model_metadata["is_trained"] = self.is_trained
             
             # 保存模型和元数据
             model_data = {
                 "model": self.model,
-                "metadata": self.metadata,
+                "metadata": self.model_metadata,
                 "training_history": self.training_history,
                 "model_type": self.model_type,
                 "device": self.device
@@ -128,7 +128,7 @@ class BaseModel(ABC):
             # 保存元数据为JSON文件
             metadata_path = save_path.with_suffix(".json")
             with open(metadata_path, "w", encoding="utf-8") as f:
-                json.dump(self.metadata, f, indent=2, ensure_ascii=False)
+                json.dump(self.model_metadata, f, indent=2, ensure_ascii=False)
             
             logger.info(f"模型已保存到: {save_path}")
             return save_path
@@ -153,7 +153,7 @@ class BaseModel(ABC):
                 model_data = pickle.load(f)
             
             self.model = model_data["model"]
-            self.metadata = model_data.get("metadata", {})
+            self.model_metadata = model_data.get("metadata", {})
             self.training_history = model_data.get("training_history", [])
             self.is_trained = model_data.get("metadata", {}).get("is_trained", False)
             
@@ -181,7 +181,7 @@ class BaseModel(ABC):
             "model_type": self.model_type,
             "device": self.device,
             "is_trained": self.is_trained,
-            "metadata": self.metadata.copy()
+            "metadata": self.model_metadata.copy()
         }
         
         # 添加模型参数数量（如果是PyTorch模型）
@@ -355,7 +355,7 @@ class PyTorchBaseModel(BaseModel):
             "optimizer_state_dict": self.optimizer.state_dict() if self.optimizer else None,
             "scheduler_state_dict": self.scheduler.state_dict() if self.scheduler else None,
             "training_history": self.training_history,
-            "metadata": self.metadata
+            "metadata": self.model_metadata
         }
         
         torch.save(checkpoint, save_path)
@@ -393,7 +393,7 @@ class PyTorchBaseModel(BaseModel):
         
         # 加载训练历史
         self.training_history = checkpoint.get("training_history", [])
-        self.metadata.update(checkpoint.get("metadata", {}))
+        self.model_metadata.update(checkpoint.get("metadata", {}))
         
         epoch = checkpoint["epoch"]
         logger.info(f"检查点已从 {checkpoint_path} 加载，轮次: {epoch}")

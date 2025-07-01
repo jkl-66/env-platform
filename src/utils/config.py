@@ -123,6 +123,13 @@ class Settings(BaseSettings):
     NOAA_API_KEY: Optional[str] = Field(default=None, description="NOAA API密钥")
     ECMWF_API_KEY: Optional[str] = Field(default=None, description="ECMWF API密钥")
     
+    # 安全配置
+    SECRET_KEY: str = Field(default="your_secret_key_here_change_in_production", description="应用密钥")
+    
+    # 开发环境配置
+    ENABLE_DOCS: bool = Field(default=True, description="启用API文档")
+    ENABLE_DEBUG_TOOLBAR: bool = Field(default=True, description="启用调试工具栏")
+    
     # 性能配置
     MAX_WORKERS: int = Field(default=4, description="最大工作线程数")
     REQUEST_TIMEOUT: int = Field(default=300, description="请求超时时间(秒)")
