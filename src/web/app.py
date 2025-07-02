@@ -43,9 +43,9 @@ config = get_config()
 
 # 创建Flask应用
 app = Flask(__name__)
-app.secret_key = config.get('secret_key', 'climate-research-secret-key-2024')
+app.secret_key = getattr(config, 'SECRET_KEY', 'climate-research-secret-key-2024')
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
-app.config['UPLOAD_FOLDER'] = config.get('upload_path', 'uploads')
+app.config['UPLOAD_FOLDER'] = str(getattr(config, 'DATA_ROOT_PATH', Path('data')) / 'uploads')
 
 # 启用CORS
 CORS(app)
@@ -858,7 +858,7 @@ def internal_error(error):
 if __name__ == '__main__':
     # 开发模式运行
     app.run(
-        host=config.get('web_host', '0.0.0.0'),
-        port=config.get('web_port', 5000),
-        debug=config.get('debug', True)
+        host=getattr(config, 'HOST', '0.0.0.0'),
+        port=getattr(config, 'PORT', 5000),
+        debug=getattr(config, 'DEBUG', True)
     )

@@ -39,7 +39,7 @@ try:
         create_global_climate_data,
         ClimateRisk
     )
-    from src.utils.logger import setup_logging, get_logger
+    from src.utils.logger import setup_logger, get_logger
 except ImportError as e:
     print(f"导入模块失败: {e}")
     print("请确保所有依赖模块都已正确安装")
@@ -51,7 +51,7 @@ class ClimateInsightDemo:
     
     def __init__(self):
         """初始化演示"""
-        setup_logging()
+        setup_logger()
         self.logger = get_logger(__name__)
         
         # 创建输出目录

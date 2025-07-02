@@ -1,0 +1,154 @@
+{
+  "file_info": {
+    "file_path": "D:\\用户\\jin\\下载\\6cd7cc57755a5204a65bc7db615cd36b.grib",
+    "file_size": 1746690816,
+    "variables": [
+      "t2m",
+      "msl",
+      "sst",
+      "sp"
+    ],
+    "coordinates": [
+      "number",
+      "time",
+      "step",
+      "surface",
+      "latitude",
+      "longitude",
+      "valid_time"
+    ],
+    "dimensions": {
+      "time": 26304,
+      "latitude": 41,
+      "longitude": 201
+    },
+    "attributes": {
+      "GRIB_edition": 1,
+      "GRIB_centre": "ecmf",
+      "GRIB_centreDescription": "European Centre for Medium-Range Weather Forecasts",
+      "GRIB_subCentre": 0,
+      "Conventions": "CF-1.7",
+      "institution": "European Centre for Medium-Range Weather Forecasts",
+      "history": "2025-07-02T14:15 GRIB to CDM+CF via cfgrib-0.9.15.0/ecCodes-2.42.0 with {\"source\": \"..\\\\..\\\\..\\\\\\u7528\\u6237\\\\jin\\\\\\u4e0b\\u8f7d\\\\6cd7cc57755a5204a65bc7db615cd36b.grib\", \"filter_by_keys\": {}, \"encode_cf\": [\"parameter\", \"time\", \"geography\", \"vertical\"]}"
+    },
+    "time_range": {
+      "start": "2022-01-01T00:00:00.000000000",
+      "end": "2024-12-31T23:00:00.000000000",
+      "count": 26304
+    },
+    "spatial_extent": {
+      "latitude": {
+        "min": -5.0,
+        "max": 5.0,
+        "count": 41
+      },
+      "longitude": {
+        "min": -170.0,
+        "max": -120.0,
+        "count": 201
+      }
+    }
+  },
+  "variable_statistics": {
+    "t2m": {
+      "shape": [
+        26304,
+        41,
+        201
+      ],
+      "dtype": "float32",
+      "min": 293.6898193359375,
+      "max": 303.6783447265625,
+      "mean": 299.36883544921875,
+      "std": 1.296205759048462,
+      "missing_values": 0
+    },
+    "msl": {
+      "shape": [
+        26304,
+        41,
+        201
+      ],
+      "dtype": "float32",
+      "min": 100186.25,
+      "max": 101880.3125,
+      "mean": 101081.984375,
+      "std": 194.1512908935547,
+      "missing_values": 0
+    },
+    "sst": {
+      "shape": [
+        26304,
+        41,
+        201
+      ],
+      "dtype": "float32",
+      "min": 293.73974609375,
+      "max": 304.493408203125,
+      "mean": 300.3133544921875,
+      "std": 1.5165348052978516,
+      "missing_values": 0
+    },
+    "sp": {
+      "shape": [
+        26304,
+        41,
+        201
+      ],
+      "dtype": "float32",
+      "min": 100185.09375,
+      "max": 101880.921875,
+      "mean": 101082.109375,
+      "std": 194.17098999023438,
+      "missing_values": 0
+    }
+  },
+  "data_quality": {
+    "t2m": {
+      "total_points": 216771264,
+      "valid_points": 216771264,
+      "missing_points": 0,
+      "quality_score": 1.0
+    },
+    "msl": {
+      "total_points": 216771264,
+      "valid_points": 216771264,
+      "missing_points": 0,
+      "quality_score": 1.0
+    },
+    "sst": {
+      "total_points": 216771264,
+      "valid_points": 216771264,
+      "missing_points": 0,
+      "quality_score": 1.0
+    },
+    "sp": {
+      "total_points": 216771264,
+      "valid_points": 216771264,
+      "missing_points": 0,
+      "quality_score": 1.0
+    }
+  },
+  "spatial_coverage": {
+    "latitude_range": [
+      -5.0,
+      5.0
+    ],
+    "longitude_range": [
+      -170.0,
+      -120.0
+    ],
+    "spatial_resolution": {
+      "latitude": -0.25,
+      "longitude": 0.25
+    }
+  },
+  "temporal_coverage": {
+    "time_range": [
+      "2022-01-01T00:00:00.000000000",
+      "2024-12-31T23:00:00.000000000"
+    ],
+    "time_points": 26304,
+    "temporal_resolution": "3600000000000 nanoseconds"
+  }
+}

@@ -152,7 +152,7 @@ class ModelManager:
     
     def __init__(self, storage: Optional[DataStorage] = None):
         self.storage = storage or DataStorage()
-        self.models_path = Path(config.get("models_path", "models"))
+        self.models_path = Path(getattr(config, 'MODEL_ROOT_PATH', Path('models')))
         self.models_path.mkdir(parents=True, exist_ok=True)
         
         # 模型注册表

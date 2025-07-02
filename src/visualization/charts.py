@@ -134,7 +134,7 @@ class ChartGenerator:
     """图表生成器"""
     
     def __init__(self):
-        self.output_path = Path(config.get("charts_path", "charts"))
+        self.output_path = Path(getattr(config, 'DATA_ROOT_PATH', Path('data')) / 'charts')
         self.output_path.mkdir(parents=True, exist_ok=True)
         
         # 默认配置

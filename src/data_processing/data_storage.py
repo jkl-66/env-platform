@@ -24,20 +24,7 @@ except ImportError:
     warnings.warn("xarray未安装，NetCDF数据处理功能受限")
     xr = None
 
-try:
-    from influxdb_client import InfluxDBClient, Point
-    from influxdb_client.client.write_api import SYNCHRONOUS
-except ImportError:
-    warnings.warn("influxdb-client未安装，时序数据库功能受限")
-    InfluxDBClient = None
-    Point = None
-    SYNCHRONOUS = None
 
-try:
-    import redis
-except ImportError:
-    warnings.warn("redis未安装，缓存功能受限")
-    redis = None
 
 from ..utils.config import get_settings
 from ..utils.logger import get_logger
@@ -52,7 +39,7 @@ class ClimateDataRecord(Base):
     """气候数据记录表"""
     __tablename__ = "climate_data_records"
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     source = Column(String(100), nullable=False)  # 数据源
     data_type = Column(String(50), nullable=False)  # 数据类型
     location = Column(String(200))  # 位置信息
@@ -74,11 +61,11 @@ class ProcessingJob(Base):
     """数据处理任务表"""
     __tablename__ = "processing_jobs"
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     job_type = Column(String(50), nullable=False)  # 任务类型
     status = Column(String(20), default="pending")  # 状态
-    input_data_id = Column(UUID(as_uuid=True))  # 输入数据ID
-    output_data_id = Column(UUID(as_uuid=True))  # 输出数据ID
+    input_data_id = Column(String(36))  # 输入数据ID
+    output_data_id = Column(String(36))  # 输出数据ID
     parameters = Column(JSON)  # 处理参数
     progress = Column(Float, default=0.0)  # 进度
     error_message = Column(Text)  # 错误信息
@@ -91,10 +78,10 @@ class ModelResult(Base):
     """模型结果表"""
     __tablename__ = "model_results"
     
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     model_name = Column(String(100), nullable=False)
     model_version = Column(String(50))
-    input_data_id = Column(UUID(as_uuid=True))
+    input_data_id = Column(String(36))
     result_type = Column(String(50))  # 结果类型
     result_data = Column(JSON)  # 结果数据
     confidence_score = Column(Float)  # 置信度
@@ -105,14 +92,12 @@ class ModelResult(Base):
 class DataStorage:
     """数据存储管理器
     
-    统一管理多种数据存储方式：PostgreSQL、InfluxDB、Redis、文件系统。
+    统一管理多种数据存储方式：MySQL、文件系统。
     """
     
     def __init__(self):
         self.engine = None
         self.session_factory = None
-        self.influx_client = None
-        self.redis_client = None
         
         # 文件存储路径
         self.data_root = Path(settings.DATA_ROOT_PATH)
@@ -130,65 +115,26 @@ class DataStorage:
         """初始化数据存储"""
         logger.info("初始化数据存储系统...")
         
-        # 设置PostgreSQL
+        # 设置MySQL
         try:
-            self.engine = create_engine(settings.postgres_url, connect_args={'connect_timeout': 5})
+            logger.info(f"正在连接MySQL: {settings.mysql_url}")
+            self.engine = create_engine(settings.mysql_url, connect_args={'connect_timeout': 5})
+            logger.info("数据库引擎创建成功。")
             self.session_factory = sessionmaker(bind=self.engine)
+            logger.info("数据库会话工厂创建成功。")
             
             # 创建表
             Base.metadata.create_all(self.engine)
-            logger.info("PostgreSQL数据库连接建立，表创建完成")
+            logger.info("MySQL数据库连接建立，表创建完成")
         except Exception as e:
-            logger.warning(f"PostgreSQL连接失败，元数据将不会被保存: {e}")
-            self.engine = None
-            self.session_factory = None
+            logger.error(f"无法连接到MySQL数据库: {e}", exc_info=True)
+            raise RuntimeError(f"数据库初始化失败: {e}") from e
             
-            # 设置InfluxDB
-            if settings.INFLUXDB_TOKEN and InfluxDBClient:
-                try:
-                    self.influx_client = InfluxDBClient(
-                        url=settings.INFLUXDB_URL,
-                        token=settings.INFLUXDB_TOKEN,
-                        org=settings.INFLUXDB_ORG
-                    )
-                    # 测试连接
-                    health = self.influx_client.health()
-                    if health.status == "pass":
-                        logger.info("InfluxDB连接建立")
-                    else:
-                        logger.warning(f"InfluxDB健康检查失败: {health.message}")
-                except Exception as e:
-                    logger.warning(f"InfluxDB连接失败: {e}")
-            
-            # 设置Redis
-            if redis:
-                try:
-                    self.redis_client = redis.Redis(
-                        host=settings.REDIS_HOST,
-                        port=settings.REDIS_PORT,
-                        db=settings.REDIS_DB,
-                        password=settings.REDIS_PASSWORD,
-                        decode_responses=True
-                    )
-                    # 测试连接
-                    self.redis_client.ping()
-                    logger.info("Redis连接建立")
-                except Exception as e:
-                    logger.warning(f"Redis连接失败: {e}")
-            
-            logger.info("数据存储系统初始化完成")
-            
-        except Exception as e:
-            logger.error(f"数据存储系统初始化失败: {e}")
-            raise
+        logger.info("数据存储系统初始化完成")
     
     async def close(self) -> None:
         """关闭数据存储连接"""
         try:
-            if self.influx_client:
-                self.influx_client.close()
-            if self.redis_client:
-                self.redis_client.close()
             if self.engine:
                 self.engine.dispose()
             logger.info("数据存储连接已关闭")
@@ -197,7 +143,9 @@ class DataStorage:
     
     # ==================== 元数据管理 ====================
     
-    def save_data_record(
+
+    
+    async def save_data_record(
         self,
         source: str,
         data_type: str,
@@ -230,7 +178,7 @@ class DataStorage:
             数据记录ID
         """
         if not self.session_factory:
-            logger.warning("PostgreSQL未连接，跳过保存数据记录")
+            logger.warning("数据库未初始化，无法保存元数据记录")
             return None
         
         session = self.session_factory()
@@ -478,129 +426,7 @@ class DataStorage:
         finally:
             session.close()
     
-    # ==================== 时序数据存储 ====================
-    
-    def save_time_series_data(
-        self,
-        measurement: str,
-        data: pd.DataFrame,
-        tags: Optional[Dict[str, str]] = None,
-        bucket: Optional[str] = None
-    ) -> bool:
-        """保存时序数据到InfluxDB
-        
-        Args:
-            measurement: 测量名称
-            data: 时序数据DataFrame（索引为时间）
-            tags: 标签字典
-            bucket: 存储桶名称
-            
-        Returns:
-            是否成功
-        """
-        if not self.influx_client or Point is None:
-            logger.warning("InfluxDB未可用，跳过时序数据存储")
-            return False
-        
-        try:
-            bucket = bucket or settings.INFLUXDB_BUCKET
-            write_api = self.influx_client.write_api(write_options=SYNCHRONOUS)
-            
-            points = []
-            for timestamp, row in data.iterrows():
-                point = Point(measurement).time(timestamp)
-                
-                # 添加标签
-                if tags:
-                    for key, value in tags.items():
-                        point = point.tag(key, value)
-                
-                # 添加字段
-                for column, value in row.items():
-                    if pd.notna(value):
-                        if isinstance(value, (int, float)):
-                            point = point.field(column, float(value))
-                        else:
-                            point = point.field(column, str(value))
-                
-                points.append(point)
-            
-            # 批量写入
-            write_api.write(bucket=bucket, record=points)
-            
-            logger.info(f"时序数据已保存到InfluxDB: {len(points)}个数据点")
-            return True
-            
-        except Exception as e:
-            logger.error(f"保存时序数据失败: {e}")
-            return False
-    
-    def query_time_series_data(
-        self,
-        measurement: str,
-        start_time: datetime,
-        end_time: datetime,
-        fields: Optional[List[str]] = None,
-        tags: Optional[Dict[str, str]] = None,
-        bucket: Optional[str] = None
-    ) -> Optional[pd.DataFrame]:
-        """查询时序数据
-        
-        Args:
-            measurement: 测量名称
-            start_time: 开始时间
-            end_time: 结束时间
-            fields: 字段列表
-            tags: 标签过滤
-            bucket: 存储桶名称
-            
-        Returns:
-            时序数据DataFrame
-        """
-        if not self.influx_client:
-            logger.warning("InfluxDB未可用")
-            return None
-        
-        try:
-            bucket = bucket or settings.INFLUXDB_BUCKET
-            query_api = self.influx_client.query_api()
-            
-            # 构建查询
-            query = f'from(bucket: "{bucket}")'
-            query += f' |> range(start: {start_time.isoformat()}, stop: {end_time.isoformat()})'
-            query += f' |> filter(fn: (r) => r._measurement == "{measurement}")'
-            
-            # 添加字段过滤
-            if fields:
-                field_filter = ' or '.join([f'r._field == "{field}"' for field in fields])
-                query += f' |> filter(fn: (r) => {field_filter})'
-            
-            # 添加标签过滤
-            if tags:
-                for key, value in tags.items():
-                    query += f' |> filter(fn: (r) => r.{key} == "{value}")'
-            
-            # 执行查询
-            result = query_api.query_data_frame(query)
-            
-            if not result.empty:
-                # 转换为时序格式
-                result = result.set_index('_time')
-                result = result.pivot_table(
-                    index='_time',
-                    columns='_field',
-                    values='_value',
-                    aggfunc='first'
-                )
-                
-                logger.info(f"查询到时序数据: {len(result)}行")
-                return result
-            
-            return pd.DataFrame()
-            
-        except Exception as e:
-            logger.error(f"查询时序数据失败: {e}")
-            return None
+
     
     # ==================== 文件数据存储 ====================
     
@@ -752,6 +578,8 @@ class DataStorage:
     def load_xarray(self, file_path: str) -> Optional['xr.Dataset']:
         """加载xarray数据集
         
+        支持多种格式：NetCDF, GRIB, HDF5等
+        
         Args:
             file_path: 文件路径
             
@@ -769,12 +597,65 @@ class DataStorage:
             return None
         
         try:
-            data = xr.open_dataset(file_path)
+            # 检测文件格式并选择合适的引擎
+            file_suffix = file_path_obj.suffix.lower()
+            
+            if file_suffix in ['.grib', '.grib2', '.grb', '.grb2']:
+                # GRIB文件使用cfgrib引擎
+                logger.info(f"检测到GRIB文件，使用cfgrib引擎: {file_path}")
+                data = xr.open_dataset(file_path, engine='cfgrib')
+            elif file_suffix in ['.nc', '.netcdf', '.nc4']:
+                # NetCDF文件使用默认引擎
+                data = xr.open_dataset(file_path)
+            elif file_suffix in ['.h5', '.hdf5']:
+                # HDF5文件
+                data = xr.open_dataset(file_path, engine='h5netcdf')
+            else:
+                # 其他格式，尝试默认引擎
+                data = xr.open_dataset(file_path)
+            
             logger.info(f"xarray数据集已加载: {file_path}")
             return data
             
         except Exception as e:
             logger.error(f"加载xarray数据集失败: {e}")
+            return None
+    
+    def load_grib_file(self, file_path: str, 
+                      backend_kwargs: Optional[Dict] = None) -> Optional['xr.Dataset']:
+        """专门加载GRIB文件的方法
+        
+        Args:
+            file_path: GRIB文件路径
+            backend_kwargs: 传递给cfgrib的额外参数
+            
+        Returns:
+            xarray数据集
+        """
+        if xr is None:
+            logger.error("xarray未安装")
+            return None
+        
+        file_path_obj = Path(file_path)
+        
+        if not file_path_obj.exists():
+            logger.error(f"GRIB文件不存在: {file_path}")
+            return None
+        
+        if not file_path_obj.suffix.lower() in ['.grib', '.grib2', '.grb', '.grb2']:
+            logger.warning(f"文件扩展名不是标准GRIB格式: {file_path_obj.suffix}")
+        
+        try:
+            backend_kwargs = backend_kwargs or {}
+            logger.info(f"正在加载GRIB文件: {file_path}")
+            
+            data = xr.open_dataset(file_path, engine='cfgrib', **backend_kwargs)
+            
+            logger.info(f"GRIB文件加载成功，包含变量: {list(data.data_vars.keys())}")
+            return data
+            
+        except Exception as e:
+            logger.error(f"加载GRIB文件失败: {e}")
             return None
     
     # ==================== 气象数据存储 ====================
@@ -827,97 +708,11 @@ class DataStorage:
             except Exception as e:
                 logger.error(f"在PostgreSQL中创建数据记录失败: {e}")
 
-        # 3. (可选) 存储到时序数据库 (InfluxDB)
-        if self.influx_client and 'DATE' in data.columns:
-            try:
-                data_for_influx = data.set_index('DATE')
-                influx_tags = {k: str(v) for k, v in tags.items()} if tags else None
-                self.save_time_series_data(
-                    data=data_for_influx,
-                    measurement=source,
-                    tags=influx_tags
-                )
-            except Exception as e:
-                logger.warning(f"存储到InfluxDB失败: {e}")
+
         
         return file_path_str
     
-    def _prepare_weather_timeseries(
-        self,
-        data: pd.DataFrame,
-        measurement: str
-    ) -> bool:
-        """准备气象数据用于时序存储
-        
-        Args:
-            data: 气象数据DataFrame
-            measurement: 测量名称
-            
-        Returns:
-            是否成功
-        """
-        try:
-            # 检查必要的列
-            if 'date' not in data.columns:
-                logger.warning("数据中缺少date列，跳过时序存储")
-                return False
-            
-            # 转换日期列
-            data_copy = data.copy()
-            data_copy['date'] = pd.to_datetime(data_copy['date'])
-            data_copy = data_copy.set_index('date')
-            
-            # 准备数值列
-            numeric_columns = []
-            for col in data_copy.columns:
-                if col in ['value', 'datatype', 'station', 'attributes']:
-                    continue
-                try:
-                    data_copy[col] = pd.to_numeric(data_copy[col], errors='coerce')
-                    if not data_copy[col].isna().all():
-                        numeric_columns.append(col)
-                except:
-                    continue
-            
-            if not numeric_columns:
-                # 处理NOAA标准格式
-                if 'value' in data_copy.columns and 'datatype' in data_copy.columns:
-                    pivot_data = data_copy.pivot_table(
-                        index='date',
-                        columns='datatype',
-                        values='value',
-                        aggfunc='first'
-                    )
-                    
-                    # 转换数值
-                    for col in pivot_data.columns:
-                        pivot_data[col] = pd.to_numeric(pivot_data[col], errors='coerce')
-                    
-                    # 准备标签
-                    tags = {"source": measurement}
-                    if 'station' in data_copy.columns:
-                        station = data_copy['station'].iloc[0] if not data_copy['station'].empty else "unknown"
-                        tags["station"] = str(station)
-                    
-                    return self.save_time_series_data(measurement, pivot_data, tags)
-                else:
-                    logger.warning("无法识别数据格式，跳过时序存储")
-                    return False
-            else:
-                # 直接使用数值列
-                numeric_data = data_copy[numeric_columns]
-                
-                # 准备标签
-                tags = {"source": measurement}
-                if 'station' in data_copy.columns:
-                    station = data_copy['station'].iloc[0] if not data_copy['station'].empty else "unknown"
-                    tags["station"] = str(station)
-                
-                return self.save_time_series_data(measurement, numeric_data, tags)
-            
-        except Exception as e:
-            logger.error(f"准备时序数据失败: {e}")
-            return False
+
     
     # ==================== 缓存管理 ====================
     
@@ -1257,16 +1052,6 @@ class DataStorage:
             finally:
                 session.close()
         
-        # Redis缓存统计
-        if self.redis_client:
-            try:
-                info = self.redis_client.info()
-                stats["cache_info"] = {
-                    "redis_keys": self.redis_client.dbsize(),
-                    "redis_memory_mb": round(info.get("used_memory", 0) / (1024 * 1024), 2),
-                    "redis_connected": True
-                }
-            except Exception as e:
-                stats["cache_info"] = {"redis_connected": False, "error": str(e)}
+
         
         return stats

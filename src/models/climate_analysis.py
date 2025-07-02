@@ -178,6 +178,37 @@ class ClimateAnalysisModel(PyTorchBaseModel):
         
         # 分析结果缓存
         self.analysis_cache = {}
+
+    def analyze_trends(self, data: pd.DataFrame, date_col: str, value_col: str) -> Dict[str, Any]:
+        """分析时间序列趋势"""
+        if Prophet is None:
+            raise ImportError("Prophet is not installed, cannot perform trend analysis.")
+
+        df = data[[date_col, value_col]].rename(columns={date_col: 'ds', value_col: 'y'})
+        
+        model = Prophet()
+        model.fit(df)
+        
+        future = model.make_future_dataframe(periods=365)
+        forecast = model.predict(future)
+        
+        return {
+            "forecast": forecast.to_dict(orient="records"),
+            "model": model
+        }
+
+    def detect_anomalies(self, data: pd.DataFrame, value_cols: List[str], contamination: float = 0.05) -> pd.DataFrame:
+        """使用孤立森林检测异常"""
+        X = data[value_cols].values
+        X_scaled = self.scaler.fit_transform(X)
+        
+        self.isolation_forest = IsolationForest(contamination=contamination, random_state=42)
+        predictions = self.isolation_forest.fit_predict(X_scaled)
+        
+        result_df = data.copy()
+        result_df["anomaly"] = predictions
+        
+        return result_df[result_df["anomaly"] == -1]
     
     def build_model(
         self,
@@ -197,6 +228,13 @@ class ClimateAnalysisModel(PyTorchBaseModel):
             num_climate_modes: 气候模态数量
         """
         logger.info("构建气候分析模型...")
+        self.lstm_model = LSTMModel(input_size=input_size, hidden_size=lstm_hidden)
+        self.autoencoder = AutoEncoder(input_size=input_size, encoding_dim=autoencoder_dim)
+        self.cnn_lstm_model = CNNLSTMModel(
+            input_channels=input_size,
+            sequence_length=sequence_length,
+            num_classes=num_climate_modes
+        )
         
         # LSTM时间序列模型
         self.lstm_model = LSTMModel(

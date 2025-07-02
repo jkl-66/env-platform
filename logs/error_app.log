@@ -1,0 +1,49 @@
+2025-07-02 13:53:42 | ERROR    | logging:callHandlers:1706 | 加载GRIB文件失败: unrecognized engine cfgrib must be one of: ['netcdf4', 'scipy', 'store']
+2025-07-02 13:53:42 | ERROR    | __main__:analyze_grib_file:765 | 分析GRIB文件失败: unrecognized engine cfgrib must be one of: ['netcdf4', 'scipy', 'store']
+2025-07-02 13:54:12 | ERROR    | logging:callHandlers:1706 | 加载GRIB文件失败: unrecognized engine cfgrib must be one of: ['netcdf4', 'scipy', 'store']
+2025-07-02 13:54:12 | ERROR    | __main__:analyze_grib_file:765 | 分析GRIB文件失败: unrecognized engine cfgrib must be one of: ['netcdf4', 'scipy', 'store']
+2025-07-02 14:38:50 | ERROR    | __main__:import_grib_data:81 | 处理文件 D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib 时发生错误: DataStorage.save_data_record() missing 1 required positional argument: 'data_type'
+2025-07-02 16:21:29 | ERROR    | __main__:import_grib_data:40 | 文件不存在: data\gfs.t00z.pgrb2.0p25.f000
+2025-07-02 16:23:41 | ERROR    | __main__:import_grib_data:95 | 处理文件 data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib 时发生错误: WindowsPath('data/raw/6cd7cc57755a5204a65bc7db615cd36b.grib') and WindowsPath('data/raw/6cd7cc57755a5204a65bc7db615cd36b.grib') are the same file
+2025-07-02 16:29:25 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:30:37 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:33:23 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:35:07 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:43:34 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:46:03 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:47:31 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:49:51 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:54:00 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'JKLJKL'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:58:44 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:59:14 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:59:53 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 17:31:06 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.ProgrammingError) (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'UUID NOT NULL, \n\tsource VARCHAR(100) NOT NULL, \n\tdata_type VARCHAR(50) NOT NULL,' at line 2")
+[SQL: 
+CREATE TABLE climate_data_records (
+	id UUID NOT NULL, 
+	source VARCHAR(100) NOT NULL, 
+	data_type VARCHAR(50) NOT NULL, 
+	location VARCHAR(200), 
+	latitude FLOAT, 
+	longitude FLOAT, 
+	start_time DATETIME, 
+	end_time DATETIME, 
+	file_path VARCHAR(500), 
+	file_format VARCHAR(20), 
+	file_size INTEGER, 
+	variables JSON, 
+	data_metadata JSON, 
+	quality_score FLOAT, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	PRIMARY KEY (id)
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)

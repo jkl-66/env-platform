@@ -131,7 +131,7 @@ class PredictionEngine:
     ):
         self.model_manager = model_manager or ModelManager()
         self.storage = storage or DataStorage()
-        self.predictions_path = Path(config.get("predictions_path", "predictions"))
+        self.predictions_path = Path(getattr(config, 'DATA_ROOT_PATH', Path('data')) / 'predictions')
         self.predictions_path.mkdir(parents=True, exist_ok=True)
         
         # 任务注册表

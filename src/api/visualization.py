@@ -15,6 +15,8 @@ import tempfile
 import json
 from PIL import Image
 import numpy as np
+import pandas as pd
+import plotly.express as px
 
 from .models import (
     ImageGenerationRequest, ImageGenerationResponse, GeneratedImage,
@@ -431,6 +433,48 @@ async def get_predefined_templates() -> List[ImageTemplate]:
     ]
     
     return templates
+
+
+@router.post("/analysis-chart", summary="生成分析图表")
+async def generate_analysis_chart(
+    analysis_result: Dict[str, Any],
+    chart_type: str = Query("trend", description="图表类型: trend, anomaly")
+):
+    """根据分析结果生成可视化图表"""
+    try:
+        if chart_type == "trend":
+            forecast_data = analysis_result.get("forecast", [])
+            if not forecast_data:
+                raise HTTPException(status_code=400, detail="缺少趋势预测数据")
+            
+            df = pd.DataFrame(forecast_data)
+            fig = px.line(df, x='ds', y='yhat', title='气候趋势预测')
+            fig.add_scatter(x=df['ds'], y=df['yhat_lower'], fill='tonexty', mode='lines', line_color='lightblue', name='预测下界')
+            fig.add_scatter(x=df['ds'], y=df['yhat_upper'], fill='tonexty', mode='lines', line_color='lightblue', name='预测上界')
+
+        elif chart_type == "anomaly":
+            anomaly_data = analysis_result.get("anomalies", [])
+            if not anomaly_data:
+                raise HTTPException(status_code=400, detail="缺少异常数据")
+
+            df = pd.DataFrame(analysis_result['original_data'])
+            anomalies = pd.DataFrame(anomaly_data)
+            
+            fig = px.line(df, x='date', y='value', title='异常检测结果')
+            fig.add_scatter(x=anomalies['date'], y=anomalies['value'], mode='markers', marker_color='red', name='异常点')
+
+        else:
+            raise HTTPException(status_code=400, detail="不支持的图表类型")
+
+        img_bytes = fig.to_image(format="png")
+        return StreamingResponse(io.BytesIO(img_bytes), media_type="image/png")
+
+    except Exception as e:
+        logger.error(f"生成分析图表失败: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"生成图表失败: {str(e)}"
+        )
 
 
 # ==================== 图像管理接口 ====================

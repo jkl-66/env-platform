@@ -27,13 +27,14 @@ try:
     from src.data_processing.data_collector import DataCollector as ClimateDataCollector
     from src.data_processing.data_storage import DataStorage as ClimateDataStore
     from src.data_processing.data_processor import DataProcessor
+    from src.data_processing.grib_processor import GRIBProcessor
     from src.models.historical_climate_analyzer import HistoricalClimateAnalyzer, analyze_climate_data
     from src.models.ecology_image_generator import EcologyImageGenerator
     from src.models.regional_climate_predictor import RegionalClimatePredictor, predict_regional_climate_risk
     from src.ml.model_manager import ModelManager
     from src.ml.prediction_engine import PredictionEngine
     from src.visualization.charts import ChartGenerator
-    from src.utils.logger import setup_logging, get_logger
+    from src.utils.logger import setup_logger, get_logger
     from src.utils.config import load_config, get_config
 except ImportError as e:
     print(f"导入模块失败: {e}")
@@ -47,7 +48,7 @@ class ClimateInsightCLI:
     def __init__(self, config_path: str = None):
         """初始化CLI"""
         # 设置日志
-        setup_logging()
+        setup_logger()
         self.logger = get_logger(__name__)
         
         # 加载配置
@@ -59,6 +60,7 @@ class ClimateInsightCLI:
         self.data_collector = ClimateDataCollector()
         self.data_store = ClimateDataStore()
         self.data_processor = DataProcessor()
+        self.grib_processor = GRIBProcessor(self.data_store)
         self.climate_analyzer = HistoricalClimateAnalyzer()
         self.image_generator = EcologyImageGenerator()
         self.climate_predictor = RegionalClimatePredictor()
@@ -488,6 +490,419 @@ class ClimateInsightCLI:
             
         except Exception as e:
             self.logger.warning(f"生成预测图表时出错: {e}")
+    
+    def process_grib_file(
+        self,
+        grib_file: str,
+        variables: list = None,
+        output_format: str = 'netcdf',
+        output_dir: str = 'output/grib_processed',
+        process_data: bool = True
+    ):
+        """处理GRIB文件"""
+        self.logger.info(f"开始处理GRIB文件: {grib_file}")
+        
+        try:
+            # 检查文件是否存在
+            grib_path = Path(grib_file)
+            if not grib_path.exists():
+                raise FileNotFoundError(f"GRIB文件不存在: {grib_file}")
+            
+            # 获取文件信息
+            file_info = self.grib_processor.get_grib_info(grib_file)
+            self.logger.info(f"GRIB文件信息: {file_info['variables']}")
+            
+            # 处理数据
+            if process_data:
+                from src.data_processing.data_processor import ProcessingConfig
+                config = ProcessingConfig(
+                    remove_outliers=True,
+                    fill_missing=True,
+                    smooth_data=False,
+                    normalize=False
+                )
+                processed_data = self.grib_processor.process_grib_data(
+                    grib_file, config, variables
+                )
+            else:
+                if variables:
+                    processed_data = self.grib_processor.extract_variables(
+                        grib_file, variables
+                    )
+                else:
+                    processed_data = self.grib_processor.load_grib_file(grib_file)
+            
+            # 保存处理后的数据
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            output_file = output_path / f"{grib_path.stem}_processed_{timestamp}"
+            
+            saved_file = self.grib_processor.save_processed_data(
+                processed_data, output_file, output_format
+            )
+            
+            # 保存文件信息
+            info_file = output_path / f"{grib_path.stem}_info_{timestamp}.json"
+            with open(info_file, 'w', encoding='utf-8') as f:
+                json.dump(file_info, f, indent=2, ensure_ascii=False, default=str)
+            
+            result = {
+                'input_file': str(grib_file),
+                'output_file': saved_file,
+                'info_file': str(info_file),
+                'variables': list(processed_data.data_vars.keys()),
+                'dimensions': dict(processed_data.dims),
+                'file_info': file_info
+            }
+            
+            processed_data.close()
+            
+            self.logger.info(f"GRIB文件处理完成: {saved_file}")
+            return result
+            
+        except Exception as e:
+            self.logger.error(f"处理GRIB文件失败: {e}")
+            raise
+    
+    def convert_grib_to_netcdf(
+        self,
+        grib_file: str,
+        output_file: str = None,
+        variables: list = None,
+        compression: bool = True
+    ):
+        """转换GRIB文件为NetCDF格式"""
+        self.logger.info(f"开始转换GRIB文件: {grib_file}")
+        
+        try:
+            if output_file is None:
+                grib_path = Path(grib_file)
+                output_file = f"output/converted/{grib_path.stem}.nc"
+            
+            # 确保输出目录存在
+            output_path = Path(output_file)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            # 转换文件
+            converted_file = self.grib_processor.convert_to_netcdf(
+                grib_file, output_file, variables, compression
+            )
+            
+            # 验证转换结果
+            converted_data = self.data_store.load_xarray(converted_file)
+            if converted_data:
+                result = {
+                    'input_file': grib_file,
+                    'output_file': converted_file,
+                    'variables': list(converted_data.data_vars.keys()),
+                    'dimensions': dict(converted_data.dims),
+                    'file_size': os.path.getsize(converted_file)
+                }
+                converted_data.close()
+            else:
+                raise ValueError("转换后的文件无法读取")
+            
+            self.logger.info(f"GRIB转换完成: {converted_file}")
+            return result
+            
+        except Exception as e:
+            self.logger.error(f"转换GRIB文件失败: {e}")
+            raise
+    
+    def batch_process_grib_files(
+        self,
+        input_dir: str,
+        output_dir: str = 'output/batch_grib',
+        pattern: str = '*.grib*',
+        output_format: str = 'netcdf',
+        process_data: bool = True
+    ):
+        """批量处理GRIB文件"""
+        self.logger.info(f"开始批量处理GRIB文件: {input_dir}")
+        
+        try:
+            from src.data_processing.data_processor import ProcessingConfig
+            
+            config = ProcessingConfig(
+                remove_outliers=True,
+                fill_missing=True,
+                smooth_data=False,
+                normalize=False
+            ) if process_data else None
+            
+            processed_files = self.grib_processor.batch_process_grib_files(
+                input_dir, output_dir, pattern, config, output_format
+            )
+            
+            # 生成批量处理报告
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            report = {
+                'input_directory': input_dir,
+                'output_directory': output_dir,
+                'pattern': pattern,
+                'output_format': output_format,
+                'processed_files': processed_files,
+                'total_files': len(processed_files),
+                'timestamp': timestamp
+            }
+            
+            # 保存报告
+            report_file = Path(output_dir) / f"batch_report_{timestamp}.json"
+            with open(report_file, 'w', encoding='utf-8') as f:
+                json.dump(report, f, indent=2, ensure_ascii=False)
+            
+            self.logger.info(f"批量处理完成，共处理 {len(processed_files)} 个文件")
+            return report
+            
+        except Exception as e:
+            self.logger.error(f"批量处理GRIB文件失败: {e}")
+            raise
+    
+    def analyze_grib_file(
+        self,
+        grib_file: str,
+        variables: list = None,
+        output_dir: str = 'output/grib_analysis'
+    ):
+        """分析GRIB文件内容"""
+        self.logger.info(f"开始分析GRIB文件: {grib_file}")
+        
+        try:
+            # 获取文件详细信息
+            file_info = self.grib_processor.get_grib_info(grib_file)
+            
+            # 加载数据进行分析
+            if variables:
+                dataset = self.grib_processor.extract_variables(grib_file, variables)
+            else:
+                dataset = self.grib_processor.load_grib_file(grib_file)
+            
+            # 生成统计信息
+            analysis_result = {
+                'file_info': file_info,
+                'variable_statistics': {},
+                'data_quality': {},
+                'spatial_coverage': {},
+                'temporal_coverage': {}
+            }
+            
+            # 分析每个变量
+            for var_name in dataset.data_vars:
+                var_data = dataset[var_name]
+                
+                # 基本统计
+                stats = {
+                    'shape': var_data.shape,
+                    'dtype': str(var_data.dtype),
+                    'min': float(var_data.min()),
+                    'max': float(var_data.max()),
+                    'mean': float(var_data.mean()),
+                    'std': float(var_data.std()),
+                    'missing_values': int(var_data.isnull().sum())
+                }
+                analysis_result['variable_statistics'][var_name] = stats
+                
+                # 数据质量评估
+                total_points = var_data.size
+                valid_points = total_points - stats['missing_values']
+                quality_score = valid_points / total_points if total_points > 0 else 0
+                
+                analysis_result['data_quality'][var_name] = {
+                    'total_points': total_points,
+                    'valid_points': valid_points,
+                    'missing_points': stats['missing_values'],
+                    'quality_score': quality_score
+                }
+            
+            # 空间覆盖分析
+            if 'latitude' in dataset.coords and 'longitude' in dataset.coords:
+                lat_range = (float(dataset.latitude.min()), float(dataset.latitude.max()))
+                lon_range = (float(dataset.longitude.min()), float(dataset.longitude.max()))
+                
+                analysis_result['spatial_coverage'] = {
+                    'latitude_range': lat_range,
+                    'longitude_range': lon_range,
+                    'spatial_resolution': {
+                        'latitude': float(dataset.latitude.diff('latitude').mean()) if len(dataset.latitude) > 1 else None,
+                        'longitude': float(dataset.longitude.diff('longitude').mean()) if len(dataset.longitude) > 1 else None
+                    }
+                }
+            
+            # 时间覆盖分析
+            if 'time' in dataset.coords:
+                time_range = (str(dataset.time.min().values), str(dataset.time.max().values))
+                time_count = len(dataset.time)
+                
+                analysis_result['temporal_coverage'] = {
+                    'time_range': time_range,
+                    'time_points': time_count,
+                    'temporal_resolution': str(dataset.time.diff('time').mean().values) if time_count > 1 else None
+                }
+            
+            # 保存分析结果
+            output_path = Path(output_dir)
+            output_path.mkdir(parents=True, exist_ok=True)
+            
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            grib_name = Path(grib_file).stem
+            
+            # 保存JSON报告
+            report_file = output_path / f"grib_analysis_{grib_name}_{timestamp}.json"
+            with open(report_file, 'w', encoding='utf-8') as f:
+                json.dump(analysis_result, f, indent=2, ensure_ascii=False, default=str)
+            
+            # 生成可视化图表
+            self._generate_grib_analysis_charts(dataset, analysis_result, output_path, timestamp, grib_name)
+            
+            dataset.close()
+            
+            self.logger.info(f"GRIB文件分析完成: {report_file}")
+            return analysis_result
+            
+        except Exception as e:
+            self.logger.error(f"分析GRIB文件失败: {e}")
+            raise
+    
+    def _generate_grib_analysis_charts(self, dataset, analysis_result, output_dir, timestamp, grib_name):
+        """生成GRIB分析图表"""
+        try:
+            import matplotlib.pyplot as plt
+            import numpy as np
+            plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
+            plt.rcParams['axes.unicode_minus'] = False
+            
+            # 变量统计图表
+            if analysis_result['variable_statistics']:
+                fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+                fig.suptitle(f'GRIB文件分析 - {grib_name}', fontsize=16)
+                
+                variables = list(analysis_result['variable_statistics'].keys())
+                
+                # 数据质量得分
+                quality_scores = [analysis_result['data_quality'][var]['quality_score'] 
+                                for var in variables]
+                
+                axes[0, 0].bar(variables, quality_scores, color='green', alpha=0.7)
+                axes[0, 0].set_title('数据质量得分')
+                axes[0, 0].set_ylabel('质量得分')
+                axes[0, 0].set_ylim(0, 1)
+                axes[0, 0].tick_params(axis='x', rotation=45)
+                
+                # 缺失值数量
+                missing_counts = [analysis_result['variable_statistics'][var]['missing_values'] 
+                                for var in variables]
+                
+                axes[0, 1].bar(variables, missing_counts, color='red', alpha=0.7)
+                axes[0, 1].set_title('缺失值数量')
+                axes[0, 1].set_ylabel('缺失值数量')
+                axes[0, 1].tick_params(axis='x', rotation=45)
+                
+                # 数据范围（最小值-最大值）
+                if len(variables) > 0:
+                    var_ranges = []
+                    var_names = []
+                    for var in variables[:4]:  # 最多显示4个变量
+                        stats = analysis_result['variable_statistics'][var]
+                        var_ranges.append([stats['min'], stats['max']])
+                        var_names.append(var)
+                    
+                    if var_ranges:
+                        x_pos = np.arange(len(var_names))
+                        mins = [r[0] for r in var_ranges]
+                        maxs = [r[1] for r in var_ranges]
+                        
+                        axes[1, 0].bar(x_pos - 0.2, mins, 0.4, label='最小值', alpha=0.7)
+                        axes[1, 0].bar(x_pos + 0.2, maxs, 0.4, label='最大值', alpha=0.7)
+                        axes[1, 0].set_title('变量数值范围')
+                        axes[1, 0].set_ylabel('数值')
+                        axes[1, 0].set_xticks(x_pos)
+                        axes[1, 0].set_xticklabels(var_names, rotation=45)
+                        axes[1, 0].legend()
+                
+                # 空间覆盖可视化
+                if analysis_result['spatial_coverage']:
+                    spatial = analysis_result['spatial_coverage']
+                    if 'latitude_range' in spatial and 'longitude_range' in spatial:
+                        lat_range = spatial['latitude_range']
+                        lon_range = spatial['longitude_range']
+                        
+                        # 创建简单的覆盖范围图
+                        axes[1, 1].add_patch(plt.Rectangle(
+                            (lon_range[0], lat_range[0]),
+                            lon_range[1] - lon_range[0],
+                            lat_range[1] - lat_range[0],
+                            fill=False, edgecolor='blue', linewidth=2
+                        ))
+                        axes[1, 1].set_xlim(lon_range[0] - 5, lon_range[1] + 5)
+                        axes[1, 1].set_ylim(lat_range[0] - 5, lat_range[1] + 5)
+                        axes[1, 1].set_xlabel('经度')
+                        axes[1, 1].set_ylabel('纬度')
+                        axes[1, 1].set_title('空间覆盖范围')
+                        axes[1, 1].grid(True, alpha=0.3)
+                
+                plt.tight_layout()
+                plt.savefig(output_dir / f'grib_analysis_{grib_name}_{timestamp}.png', 
+                           dpi=300, bbox_inches='tight')
+                plt.close()
+            
+            # 如果有时间序列数据，生成时间序列图
+            if 'time' in dataset.coords and len(dataset.time) > 1:
+                self._generate_grib_timeseries_charts(dataset, output_dir, timestamp, grib_name)
+                
+        except Exception as e:
+            self.logger.warning(f"生成GRIB分析图表时出错: {e}")
+    
+    def _generate_grib_timeseries_charts(self, dataset, output_dir, timestamp, grib_name):
+        """生成GRIB时间序列图表"""
+        try:
+            import matplotlib.pyplot as plt
+            
+            # 选择前几个变量进行时间序列可视化
+            variables = list(dataset.data_vars.keys())[:4]  # 最多4个变量
+            
+            if variables:
+                fig, axes = plt.subplots(len(variables), 1, figsize=(12, 3 * len(variables)))
+                if len(variables) == 1:
+                    axes = [axes]
+                
+                fig.suptitle(f'GRIB时间序列 - {grib_name}', fontsize=16)
+                
+                for i, var in enumerate(variables):
+                    var_data = dataset[var]
+                    
+                    # 计算空间平均值
+                    if len(var_data.dims) > 1:
+                        # 对空间维度求平均
+                        spatial_dims = [dim for dim in var_data.dims if dim != 'time']
+                        if spatial_dims:
+                            time_series = var_data.mean(dim=spatial_dims)
+                        else:
+                            time_series = var_data
+                    else:
+                        time_series = var_data
+                    
+                    # 绘制时间序列
+                    axes[i].plot(dataset.time, time_series, linewidth=1.5)
+                    axes[i].set_title(f'{var} 时间序列（空间平均）')
+                    axes[i].set_ylabel(var)
+                    axes[i].grid(True, alpha=0.3)
+                    
+                    # 设置x轴标签
+                    if i == len(variables) - 1:
+                        axes[i].set_xlabel('时间')
+                    
+                    # 旋转x轴标签
+                    axes[i].tick_params(axis='x', rotation=45)
+                
+                plt.tight_layout()
+                plt.savefig(output_dir / f'grib_timeseries_{grib_name}_{timestamp}.png', 
+                           dpi=300, bbox_inches='tight')
+                plt.close()
+                
+        except Exception as e:
+            self.logger.warning(f"生成GRIB时间序列图表时出错: {e}")
 
 
 def main():
@@ -532,6 +947,44 @@ def main():
     predict_parser.add_argument('--temp-increase', type=float, default=2.0, help='全球升温幅度')
     predict_parser.add_argument('--co2-increase', type=float, default=100.0, help='CO2浓度增加')
     predict_parser.add_argument('--output', default='output/predictions', help='输出目录')
+    
+    # GRIB文件处理命令
+    grib_parser = subparsers.add_parser('grib', help='处理GRIB格式文件')
+    grib_subparsers = grib_parser.add_subparsers(dest='grib_command', help='GRIB处理子命令')
+    
+    # GRIB文件信息查看
+    grib_info_parser = grib_subparsers.add_parser('info', help='查看GRIB文件信息')
+    grib_info_parser.add_argument('file', help='GRIB文件路径')
+    grib_info_parser.add_argument('--output', default='output/grib_info', help='输出目录')
+    
+    # GRIB文件转换
+    grib_convert_parser = grib_subparsers.add_parser('convert', help='转换GRIB文件为其他格式')
+    grib_convert_parser.add_argument('input', help='输入GRIB文件路径')
+    grib_convert_parser.add_argument('--output', help='输出文件路径')
+    grib_convert_parser.add_argument('--variables', help='要转换的变量，用逗号分隔')
+    grib_convert_parser.add_argument('--compression', action='store_true', default=True, help='启用压缩')
+    
+    # GRIB文件处理
+    grib_process_parser = grib_subparsers.add_parser('process', help='处理GRIB文件（质量控制、清洗等）')
+    grib_process_parser.add_argument('file', help='GRIB文件路径')
+    grib_process_parser.add_argument('--variables', help='要处理的变量，用逗号分隔')
+    grib_process_parser.add_argument('--output-format', default='netcdf', choices=['netcdf', 'zarr'], help='输出格式')
+    grib_process_parser.add_argument('--output', default='output/grib_processed', help='输出目录')
+    grib_process_parser.add_argument('--no-process', action='store_true', help='不进行数据处理，仅提取')
+    
+    # GRIB文件分析
+    grib_analyze_parser = grib_subparsers.add_parser('analyze', help='分析GRIB文件内容')
+    grib_analyze_parser.add_argument('file', help='GRIB文件路径')
+    grib_analyze_parser.add_argument('--variables', help='要分析的变量，用逗号分隔')
+    grib_analyze_parser.add_argument('--output', default='output/grib_analysis', help='输出目录')
+    
+    # GRIB批量处理
+    grib_batch_parser = grib_subparsers.add_parser('batch', help='批量处理GRIB文件')
+    grib_batch_parser.add_argument('input_dir', help='输入目录')
+    grib_batch_parser.add_argument('--output', default='output/batch_grib', help='输出目录')
+    grib_batch_parser.add_argument('--pattern', default='*.grib*', help='文件匹配模式')
+    grib_batch_parser.add_argument('--output-format', default='netcdf', choices=['netcdf', 'zarr'], help='输出格式')
+    grib_batch_parser.add_argument('--no-process', action='store_true', help='不进行数据处理，仅转换格式')
     
     # 通用参数
     parser.add_argument('--config', help='配置文件路径')
@@ -583,6 +1036,58 @@ def main():
             print(f"情景: {result.scenario.name}")
             print(f"主要风险: {[k.value for k, v in result.risk_levels.items() if v.value >= 3]}")
             print(f"建议措施: {len(result.recommendations)}")
+            
+        elif args.command == 'grib':
+            if args.grib_command == 'info':
+                result = cli.analyze_grib_file(
+                    args.file,
+                    args.variables.split(',') if hasattr(args, 'variables') and args.variables else None,
+                    args.output
+                )
+                print(f"\n=== GRIB文件分析完成 ===")
+                print(f"文件: {args.file}")
+                print(f"变量数量: {len(result['variable_statistics'])}")
+                
+            elif args.grib_command == 'convert':
+                result = cli.convert_grib_to_netcdf(
+                    args.input,
+                    args.output,
+                    args.variables.split(',') if args.variables else None,
+                    args.compression
+                )
+                print(f"\n=== GRIB转换完成 ===")
+                print(f"输出文件: {result['output_file']}")
+                
+            elif args.grib_command == 'process':
+                result = cli.process_grib_file(
+                    args.file,
+                    args.variables.split(',') if args.variables else None,
+                    args.output_format,
+                    args.output,
+                    not args.no_process
+                )
+                print(f"\n=== GRIB处理完成 ===")
+                print(f"输出文件: {result['output_file']}")
+                
+            elif args.grib_command == 'analyze':
+                result = cli.analyze_grib_file(
+                    args.file,
+                    args.variables.split(',') if args.variables else None,
+                    args.output
+                )
+                print(f"\n=== GRIB分析完成 ===")
+                print(f"变量数量: {len(result['variable_statistics'])}")
+                
+            elif args.grib_command == 'batch':
+                result = cli.batch_process_grib_files(
+                    args.input_dir,
+                    args.output,
+                    args.pattern,
+                    args.output_format,
+                    not args.no_process
+                )
+                print(f"\n=== 批量处理完成 ===")
+                print(f"处理文件数: {result['total_files']}")
             
     except KeyboardInterrupt:
         print("\n程序被用户中断")

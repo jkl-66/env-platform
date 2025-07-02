@@ -1,0 +1,236 @@
+2025-07-02 13:28:39 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-02 13:28:39 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-02 13:39:50 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-02 13:39:50 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-02 13:53:41 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-02 13:53:41 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-02 13:53:42 | INFO     | __main__:__init__:71 | 气候洞察平台CLI初始化完成
+2025-07-02 13:53:42 | INFO     | __main__:analyze_grib_file:670 | 开始分析GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 13:53:42 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 13:53:42 | ERROR    | logging:callHandlers:1706 | 加载GRIB文件失败: unrecognized engine cfgrib must be one of: ['netcdf4', 'scipy', 'store']
+2025-07-02 13:53:42 | ERROR    | __main__:analyze_grib_file:765 | 分析GRIB文件失败: unrecognized engine cfgrib must be one of: ['netcdf4', 'scipy', 'store']
+2025-07-02 13:54:12 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-02 13:54:12 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-02 13:54:12 | INFO     | __main__:__init__:71 | 气候洞察平台CLI初始化完成
+2025-07-02 13:54:12 | INFO     | __main__:analyze_grib_file:670 | 开始分析GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 13:54:12 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 13:54:12 | ERROR    | logging:callHandlers:1706 | 加载GRIB文件失败: unrecognized engine cfgrib must be one of: ['netcdf4', 'scipy', 'store']
+2025-07-02 13:54:12 | ERROR    | __main__:analyze_grib_file:765 | 分析GRIB文件失败: unrecognized engine cfgrib must be one of: ['netcdf4', 'scipy', 'store']
+2025-07-02 14:14:54 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-02 14:14:54 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-02 14:14:55 | INFO     | __main__:__init__:71 | 气候洞察平台CLI初始化完成
+2025-07-02 14:14:55 | INFO     | __main__:analyze_grib_file:670 | 开始分析GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 14:14:55 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 14:15:39 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 14:15:39 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 14:15:40 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 14:16:17 | INFO     | __main__:analyze_grib_file:761 | GRIB文件分析完成: data\analysis\grib_analysis_6cd7cc57755a5204a65bc7db615cd36b_20250702_141613.json
+2025-07-02 14:38:37 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 14:38:37 | INFO     | src.data_processing.data_storage:initialize:131 | 初始化数据存储系统...
+2025-07-02 14:38:41 | WARNING  | src.data_processing.data_storage:initialize:142 | PostgreSQL连接失败，元数据将不会被保存: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 14:38:45 | WARNING  | src.data_processing.data_storage:initialize:159 | InfluxDB健康检查失败: <urllib3.connection.HTTPConnection object at 0x0000028200419990>: Failed to establish a new connection: [WinError 10061] 由于目标计算机积极拒绝，无法连接。
+2025-07-02 14:38:49 | WARNING  | src.data_processing.data_storage:initialize:177 | Redis连接失败: Error 10061 connecting to localhost:6379. 由于目标计算机积极拒绝，无法连接。.
+2025-07-02 14:38:49 | INFO     | src.data_processing.data_storage:initialize:179 | 数据存储系统初始化完成
+2025-07-02 14:38:49 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 14:38:49 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 14:38:50 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 14:38:50 | INFO     | __main__:import_grib_data:55 | 原始文件已复制到: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 14:38:50 | INFO     | __main__:import_grib_data:58 | 正在创建数据库记录...
+2025-07-02 14:38:50 | ERROR    | __main__:import_grib_data:81 | 处理文件 D:\用户\jin\下载\6cd7cc57755a5204a65bc7db615cd36b.grib 时发生错误: DataStorage.save_data_record() missing 1 required positional argument: 'data_type'
+2025-07-02 14:38:50 | INFO     | src.data_processing.data_storage:close:194 | 数据存储连接已关闭
+2025-07-02 14:38:50 | INFO     | __main__:import_grib_data:84 | 数据存储连接已关闭。
+2025-07-02 16:21:29 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\gfs.t00z.pgrb2.0p25.f000
+2025-07-02 16:21:29 | ERROR    | __main__:import_grib_data:40 | 文件不存在: data\gfs.t00z.pgrb2.0p25.f000
+2025-07-02 16:22:49 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:22:49 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:22:49 | WARNING  | src.data_processing.data_storage:initialize:127 | MySQL连接失败，元数据将不会被保存: No module named 'pymysql'
+2025-07-02 16:22:49 | INFO     | src.data_processing.data_storage:initialize:131 | 数据存储系统初始化完成
+2025-07-02 16:22:49 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 16:22:49 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:23:41 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 16:23:41 | ERROR    | __main__:import_grib_data:95 | 处理文件 data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib 时发生错误: WindowsPath('data/raw/6cd7cc57755a5204a65bc7db615cd36b.grib') and WindowsPath('data/raw/6cd7cc57755a5204a65bc7db615cd36b.grib') are the same file
+2025-07-02 16:23:41 | INFO     | src.data_processing.data_storage:close:138 | 数据存储连接已关闭
+2025-07-02 16:23:41 | INFO     | __main__:import_grib_data:98 | 数据存储连接已关闭。
+2025-07-02 16:29:24 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:29:24 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:29:24 | WARNING  | src.data_processing.data_storage:initialize:127 | MySQL连接失败，元数据将不会被保存: No module named 'pymysql'
+2025-07-02 16:29:24 | INFO     | src.data_processing.data_storage:initialize:131 | 数据存储系统初始化完成
+2025-07-02 16:29:24 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 16:29:24 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:29:25 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 16:29:25 | INFO     | __main__:import_grib_data:58 | 文件已存在于目标位置: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib，跳过复制。
+2025-07-02 16:29:25 | INFO     | __main__:import_grib_data:61 | 正在创建数据库记录...
+2025-07-02 16:29:25 | WARNING  | src.data_processing.data_storage:save_data_record:179 | 数据库未初始化，无法保存元数据记录
+2025-07-02 16:29:25 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:29:25 | INFO     | src.data_processing.data_storage:close:138 | 数据存储连接已关闭
+2025-07-02 16:29:25 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。
+2025-07-02 16:30:36 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:30:36 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:30:36 | WARNING  | src.data_processing.data_storage:initialize:127 | MySQL连接失败，元数据将不会被保存: No module named 'pymysql'
+2025-07-02 16:30:36 | INFO     | src.data_processing.data_storage:initialize:131 | 数据存储系统初始化完成
+2025-07-02 16:30:36 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 16:30:36 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:30:37 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 16:30:37 | INFO     | __main__:import_grib_data:58 | 文件已存在于目标位置: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib，跳过复制。
+2025-07-02 16:30:37 | INFO     | __main__:import_grib_data:61 | 正在创建数据库记录...
+2025-07-02 16:30:37 | WARNING  | src.data_processing.data_storage:save_data_record:179 | 数据库未初始化，无法保存元数据记录
+2025-07-02 16:30:37 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:30:37 | INFO     | src.data_processing.data_storage:close:138 | 数据存储连接已关闭
+2025-07-02 16:30:37 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。
+2025-07-02 16:33:22 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:33:22 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:33:22 | WARNING  | src.data_processing.data_storage:initialize:127 | MySQL连接失败，元数据将不会被保存: (pymysql.err.OperationalError) (1045, "Access denied for user 'mysql_user'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:33:22 | INFO     | src.data_processing.data_storage:initialize:131 | 数据存储系统初始化完成
+2025-07-02 16:33:22 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 16:33:22 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:33:23 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 16:33:23 | INFO     | __main__:import_grib_data:58 | 文件已存在于目标位置: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib，跳过复制。
+2025-07-02 16:33:23 | INFO     | __main__:import_grib_data:61 | 正在创建数据库记录...
+2025-07-02 16:33:23 | WARNING  | src.data_processing.data_storage:save_data_record:179 | 数据库未初始化，无法保存元数据记录
+2025-07-02 16:33:23 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:33:23 | INFO     | src.data_processing.data_storage:close:138 | 数据存储连接已关闭
+2025-07-02 16:33:23 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。
+2025-07-02 16:35:06 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:35:06 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:35:06 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://mysql_user:mysql_password@localhost:3306/climate_metadata
+2025-07-02 16:35:06 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:35:06 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:35:06 | WARNING  | src.data_processing.data_storage:initialize:130 | MySQL连接失败，元数据将不会被保存: (pymysql.err.OperationalError) (1045, "Access denied for user 'mysql_user'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:35:06 | INFO     | src.data_processing.data_storage:initialize:134 | 数据存储系统初始化完成
+2025-07-02 16:35:06 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 16:35:06 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:35:07 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 16:35:07 | INFO     | __main__:import_grib_data:58 | 文件已存在于目标位置: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib，跳过复制。
+2025-07-02 16:35:07 | INFO     | __main__:import_grib_data:61 | 正在创建数据库记录...
+2025-07-02 16:35:07 | WARNING  | src.data_processing.data_storage:save_data_record:182 | 数据库未初始化，无法保存元数据记录
+2025-07-02 16:35:07 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:35:07 | INFO     | src.data_processing.data_storage:close:141 | 数据存储连接已关闭
+2025-07-02 16:35:07 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。
+2025-07-02 16:43:33 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:43:33 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:43:33 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 16:43:33 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:43:33 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:43:33 | WARNING  | src.data_processing.data_storage:initialize:130 | MySQL连接失败，元数据将不会被保存: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:43:33 | INFO     | src.data_processing.data_storage:initialize:134 | 数据存储系统初始化完成
+2025-07-02 16:43:33 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 16:43:33 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:43:34 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 16:43:34 | INFO     | __main__:import_grib_data:58 | 文件已存在于目标位置: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib，跳过复制。
+2025-07-02 16:43:34 | INFO     | __main__:import_grib_data:61 | 正在创建数据库记录...
+2025-07-02 16:43:34 | WARNING  | src.data_processing.data_storage:save_data_record:182 | 数据库未初始化，无法保存元数据记录
+2025-07-02 16:43:34 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:43:34 | INFO     | src.data_processing.data_storage:close:141 | 数据存储连接已关闭
+2025-07-02 16:43:34 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。
+2025-07-02 16:46:01 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:46:01 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:46:01 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 16:46:01 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:46:01 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:46:01 | WARNING  | src.data_processing.data_storage:initialize:130 | MySQL连接失败，元数据将不会被保存: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:46:01 | INFO     | src.data_processing.data_storage:initialize:134 | 数据存储系统初始化完成
+2025-07-02 16:46:01 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 16:46:01 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:46:02 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 16:46:02 | INFO     | __main__:import_grib_data:58 | 文件已存在于目标位置: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib，跳过复制。
+2025-07-02 16:46:02 | INFO     | __main__:import_grib_data:61 | 正在创建数据库记录...
+2025-07-02 16:46:03 | WARNING  | src.data_processing.data_storage:save_data_record:182 | 数据库未初始化，无法保存元数据记录
+2025-07-02 16:46:03 | ERROR    | __main__:import_grib_data:95 | 保存数据记录失败，未返回记录ID。
+2025-07-02 16:46:03 | INFO     | src.data_processing.data_storage:close:141 | 数据存储连接已关闭
+2025-07-02 16:46:03 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。
+2025-07-02 16:47:31 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:47:31 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:47:31 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 16:47:31 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:47:31 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:47:31 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:49:51 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:49:51 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:49:51 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 16:49:51 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:49:51 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:49:51 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:54:00 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:54:00 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:54:00 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://JKLJKL:922920@localhost:3306/climate_metadata
+2025-07-02 16:54:00 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:54:00 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:54:00 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'JKLJKL'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:58:44 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:58:44 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:58:44 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 16:58:44 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:58:44 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:58:44 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:59:14 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:59:14 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:59:14 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 16:59:14 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:59:14 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:59:14 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 16:59:53 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 16:59:53 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 16:59:53 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 16:59:53 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 16:59:53 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 16:59:53 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.OperationalError) (1045, "Access denied for user 'jkl'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-07-02 17:31:06 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 17:31:06 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 17:31:06 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 17:31:06 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 17:31:06 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 17:31:06 | ERROR    | src.data_processing.data_storage:initialize:130 | 无法连接到MySQL数据库: (pymysql.err.ProgrammingError) (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'UUID NOT NULL, \n\tsource VARCHAR(100) NOT NULL, \n\tdata_type VARCHAR(50) NOT NULL,' at line 2")
+[SQL: 
+CREATE TABLE climate_data_records (
+	id UUID NOT NULL, 
+	source VARCHAR(100) NOT NULL, 
+	data_type VARCHAR(50) NOT NULL, 
+	location VARCHAR(200), 
+	latitude FLOAT, 
+	longitude FLOAT, 
+	start_time DATETIME, 
+	end_time DATETIME, 
+	file_path VARCHAR(500), 
+	file_format VARCHAR(20), 
+	file_size INTEGER, 
+	variables JSON, 
+	data_metadata JSON, 
+	quality_score FLOAT, 
+	created_at DATETIME, 
+	updated_at DATETIME, 
+	PRIMARY KEY (id)
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-07-02 18:15:26 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 18:15:26 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 18:15:26 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 18:15:26 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 18:15:26 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 18:15:26 | INFO     | src.data_processing.data_storage:initialize:128 | MySQL数据库连接建立，表创建完成
+2025-07-02 18:15:26 | INFO     | src.data_processing.data_storage:initialize:133 | 数据存储系统初始化完成
+2025-07-02 18:15:26 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 18:15:26 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 18:15:27 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 18:15:27 | INFO     | __main__:import_grib_data:58 | 文件已存在于目标位置: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib，跳过复制。
+2025-07-02 18:15:27 | INFO     | __main__:import_grib_data:61 | 正在创建数据库记录...
+2025-07-02 18:15:27 | INFO     | src.data_processing.data_storage:save_data_record:210 | 数据记录已保存: 8625299f-4b74-4aa0-a677-e719ea648e96
+2025-07-02 18:15:27 | INFO     | __main__:import_grib_data:93 | 成功将数据记录 8625299f-4b74-4aa0-a677-e719ea648e96 保存到数据库。
+2025-07-02 18:15:27 | INFO     | src.data_processing.data_storage:close:140 | 数据存储连接已关闭
+2025-07-02 18:15:27 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。

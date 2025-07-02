@@ -30,24 +30,12 @@ class Settings(BaseSettings):
     )
     
     # 数据库配置
-    # PostgreSQL (元数据)
-    POSTGRES_HOST: str = Field(default="localhost", description="PostgreSQL主机")
-    POSTGRES_PORT: int = Field(default=5432, description="PostgreSQL端口")
-    POSTGRES_DB: str = Field(default="climate_metadata", description="PostgreSQL数据库名")
-    POSTGRES_USER: str = Field(default="postgres", description="PostgreSQL用户名")
-    POSTGRES_PASSWORD: str = Field(default="password", description="PostgreSQL密码")
-    
-    # InfluxDB (时序数据)
-    INFLUXDB_URL: str = Field(default="http://localhost:8086", description="InfluxDB地址")
-    INFLUXDB_TOKEN: Optional[str] = Field(default=None, description="InfluxDB访问令牌")
-    INFLUXDB_ORG: str = Field(default="climate-org", description="InfluxDB组织")
-    INFLUXDB_BUCKET: str = Field(default="climate-data", description="InfluxDB存储桶")
-    
-    # Redis (缓存)
-    REDIS_HOST: str = Field(default="localhost", description="Redis主机")
-    REDIS_PORT: int = Field(default=6379, description="Redis端口")
-    REDIS_DB: int = Field(default=0, description="Redis数据库")
-    REDIS_PASSWORD: Optional[str] = Field(default=None, description="Redis密码")
+    # MySQL (元数据)
+    MYSQL_HOST: str = Field(default="localhost", description="MySQL主机")
+    MYSQL_PORT: int = Field(default=3306, description="MySQL端口")
+    MYSQL_DB: str = Field(default="climate_metadata", description="MySQL数据库名")
+    MYSQL_USER: str = Field(default="jkl", description="MySQL用户名")
+    MYSQL_PASSWORD: str = Field(default="922920", description="MySQL密码")
     
     # Kafka配置
     KAFKA_BOOTSTRAP_SERVERS: List[str] = Field(
@@ -139,6 +127,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = True
+        extra = 'ignore'
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -152,16 +141,9 @@ class Settings(BaseSettings):
         (self.MODEL_ROOT_PATH / "trained").mkdir(exist_ok=True)
     
     @property
-    def postgres_url(self) -> str:
-        """PostgreSQL连接URL"""
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-    
-    @property
-    def redis_url(self) -> str:
-        """Redis连接URL"""
-        if self.REDIS_PASSWORD:
-            return f"redis://:{self.REDIS_PASSWORD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
-        return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
+    def mysql_url(self) -> str:
+        """MySQL连接URL"""
+        return f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DB}"
 
 
 # 全局设置实例
