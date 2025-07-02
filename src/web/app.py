@@ -16,6 +16,9 @@ import tempfile
 import zipfile
 from io import BytesIO
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Web框架
 from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, flash, session
 from flask_cors import CORS
@@ -29,14 +32,16 @@ import numpy as np
 import xarray as xr
 
 # 项目模块
-from src.data_processing.data_collector import DataCollector
-from src.data_processing.data_storage import DataStorage
-from src.data_processing.data_processor import DataProcessor
-from src.ml.model_manager import ModelManager
-from src.ml.prediction_engine import PredictionEngine
-from src.visualization.charts import ChartGenerator, ChartConfig, ChartType
-from src.utils.logger import get_logger
-from src.utils.config import get_config
+from ..data_processing.data_collector import DataCollector
+from ..data_processing.data_storage import DataStorage
+from ..data_processing.data_processor import DataProcessor
+from ..ml.model_manager import ModelManager
+from ..ml.prediction_engine import PredictionEngine
+from ..visualization.charts import ChartGenerator, ChartConfig, ChartType
+from ..utils.logger import get_logger
+from ..utils.config import get_config
+from ..utils.natural_language_query import convert_nl_to_sql
+import mysql.connector
 
 logger = get_logger(__name__)
 config = get_config()
@@ -192,6 +197,145 @@ def dashboard():
 def data_management():
     """数据管理页面"""
     return render_template('data_management.html')
+
+
+@app.route('/climate-data')
+@login_required
+def climate_data_page():
+    """气候数据探索页面"""
+    return render_template('climate_data.html')
+
+
+@app.route('/climate/data', methods=['GET'])
+def get_climate_data():
+    """获取气候数据，支持筛选"""
+    try:
+        # 获取筛选参数
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        location = request.args.get('location')
+        variable = request.args.get('variable')
+
+        # 构建基础查询
+        query = "SELECT * FROM climate_data WHERE 1=1"
+        params = []
+
+        if start_date:
+            query += " AND start_time >= %s"
+            params.append(start_date)
+        if end_date:
+            query += " AND end_time <= %s"
+            params.append(end_date)
+        if location:
+            # 简单的位置查询，可能需要更复杂的地理空间查询
+            query += " AND location LIKE %s"
+            params.append(f"%{location}%")
+        if variable:
+            query += " AND data_type = %s"
+            params.append(variable)
+
+        query += " ORDER BY start_time DESC LIMIT 1000" # 限制返回结果数量
+
+        connection = data_storage.get_connection()
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(query, tuple(params))
+        records = cursor.fetchall()
+        cursor.close()
+        connection.close()
+
+        return jsonify({'data': records})
+
+    except Exception as e:
+        logger.error(f"获取气候数据失败: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/download', methods=['GET'])
+def download_data():
+    """下载筛选后的数据为CSV"""
+    try:
+        # (与get_climate_data类似的筛选逻辑)
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        location = request.args.get('location')
+        variable = request.args.get('variable')
+
+        query = "SELECT * FROM climate_data WHERE 1=1"
+        params = []
+
+        if start_date:
+            query += " AND start_time >= %s"
+            params.append(start_date)
+        if end_date:
+            query += " AND end_time <= %s"
+            params.append(end_date)
+        if location:
+            query += " AND location LIKE %s"
+            params.append(f"%{location}%")
+        if variable:
+            query += " AND data_type = %s"
+            params.append(variable)
+
+        connection = data_storage.get_connection()
+        df = pd.read_sql(query, connection, params=params)
+        connection.close()
+
+        # 创建CSV内存文件
+        output = BytesIO()
+        df.to_csv(output, index=False)
+        output.seek(0)
+
+        return send_file(
+            output,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='climate_data.csv'
+        )
+
+    except Exception as e:
+        logger.error(f"下载数据失败: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/natural_language_query', methods=['POST'])
+@login_required
+def natural_language_query():
+    """自然语言查询"""
+    try:
+        data = request.get_json()
+        nl_query = data.get('query')
+        api_key = os.environ.get("DASHSCOPE_API_KEY")
+
+        if not nl_query:
+            return jsonify({"error": "Query is required"}), 400
+
+        if not api_key:
+            return jsonify({"error": "DASHSCOPE_API_KEY is not set"}), 500
+
+        # This is a simplified schema. In a real application, you would fetch this dynamically.
+        table_schema = "CREATE TABLE climate_data_records (id INT, source VARCHAR(255), data_type VARCHAR(255), location VARCHAR(255), start_time DATETIME, end_time DATETIME)"
+
+        sql_query = convert_nl_to_sql(nl_query, api_key, table_schema)
+
+        # Execute the SQL query
+        db_config = {
+            'host': os.environ.get('DB_HOST', 'localhost'),
+            'user': os.environ.get('DB_USER', 'root'),
+            'password': os.environ.get('DB_PASSWORD', ''),
+            'database': os.environ.get('DB_NAME', 'climate_data')
+        }
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(sql_query)
+        result = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"data": result})
+
+    except Exception as e:
+        logger.error(f"自然语言查询失败: {e}")
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/data/collect', methods=['POST'])
@@ -856,9 +1000,4 @@ def internal_error(error):
 
 
 if __name__ == '__main__':
-    # 开发模式运行
-    app.run(
-        host=getattr(config, 'HOST', '0.0.0.0'),
-        port=getattr(config, 'PORT', 5000),
-        debug=getattr(config, 'DEBUG', True)
-    )
+    app.run(host='0.0.0.0', port=5000, debug=True)

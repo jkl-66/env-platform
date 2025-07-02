@@ -234,3 +234,19 @@ CREATE TABLE climate_data_records (
 2025-07-02 18:15:27 | INFO     | __main__:import_grib_data:93 | 成功将数据记录 8625299f-4b74-4aa0-a677-e719ea648e96 保存到数据库。
 2025-07-02 18:15:27 | INFO     | src.data_processing.data_storage:close:140 | 数据存储连接已关闭
 2025-07-02 18:15:27 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。
+2025-07-02 22:57:27 | INFO     | __main__:import_grib_data:37 | 开始处理GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 22:57:27 | INFO     | src.data_processing.data_storage:initialize:116 | 初始化数据存储系统...
+2025-07-02 22:57:27 | INFO     | src.data_processing.data_storage:initialize:120 | 正在连接MySQL: mysql+pymysql://jkl:922920@localhost:3306/climate_metadata
+2025-07-02 22:57:27 | INFO     | src.data_processing.data_storage:initialize:122 | 数据库引擎创建成功。
+2025-07-02 22:57:27 | INFO     | src.data_processing.data_storage:initialize:124 | 数据库会话工厂创建成功。
+2025-07-02 22:57:27 | INFO     | src.data_processing.data_storage:initialize:128 | MySQL数据库连接建立，表创建完成
+2025-07-02 22:57:27 | INFO     | src.data_processing.data_storage:initialize:133 | 数据存储系统初始化完成
+2025-07-02 22:57:27 | INFO     | __main__:import_grib_data:49 | 正在提取GRIB元数据...
+2025-07-02 22:57:27 | INFO     | logging:callHandlers:1706 | 正在加载GRIB文件: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-02 22:58:11 | INFO     | logging:callHandlers:1706 | 成功加载GRIB文件，包含变量: ['t2m', 'msl', 'sst', 'sp']
+2025-07-02 22:58:11 | INFO     | __main__:import_grib_data:58 | 文件已存在于目标位置: data\raw\6cd7cc57755a5204a65bc7db615cd36b.grib，跳过复制。
+2025-07-02 22:58:11 | INFO     | __main__:import_grib_data:61 | 正在创建数据库记录...
+2025-07-02 22:58:11 | INFO     | src.data_processing.data_storage:save_data_record:236 | 数据记录已保存: 3b6cf2cc-2a1d-4ca1-ba21-56bcc5709498
+2025-07-02 22:58:11 | INFO     | __main__:import_grib_data:93 | 成功将数据记录 3b6cf2cc-2a1d-4ca1-ba21-56bcc5709498 保存到数据库。
+2025-07-02 22:58:11 | INFO     | src.data_processing.data_storage:close:140 | 数据存储连接已关闭
+2025-07-02 22:58:11 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。

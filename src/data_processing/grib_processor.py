@@ -13,6 +13,7 @@ from typing import List, Dict, Any, Optional, Union
 from pathlib import Path
 import xarray as xr
 import pandas as pd
+import pygrib
 from datetime import datetime, timedelta
 
 from .data_processor import DataProcessor, ProcessingConfig
@@ -197,6 +198,62 @@ class GRIBProcessor:
                     
         dataset.close()
         return extracted
+
+    def process_grib_to_dataframe(self, file_path: str) -> pd.DataFrame:
+        """
+        Processes a GRIB file and returns a pandas DataFrame in a memory-efficient way.
+        """
+        logger.info(f"Memory-efficiently processing GRIB file: {file_path}")
+        try:
+            grib_messages = pygrib.open(str(file_path))
+        except Exception as e:
+            logger.error(f"Error opening GRIB file {file_path}: {e}")
+            return pd.DataFrame()
+
+        records = {}  # Using a dictionary to store records: (time, lat, lon) -> {var: val}
+
+        for msg in grib_messages:
+            try:
+                lats, lons = msg.latlons()
+                values = msg.values
+                variable_name = msg.shortName
+                time = msg.validDate
+
+                if lats.ndim != 2 or lons.ndim != 2 or values.ndim != 2:
+                    logger.warning(f"Skipping message with non-2D data for variable {variable_name}")
+                    continue
+
+                # Flatten the grid data
+                lat_flat = lats.flatten()
+                lon_flat = lons.flatten()
+                val_flat = values.flatten()
+
+                for i in range(len(lat_flat)):
+                    key = (time, lat_flat[i], lon_flat[i])
+                    if key not in records:
+                        records[key] = {}
+                    records[key][variable_name] = val_flat[i]
+
+            except Exception as e:
+                logger.warning(f"Could not process a message in {file_path}: {e}")
+                continue
+        
+        grib_messages.close()
+
+        if not records:
+            logger.warning(f"No data processed from GRIB file: {file_path}")
+            return pd.DataFrame()
+            
+        # Convert the dictionary of records to a list of dictionaries for DataFrame creation
+        data_list = []
+        for key, variables in records.items():
+            record = {'time': key[0], 'latitude': key[1], 'longitude': key[2]}
+            record.update(variables)
+            data_list.append(record)
+            
+        df = pd.DataFrame(data_list)
+        logger.info(f"Successfully processed GRIB file {file_path} into a DataFrame with shape {df.shape}")
+        return df
     
     def convert_to_netcdf(self, grib_path: Union[str, Path], 
                          output_path: Union[str, Path],

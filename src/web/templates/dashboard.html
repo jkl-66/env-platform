@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Dashboard</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('data_management') }}">Data Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('climate_data_page') }}">Climate Data</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1>Dashboard</h1>
+        <p>Welcome, {{ current_user.username }}!</p>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Data Records</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ stats.get('data_records', 'N/A') }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Models</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ stats.get('models', 'N/A') }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-header">Predictions</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ stats.get('predictions', 'N/A') }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-header">Charts</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ stats.get('charts', 'N/A') }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

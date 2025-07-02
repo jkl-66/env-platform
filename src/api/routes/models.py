@@ -16,7 +16,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, 
 from pydantic import BaseModel, Field
 
 from src.utils.logger import get_logger
-from src.models.model_manager import ModelManager
+from src.ml.model_manager import ModelManager
 from src.api.routes.auth import get_current_active_user
 
 logger = get_logger(__name__)

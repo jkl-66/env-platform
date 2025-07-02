@@ -140,6 +140,32 @@ class DataStorage:
             logger.info("数据存储连接已关闭")
         except Exception as e:
             logger.error(f"关闭数据存储连接时出错: {e}")
+
+    async def fetch_data_as_dataframe(self, query: str, params: Optional[Dict] = None) -> Optional[pd.DataFrame]:
+        """从数据库获取数据并作为Pandas DataFrame返回
+
+        Args:
+            query: SQL查询语句
+            params: 查询参数
+
+        Returns:
+            Pandas DataFrame, or None if an error occurs.
+        """
+        if not self.engine:
+            logger.warning("数据库未初始化，无法获取数据")
+            return None
+        
+        try:
+            loop = asyncio.get_running_loop()
+            # pd.read_sql_query is synchronous, run it in an executor
+            df = await loop.run_in_executor(
+                None, 
+                lambda: pd.read_sql_query(query, self.engine, params=params)
+            )
+            return df
+        except Exception as e:
+            logger.error(f"执行数据库查询时出错: {e}", exc_info=True)
+            return None
     
     # ==================== 元数据管理 ====================
     

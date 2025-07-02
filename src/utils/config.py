@@ -61,10 +61,7 @@ class Settings(BaseSettings):
     def data_storage_path(self) -> str:
         """数据存储路径"""
         return str(self.DATA_ROOT_PATH)
-    UPLOAD_MAX_SIZE: int = Field(
-        default=100 * 1024 * 1024,  # 100MB
-        description="最大上传文件大小"
-    )
+    UPLOAD_MAX_SIZE: int = 104857600
     
     # AI模型配置
     # 设备配置
