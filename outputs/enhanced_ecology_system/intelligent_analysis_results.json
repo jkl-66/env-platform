@@ -1,0 +1,149 @@
+{
+  "analysis_time": "2025-07-03T13:51:38.238493",
+  "total_scenarios": 5,
+  "results": [
+    {
+      "scenario": "理想环境",
+      "indicators": {
+        "co2_level": 350,
+        "pm25_level": 15,
+        "temperature": 22,
+        "humidity": 60,
+        "forest_coverage": 70,
+        "water_quality": 9,
+        "air_quality": 9,
+        "biodiversity": 8,
+        "pollution_level": 1,
+        "warning_level": 1
+      },
+      "warning_level": 1,
+      "assessment": {
+        "overall_risk": "低",
+        "primary_concerns": [],
+        "recommendations": [],
+        "urgency_level": "一般"
+      },
+      "template": "冰川融化"
+    },
+    {
+      "scenario": "轻度污染",
+      "indicators": {
+        "co2_level": 400,
+        "pm25_level": 50,
+        "temperature": 28,
+        "humidity": 45,
+        "forest_coverage": 45,
+        "water_quality": 6,
+        "air_quality": 6,
+        "biodiversity": 6,
+        "pollution_level": 4,
+        "warning_level": 2
+      },
+      "warning_level": 2,
+      "assessment": {
+        "overall_risk": "低",
+        "primary_concerns": [],
+        "recommendations": [],
+        "urgency_level": "一般"
+      },
+      "template": "冰川融化"
+    },
+    {
+      "scenario": "中度污染",
+      "indicators": {
+        "co2_level": 450,
+        "pm25_level": 100,
+        "temperature": 32,
+        "humidity": 35,
+        "forest_coverage": 25,
+        "water_quality": 4,
+        "air_quality": 4,
+        "biodiversity": 4,
+        "pollution_level": 6,
+        "warning_level": 3
+      },
+      "warning_level": 3,
+      "assessment": {
+        "overall_risk": "中等",
+        "primary_concerns": [
+          "空气质量恶化",
+          "森林覆盖率低",
+          "气温异常升高"
+        ],
+        "recommendations": [
+          "加强工业排放控制",
+          "实施植树造林计划",
+          "采取气候适应措施"
+        ],
+        "urgency_level": "重要"
+      },
+      "template": "冰川融化"
+    },
+    {
+      "scenario": "重度污染",
+      "indicators": {
+        "co2_level": 500,
+        "pm25_level": 150,
+        "temperature": 38,
+        "humidity": 25,
+        "forest_coverage": 15,
+        "water_quality": 2,
+        "air_quality": 2,
+        "biodiversity": 2,
+        "pollution_level": 8,
+        "warning_level": 4
+      },
+      "warning_level": 4,
+      "assessment": {
+        "overall_risk": "高",
+        "primary_concerns": [
+          "碳排放过高",
+          "空气质量恶化",
+          "森林覆盖率低",
+          "气温异常升高"
+        ],
+        "recommendations": [
+          "减少化石燃料使用",
+          "加强工业排放控制",
+          "实施植树造林计划",
+          "采取气候适应措施"
+        ],
+        "urgency_level": "紧急"
+      },
+      "template": "极端天气"
+    },
+    {
+      "scenario": "环境危机",
+      "indicators": {
+        "co2_level": 600,
+        "pm25_level": 250,
+        "temperature": 45,
+        "humidity": 15,
+        "forest_coverage": 5,
+        "water_quality": 1,
+        "air_quality": 1,
+        "biodiversity": 1,
+        "pollution_level": 10,
+        "warning_level": 5
+      },
+      "warning_level": 5,
+      "assessment": {
+        "overall_risk": "高",
+        "primary_concerns": [
+          "碳排放过高",
+          "空气质量恶化",
+          "森林覆盖率低",
+          "气温异常升高"
+        ],
+        "recommendations": [
+          "减少化石燃料使用",
+          "加强工业排放控制",
+          "实施植树造林计划",
+          "采取气候适应措施"
+        ],
+        "urgency_level": "紧急"
+      },
+      "template": "极端天气"
+    }
+  ]
+}

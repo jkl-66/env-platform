@@ -1,0 +1,37 @@
+{
+  "name": "temperature_prediction_rf",
+  "model_type": "regression",
+  "algorithm": "random_forest",
+  "parameters": {
+    "n_estimators": 50,
+    "max_depth": 5,
+    "random_state": 42
+  },
+  "features": [
+    "latitude",
+    "longitude",
+    "number",
+    "step",
+    "surface",
+    "msl",
+    "sst",
+    "sp",
+    "quality_score",
+    "year",
+    "month",
+    "day",
+    "hour",
+    "day_of_year",
+    "season",
+    "month_sin",
+    "month_cos",
+    "day_sin",
+    "day_cos",
+    "hour_sin",
+    "hour_cos"
+  ],
+  "target": "t2m",
+  "validation_split": 0.2,
+  "cross_validation_folds": 5,
+  "random_state": 42
+}

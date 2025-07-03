@@ -410,8 +410,15 @@ class ClimateInsightDemo:
     
     def _create_analysis_charts(self, data, report):
         """创建分析图表"""
-        plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
+        plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS', 'DejaVu Sans', 'sans-serif']
         plt.rcParams['axes.unicode_minus'] = False
+        plt.rcParams['font.size'] = 10
+        plt.rcParams['figure.titlesize'] = 14
+        plt.rcParams['axes.titlesize'] = 12
+        plt.rcParams['axes.labelsize'] = 10
+        plt.rcParams['xtick.labelsize'] = 9
+        plt.rcParams['ytick.labelsize'] = 9
+        plt.rcParams['legend.fontsize'] = 9
         
         # 时间序列图
         fig, axes = plt.subplots(2, 2, figsize=(15, 10))
@@ -432,7 +439,9 @@ class ClimateInsightDemo:
                 result = report.trend_results[var]
                 x_numeric = np.arange(len(data))
                 trend_line = result.slope * x_numeric + result.intercept
-                ax.plot(data['time'], trend_line, 'r-', linewidth=2, label=f'趋势线 (斜率: {result.slope:.4f})')
+                # 确保数字格式化正确显示
+                slope_str = f"{result.slope:.4f}".replace('.', '.')
+                ax.plot(data['time'], trend_line, 'r-', linewidth=2, label=f'趋势线 (斜率: {slope_str})')
             
             # 标记异常点
             if var in report.anomaly_results:
@@ -480,8 +489,10 @@ class ClimateInsightDemo:
                        str(count), ha='center', va='bottom')
             
             for bar, rate in zip(bars2, anomaly_rates):
+                # 确保百分比数字格式化正确显示
+                rate_str = f"{rate:.1f}".replace('.', '.')
                 ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.1,
-                        f'{rate:.1f}%', ha='center', va='bottom')
+                        f'{rate_str}%', ha='center', va='bottom')
             
             ax.legend(loc='upper left')
             ax2.legend(loc='upper right')
@@ -548,12 +559,17 @@ class ClimateInsightDemo:
         ax.text(0.5, 0.75, warning_level, fontsize=16, fontweight='bold',
                ha='center', va='center', color='yellow')
         
-        # 环境指标
+        # 环境指标 - 确保数字格式化正确显示
+        carbon_str = f"{conditions['carbon_emission']:.0f}"
+        pollution_str = f"{conditions['pollution_index']:.0f}"
+        deforestation_str = f"{conditions['deforestation_rate']:.0f}"
+        temp_str = f"{conditions['temperature_increase']:.1f}".replace('.', '.')
+        
         indicators = [
-            f"碳排放: {conditions['carbon_emission']:.0f} ppm",
-            f"污染指数: {conditions['pollution_index']:.0f}",
-            f"森林砍伐: {conditions['deforestation_rate']:.0f}%",
-            f"温度上升: {conditions['temperature_increase']:.1f}°C"
+            f"碳排放: {carbon_str} ppm",
+            f"污染指数: {pollution_str}",
+            f"森林砍伐: {deforestation_str}%",
+            f"温度上升: {temp_str}°C"
         ]
         
         for i, indicator in enumerate(indicators):
@@ -575,8 +591,15 @@ class ClimateInsightDemo:
     
     def _create_prediction_charts(self, prediction_results):
         """创建预测对比图表"""
-        plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
+        plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS', 'DejaVu Sans', 'sans-serif']
         plt.rcParams['axes.unicode_minus'] = False
+        plt.rcParams['font.size'] = 10
+        plt.rcParams['figure.titlesize'] = 14
+        plt.rcParams['axes.titlesize'] = 12
+        plt.rcParams['axes.labelsize'] = 10
+        plt.rcParams['xtick.labelsize'] = 9
+        plt.rcParams['ytick.labelsize'] = 9
+        plt.rcParams['legend.fontsize'] = 9
         
         # 风险等级热力图
         regions = [result['region'] for result in prediction_results]

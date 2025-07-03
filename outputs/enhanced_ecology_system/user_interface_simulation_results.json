@@ -1,0 +1,36 @@
+{
+  "simulation_time": "2025-07-03T13:51:43.601010",
+  "total_scenarios": 3,
+  "results": [
+    {
+      "user_type": "小学教师",
+      "input_method": "简单选择",
+      "target_audience": "小学生",
+      "education_goal": "环保意识启蒙",
+      "presentation_style": "简单易懂，图文并茂",
+      "complexity_level": "基础",
+      "warning_level": 4,
+      "ui_simulation_path": "outputs\\enhanced_ecology_system\\user_interface_simulation_1_小学教师.png"
+    },
+    {
+      "user_type": "环保组织",
+      "input_method": "详细数据",
+      "target_audience": "公众",
+      "education_goal": "环境危机警示",
+      "presentation_style": "直观震撼，数据支撑",
+      "complexity_level": "中等",
+      "warning_level": 4,
+      "ui_simulation_path": "outputs\\enhanced_ecology_system\\user_interface_simulation_2_环保组织.png"
+    },
+    {
+      "user_type": "中学生",
+      "input_method": "互动探索",
+      "target_audience": "同龄人",
+      "education_goal": "科学认知提升",
+      "presentation_style": "科学严谨，深入分析",
+      "complexity_level": "高级",
+      "warning_level": 4,
+      "ui_simulation_path": "outputs\\enhanced_ecology_system\\user_interface_simulation_3_中学生.png"
+    }
+  ]
+}

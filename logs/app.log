@@ -250,3 +250,323 @@ CREATE TABLE climate_data_records (
 2025-07-02 22:58:11 | INFO     | __main__:import_grib_data:93 | 成功将数据记录 3b6cf2cc-2a1d-4ca1-ba21-56bcc5709498 保存到数据库。
 2025-07-02 22:58:11 | INFO     | src.data_processing.data_storage:close:140 | 数据存储连接已关闭
 2025-07-02 22:58:11 | INFO     | __main__:import_grib_data:101 | 数据存储连接已关闭。
+2025-07-03 12:20:32 | INFO     | __main__:load_climate_data:49 | 正在加载历史气候数据...
+2025-07-03 12:20:32 | INFO     | logging:callHandlers:1706 | Processing GRIB file to extract all climate data: data/raw/6cd7cc57755a5204a65bc7db615cd36b.grib
+2025-07-03 12:20:33 | WARNING  | logging:callHandlers:1706 | Ignoring index file 'data/raw/6cd7cc57755a5204a65bc7db615cd36b.grib.5b7b6.idx' incompatible with GRIB file
+2025-07-03 12:21:17 | INFO     | logging:callHandlers:1706 | Found data variables: ['t2m', 'msl', 'sst', 'sp']
+2025-07-03 12:21:17 | INFO     | logging:callHandlers:1706 | Dataset dimensions: {'time': 26304, 'latitude': 41, 'longitude': 201}
+2025-07-03 12:21:17 | INFO     | logging:callHandlers:1706 | Dataset coordinates: ['number', 'time', 'step', 'surface', 'latitude', 'longitude', 'valid_time']
+2025-07-03 12:22:38 | INFO     | logging:callHandlers:1706 | Removed 0 rows with NaN values
+2025-07-03 12:22:38 | INFO     | logging:callHandlers:1706 | Randomly sampling 1000 points from 216771264 total points
+2025-07-03 12:22:45 | INFO     | logging:callHandlers:1706 | Successfully processed GRIB file data/raw/6cd7cc57755a5204a65bc7db615cd36b.grib into a DataFrame with shape (1000, 12)
+2025-07-03 12:22:45 | INFO     | logging:callHandlers:1706 | DataFrame columns: ['time', 'latitude', 'longitude', 'number', 'step', 'surface', 'valid_time', 't2m', 'msl', 'sst', 'sp', 'quality_score']
+2025-07-03 12:22:45 | INFO     | __main__:load_climate_data:67 | 从GRIB文件加载了 1000 条记录
+2025-07-03 12:22:45 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-03 12:22:45 | INFO     | __main__:analyze_trends_and_seasonality:141 | === 开始趋势分析与周期性检测 ===
+2025-07-03 12:22:45 | INFO     | src.models.historical_climate_analyzer:analyze_trends:279 | 开始趋势分析，方法: linear_regression
+2025-07-03 12:22:45 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | latitude 趋势分析完成: decreasing, 斜率=-0.0000
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | longitude 趋势分析完成: decreasing, 斜率=-0.0003
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | number 趋势分析完成: stable, 斜率=0.0000
+2025-07-03 12:22:46 | ERROR    | src.models.historical_climate_analyzer:analyze_trends:304 | 分析 step 趋势时出错: The DType <class 'numpy.dtype[float64]'> could not be promoted by <class 'numpy.dtype[timedelta64]'>. This means that no common DType exists for the given inputs. For example they cannot be stored in a single array unless the dtype is `object`. The full list of DTypes is: (<class 'numpy.dtype[float64]'>, <class 'numpy.dtype[int32]'>, <class 'numpy.dtype[timedelta64]'>)
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | surface 趋势分析完成: stable, 斜率=0.0000
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | t2m 趋势分析完成: decreasing, 斜率=-0.0000
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | msl 趋势分析完成: increasing, 斜率=0.0043
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | sst 趋势分析完成: decreasing, 斜率=-0.0000
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | sp 趋势分析完成: increasing, 斜率=0.0045
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | quality_score 趋势分析完成: stable, 斜率=0.0000
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:423 | 开始季节性分析
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | latitude 季节性分析完成: 季节性强度=0.014
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | longitude 季节性分析完成: 季节性强度=0.009
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | number 季节性分析完成: 季节性强度=0.000
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | step 季节性分析完成: 季节性强度=0.000
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | surface 季节性分析完成: 季节性强度=0.000
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | t2m 季节性分析完成: 季节性强度=0.012
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | msl 季节性分析完成: 季节性强度=0.009
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | sst 季节性分析完成: 季节性强度=0.009
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | sp 季节性分析完成: 季节性强度=0.009
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | quality_score 季节性分析完成: 季节性强度=0.006
+2025-07-03 12:22:46 | INFO     | __main__:detect_anomalies_and_patterns:184 | === 开始异常事件检测 ===
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: isolation_forest
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | latitude 异常检测完成: 发现 80 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | longitude 异常检测完成: 发现 98 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | number 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | step 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | surface 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | t2m 异常检测完成: 发现 100 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | msl 异常检测完成: 发现 100 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sst 异常检测完成: 发现 100 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sp 异常检测完成: 发现 100 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | quality_score 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: statistical
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | latitude 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | longitude 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | number 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | ERROR    | src.models.historical_climate_analyzer:detect_anomalies:603 | 检测 step 异常时出错: ufunc 'multiply' cannot use operands with types dtype('<m8[ns]') and dtype('<m8[ns]')
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | surface 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | t2m 异常检测完成: 发现 4 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | msl 异常检测完成: 发现 2 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sst 异常检测完成: 发现 4 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sp 异常检测完成: 发现 3 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | quality_score 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:46 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: one_class_svm
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | latitude 异常检测完成: 发现 99 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | longitude 异常检测完成: 发现 98 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | number 异常检测完成: 发现 1000 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | step 异常检测完成: 发现 1000 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | surface 异常检测完成: 发现 1000 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | t2m 异常检测完成: 发现 111 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | msl 异常检测完成: 发现 121 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sst 异常检测完成: 发现 107 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sp 异常检测完成: 发现 109 个异常点
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | quality_score 异常检测完成: 发现 1000 个异常点
+2025-07-03 12:22:47 | INFO     | __main__:detect_anomalies_and_patterns:210 | === 开始模式识别 ===
+2025-07-03 12:22:47 | INFO     | src.models.historical_climate_analyzer:identify_patterns:735 | 开始模式识别分析
+2025-07-03 12:22:48 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | latitude 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:48 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | longitude 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:49 | ERROR    | src.models.historical_climate_analyzer:identify_patterns:762 | 识别 number 模式时出错: Input X contains NaN.
+KMeans does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-07-03 12:22:49 | ERROR    | src.models.historical_climate_analyzer:identify_patterns:762 | 识别 step 模式时出错: ufunc 'multiply' cannot use operands with types dtype('<m8[ns]') and dtype('<m8[ns]')
+2025-07-03 12:22:49 | ERROR    | src.models.historical_climate_analyzer:identify_patterns:762 | 识别 surface 模式时出错: Input X contains NaN.
+KMeans does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-07-03 12:22:50 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | t2m 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:50 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | msl 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:51 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | sst 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | sp 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:52 | ERROR    | src.models.historical_climate_analyzer:identify_patterns:762 | 识别 quality_score 模式时出错: Input X contains NaN.
+KMeans does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-07-03 12:22:52 | INFO     | __main__:analyze_extreme_events:231 | === 开始极端事件分析 ===
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:887 | 开始极端事件分析
+2025-07-03 12:22:52 | INFO     | __main__:generate_comprehensive_report:277 | === 生成综合分析报告 ===
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:generate_comprehensive_report:1076 | 开始生成 历史气候数据分析 的综合分析报告
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:279 | 开始趋势分析，方法: linear_regression
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | latitude 趋势分析完成: decreasing, 斜率=-0.0000
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | longitude 趋势分析完成: decreasing, 斜率=-0.0003
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | number 趋势分析完成: stable, 斜率=0.0000
+2025-07-03 12:22:52 | ERROR    | src.models.historical_climate_analyzer:analyze_trends:304 | 分析 step 趋势时出错: The DType <class 'numpy.dtype[float64]'> could not be promoted by <class 'numpy.dtype[timedelta64]'>. This means that no common DType exists for the given inputs. For example they cannot be stored in a single array unless the dtype is `object`. The full list of DTypes is: (<class 'numpy.dtype[float64]'>, <class 'numpy.dtype[int32]'>, <class 'numpy.dtype[timedelta64]'>)
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | surface 趋势分析完成: stable, 斜率=0.0000
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | t2m 趋势分析完成: decreasing, 斜率=-0.0000
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | msl 趋势分析完成: increasing, 斜率=0.0043
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | sst 趋势分析完成: decreasing, 斜率=-0.0000
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | sp 趋势分析完成: increasing, 斜率=0.0045
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | quality_score 趋势分析完成: stable, 斜率=0.0000
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:423 | 开始季节性分析
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | latitude 季节性分析完成: 季节性强度=0.014
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | longitude 季节性分析完成: 季节性强度=0.009
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | number 季节性分析完成: 季节性强度=0.000
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | step 季节性分析完成: 季节性强度=0.000
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | surface 季节性分析完成: 季节性强度=0.000
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | t2m 季节性分析完成: 季节性强度=0.012
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | msl 季节性分析完成: 季节性强度=0.009
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | sst 季节性分析完成: 季节性强度=0.009
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | sp 季节性分析完成: 季节性强度=0.009
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | quality_score 季节性分析完成: 季节性强度=0.006
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: isolation_forest
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | latitude 异常检测完成: 发现 80 个异常点
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | longitude 异常检测完成: 发现 98 个异常点
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | number 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | step 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | surface 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | t2m 异常检测完成: 发现 100 个异常点
+2025-07-03 12:22:52 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | msl 异常检测完成: 发现 100 个异常点
+2025-07-03 12:22:53 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sst 异常检测完成: 发现 100 个异常点
+2025-07-03 12:22:53 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sp 异常检测完成: 发现 100 个异常点
+2025-07-03 12:22:53 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | quality_score 异常检测完成: 发现 0 个异常点
+2025-07-03 12:22:53 | INFO     | src.models.historical_climate_analyzer:identify_patterns:735 | 开始模式识别分析
+2025-07-03 12:22:53 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | latitude 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:54 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | longitude 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:54 | ERROR    | src.models.historical_climate_analyzer:identify_patterns:762 | 识别 number 模式时出错: Input X contains NaN.
+KMeans does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-07-03 12:22:54 | ERROR    | src.models.historical_climate_analyzer:identify_patterns:762 | 识别 step 模式时出错: ufunc 'multiply' cannot use operands with types dtype('<m8[ns]') and dtype('<m8[ns]')
+2025-07-03 12:22:55 | ERROR    | src.models.historical_climate_analyzer:identify_patterns:762 | 识别 surface 模式时出错: Input X contains NaN.
+KMeans does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-07-03 12:22:55 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | t2m 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:56 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | msl 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:56 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | sst 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:57 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | sp 模式识别完成: 识别出 5 个主要模式
+2025-07-03 12:22:57 | ERROR    | src.models.historical_climate_analyzer:identify_patterns:762 | 识别 quality_score 模式时出错: Input X contains NaN.
+KMeans does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-07-03 12:22:57 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:887 | 开始极端事件分析
+2025-07-03 12:22:57 | INFO     | src.models.historical_climate_analyzer:generate_comprehensive_report:1127 | 历史气候数据分析 综合分析报告生成完成
+2025-07-03 12:22:57 | INFO     | __main__:create_visualizations:310 | 创建可视化图表...
+2025-07-03 12:22:59 | INFO     | __main__:create_visualizations:406 | 可视化图表已保存到 outputs/climate_analysis/climate_pattern_analysis.png
+2025-07-03 12:26:26 | INFO     | __main__:save_results_to_files:468 | 分析结果已保存到 outputs/climate_analysis 目录
+2025-07-03 12:29:08 | INFO     | __main__:create_realistic_climate_data:47 | 创建真实的历史气候数据...
+2025-07-03 12:29:08 | INFO     | __main__:create_realistic_climate_data:160 | 创建了包含 648 条记录的真实气候数据
+2025-07-03 12:29:08 | INFO     | __main__:create_realistic_climate_data:161 | 时间范围: 1970-01-31 00:00:00 至 2023-12-31 00:00:00
+2025-07-03 12:29:08 | INFO     | __main__:create_realistic_climate_data:162 | 变量: ['temperature', 'precipitation', 'humidity', 'wind_speed', 'pressure', 'sea_surface_temp']
+2025-07-03 12:29:08 | INFO     | __main__:analyze_climate_patterns:170 | === 开始全面气候模式分析 ===
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_trends:279 | 开始趋势分析，方法: linear_regression
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | temperature 趋势分析完成: increasing, 斜率=0.0022
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | precipitation 趋势分析完成: decreasing, 斜率=-0.0163
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | humidity 趋势分析完成: decreasing, 斜率=-0.0026
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | wind_speed 趋势分析完成: decreasing, 斜率=-0.0007
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | pressure 趋势分析完成: decreasing, 斜率=-0.0005
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | sea_surface_temp 趋势分析完成: increasing, 斜率=0.0019
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:423 | 开始季节性分析
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | temperature 季节性分析完成: 季节性强度=0.942
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | precipitation 季节性分析完成: 季节性强度=0.155
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | humidity 季节性分析完成: 季节性强度=0.821
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | wind_speed 季节性分析完成: 季节性强度=0.275
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | pressure 季节性分析完成: 季节性强度=0.595
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | sea_surface_temp 季节性分析完成: 季节性强度=0.935
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: isolation_forest
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | temperature 异常检测完成: 发现 33 个异常点
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | precipitation 异常检测完成: 发现 33 个异常点
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | humidity 异常检测完成: 发现 33 个异常点
+2025-07-03 12:29:08 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | wind_speed 异常检测完成: 发现 33 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | pressure 异常检测完成: 发现 33 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sea_surface_temp 异常检测完成: 发现 33 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: statistical
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | temperature 异常检测完成: 发现 0 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | precipitation 异常检测完成: 发现 20 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | humidity 异常检测完成: 发现 0 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | wind_speed 异常检测完成: 发现 15 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | pressure 异常检测完成: 发现 0 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sea_surface_temp 异常检测完成: 发现 0 个异常点
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:887 | 开始极端事件分析
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | temperature heatwave 极端事件分析完成: 频率=0.48/年
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | temperature coldwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | precipitation drought 极端事件分析完成: 频率=0.56/年
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | precipitation flood 极端事件分析完成: 频率=1.02/年
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | humidity drought 极端事件分析完成: 频率=0.78/年
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | sea_surface_temp heatwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | sea_surface_temp coldwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:identify_patterns:735 | 开始模式识别分析
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | temperature 模式识别完成: 识别出 4 个主要模式
+2025-07-03 12:29:09 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | precipitation 模式识别完成: 识别出 4 个主要模式
+2025-07-03 12:29:10 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | humidity 模式识别完成: 识别出 4 个主要模式
+2025-07-03 12:29:10 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | wind_speed 模式识别完成: 识别出 4 个主要模式
+2025-07-03 12:29:11 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | pressure 模式识别完成: 识别出 4 个主要模式
+2025-07-03 12:29:11 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | sea_surface_temp 模式识别完成: 识别出 4 个主要模式
+2025-07-03 12:29:11 | INFO     | __main__:create_comprehensive_visualizations:300 | 创建综合可视化分析...
+2025-07-03 12:29:12 | INFO     | __main__:create_comprehensive_visualizations:494 | 综合分析图表已保存到 outputs/climate_analysis/enhanced_climate_analysis.png
+2025-07-03 12:29:53 | INFO     | __main__:main:644 | 详细结果已保存到 outputs/climate_analysis 目录
+2025-07-03 13:13:56 | INFO     | __main__:create_realistic_climate_data:47 | 创建真实的历史气候数据...
+2025-07-03 13:13:56 | INFO     | __main__:create_realistic_climate_data:160 | 创建了包含 648 条记录的真实气候数据
+2025-07-03 13:13:56 | INFO     | __main__:create_realistic_climate_data:161 | 时间范围: 1970-01-31 00:00:00 至 2023-12-31 00:00:00
+2025-07-03 13:13:56 | INFO     | __main__:create_realistic_climate_data:162 | 变量: ['temperature', 'precipitation', 'humidity', 'wind_speed', 'pressure', 'sea_surface_temp']
+2025-07-03 13:13:56 | INFO     | __main__:analyze_climate_patterns:170 | === 开始全面气候模式分析 ===
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_trends:279 | 开始趋势分析，方法: linear_regression
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | temperature 趋势分析完成: increasing, 斜率=0.0022
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | precipitation 趋势分析完成: decreasing, 斜率=-0.0163
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | humidity 趋势分析完成: decreasing, 斜率=-0.0026
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | wind_speed 趋势分析完成: decreasing, 斜率=-0.0007
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | pressure 趋势分析完成: decreasing, 斜率=-0.0005
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | sea_surface_temp 趋势分析完成: increasing, 斜率=0.0019
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:423 | 开始季节性分析
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | temperature 季节性分析完成: 季节性强度=0.942
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | precipitation 季节性分析完成: 季节性强度=0.155
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | humidity 季节性分析完成: 季节性强度=0.821
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | wind_speed 季节性分析完成: 季节性强度=0.275
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | pressure 季节性分析完成: 季节性强度=0.595
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | sea_surface_temp 季节性分析完成: 季节性强度=0.935
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: isolation_forest
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | temperature 异常检测完成: 发现 33 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | precipitation 异常检测完成: 发现 33 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | humidity 异常检测完成: 发现 33 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | wind_speed 异常检测完成: 发现 33 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | pressure 异常检测完成: 发现 33 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sea_surface_temp 异常检测完成: 发现 33 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: statistical
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | temperature 异常检测完成: 发现 0 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | precipitation 异常检测完成: 发现 20 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | humidity 异常检测完成: 发现 0 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | wind_speed 异常检测完成: 发现 15 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | pressure 异常检测完成: 发现 0 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sea_surface_temp 异常检测完成: 发现 0 个异常点
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:887 | 开始极端事件分析
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | temperature heatwave 极端事件分析完成: 频率=0.48/年
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | temperature coldwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | precipitation drought 极端事件分析完成: 频率=0.56/年
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | precipitation flood 极端事件分析完成: 频率=1.02/年
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | humidity drought 极端事件分析完成: 频率=0.78/年
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | sea_surface_temp heatwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | sea_surface_temp coldwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:identify_patterns:735 | 开始模式识别分析
+2025-07-03 13:13:56 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | temperature 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:13:57 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | precipitation 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:13:57 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | humidity 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:13:58 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | wind_speed 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:13:58 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | pressure 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:13:58 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | sea_surface_temp 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:13:58 | INFO     | __main__:create_comprehensive_visualizations:300 | 创建综合可视化分析...
+2025-07-03 13:14:00 | INFO     | __main__:create_comprehensive_visualizations:505 | 综合分析图表已保存到 outputs/climate_analysis/enhanced_climate_analysis.png
+2025-07-03 13:14:10 | INFO     | __main__:main:655 | 详细结果已保存到 outputs/climate_analysis 目录
+2025-07-03 13:24:59 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-03 13:24:59 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 13:25:00 | INFO     | demo:__init__:66 | 气候洞察平台演示初始化完成
+2025-07-03 13:25:00 | INFO     | src.utils.font_config:configure_chinese_fonts:98 | 中文字体配置完成，使用字体: SimHei
+2025-07-03 13:26:00 | INFO     | __main__:create_realistic_climate_data:47 | 创建真实的历史气候数据...
+2025-07-03 13:26:00 | INFO     | __main__:create_realistic_climate_data:160 | 创建了包含 648 条记录的真实气候数据
+2025-07-03 13:26:00 | INFO     | __main__:create_realistic_climate_data:161 | 时间范围: 1970-01-31 00:00:00 至 2023-12-31 00:00:00
+2025-07-03 13:26:00 | INFO     | __main__:create_realistic_climate_data:162 | 变量: ['temperature', 'precipitation', 'humidity', 'wind_speed', 'pressure', 'sea_surface_temp']
+2025-07-03 13:26:00 | INFO     | __main__:analyze_climate_patterns:170 | === 开始全面气候模式分析 ===
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:__init__:229 | 历史气候数据分析器初始化完成
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_trends:279 | 开始趋势分析，方法: linear_regression
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | temperature 趋势分析完成: increasing, 斜率=0.0022
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | precipitation 趋势分析完成: decreasing, 斜率=-0.0163
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | humidity 趋势分析完成: decreasing, 斜率=-0.0026
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | wind_speed 趋势分析完成: decreasing, 斜率=-0.0007
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | pressure 趋势分析完成: decreasing, 斜率=-0.0005
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_trends:301 | sea_surface_temp 趋势分析完成: increasing, 斜率=0.0019
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:423 | 开始季节性分析
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | temperature 季节性分析完成: 季节性强度=0.942
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | precipitation 季节性分析完成: 季节性强度=0.155
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | humidity 季节性分析完成: 季节性强度=0.821
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | wind_speed 季节性分析完成: 季节性强度=0.275
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | pressure 季节性分析完成: 季节性强度=0.595
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_seasonality:447 | sea_surface_temp 季节性分析完成: 季节性强度=0.935
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: isolation_forest
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | temperature 异常检测完成: 发现 33 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | precipitation 异常检测完成: 发现 33 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | humidity 异常检测完成: 发现 33 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | wind_speed 异常检测完成: 发现 33 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | pressure 异常检测完成: 发现 33 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sea_surface_temp 异常检测完成: 发现 33 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:576 | 开始异常检测，方法: statistical
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | temperature 异常检测完成: 发现 0 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | precipitation 异常检测完成: 发现 20 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | humidity 异常检测完成: 发现 0 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | wind_speed 异常检测完成: 发现 15 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | pressure 异常检测完成: 发现 0 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:detect_anomalies:600 | sea_surface_temp 异常检测完成: 发现 0 个异常点
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:887 | 开始极端事件分析
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | temperature heatwave 极端事件分析完成: 频率=0.48/年
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | temperature coldwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | precipitation drought 极端事件分析完成: 频率=0.56/年
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | precipitation flood 极端事件分析完成: 频率=1.02/年
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | humidity drought 极端事件分析完成: 频率=0.78/年
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | sea_surface_temp heatwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:analyze_extreme_events:916 | sea_surface_temp coldwave 极端事件分析完成: 频率=0.50/年
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:identify_patterns:735 | 开始模式识别分析
+2025-07-03 13:26:00 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | temperature 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:26:01 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | precipitation 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:26:01 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | humidity 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:26:02 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | wind_speed 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:26:02 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | pressure 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:26:02 | INFO     | src.models.historical_climate_analyzer:identify_patterns:759 | sea_surface_temp 模式识别完成: 识别出 4 个主要模式
+2025-07-03 13:26:02 | INFO     | __main__:create_comprehensive_visualizations:300 | 创建综合可视化分析...
+2025-07-03 13:26:04 | INFO     | __main__:create_comprehensive_visualizations:509 | 综合分析图表已保存到 outputs/climate_analysis/enhanced_climate_analysis.png
+2025-07-03 13:27:48 | INFO     | __main__:main:659 | 详细结果已保存到 outputs/climate_analysis 目录
+2025-07-03 13:33:39 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 13:33:40 | INFO     | __main__:__init__:52 | 生态警示图像系统演示初始化完成
+2025-07-03 13:33:40 | INFO     | src.models.ecology_image_generator:set_generation_mode:693 | 生成模式设置为: gan
+2025-07-03 13:33:40 | INFO     | src.models.ecology_image_generator:set_generation_mode:693 | 生成模式设置为: diffusion
+2025-07-03 13:38:05 | INFO     | __main__:__init__:289 | 增强版生态警示图像系统演示初始化完成
+2025-07-03 13:51:37 | INFO     | __main__:__init__:289 | 增强版生态警示图像系统演示初始化完成
+2025-07-03 13:53:36 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 13:54:23 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 13:54:57 | INFO     | src.models.ecology_image_generator:set_generation_mode:693 | 生成模式设置为: diffusion
+2025-07-03 13:55:05 | ERROR    | __main__:generate_single_image:159 | 图像生成失败: 'warning_level'
+2025-07-03 14:00:35 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 14:01:28 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 14:01:28 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 14:04:30 | INFO     | src.models.ecology_image_generator:set_generation_mode:693 | 生成模式设置为: diffusion
+2025-07-03 14:04:39 | ERROR    | __main__:generate_single_image:159 | 图像生成失败: 'warning_level'
+2025-07-03 14:04:57 | ERROR    | __main__:main:459 | 系统运行错误: 'description'
+2025-07-03 14:08:48 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 14:13:33 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 14:20:51 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda
+2025-07-03 14:28:55 | INFO     | src.models.base_model:__init__:53 | 初始化模型: ecology_image_generator (generation) on "cpu"  # 可选: cpu, cuda

@@ -1,0 +1,27 @@
+{
+  "comparison_time": "2025-07-03T13:51:42.385772",
+  "total_scenarios": 3,
+  "results": [
+    {
+      "title": "保护森林的重要性",
+      "description": "展示森林保护与砍伐的对比效果",
+      "good_warning_level": 2,
+      "bad_warning_level": 4,
+      "visualization_path": "outputs\\enhanced_ecology_system\\educational_comparison_1_保护森林的重要性.png"
+    },
+    {
+      "title": "减少碳排放的必要性",
+      "description": "对比低碳与高碳生活方式的环境影响",
+      "good_warning_level": 2,
+      "bad_warning_level": 5,
+      "visualization_path": "outputs\\enhanced_ecology_system\\educational_comparison_2_减少碳排放的必要性.png"
+    },
+    {
+      "title": "水资源保护意识",
+      "description": "展示水资源保护与污染的对比",
+      "good_warning_level": 1,
+      "bad_warning_level": 4,
+      "visualization_path": "outputs\\enhanced_ecology_system\\educational_comparison_3_水资源保护意识.png"
+    }
+  ]
+}

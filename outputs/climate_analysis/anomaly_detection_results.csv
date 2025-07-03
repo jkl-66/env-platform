@@ -1,0 +1,11 @@
+﻿variable,method,total_anomalies,anomaly_rate,threshold
+latitude,isolation_forest,80,0.08,0.5727005110056325
+longitude,isolation_forest,98,0.098,0.5569743673782801
+number,isolation_forest,0,0.0,0.5000000000000007
+step,isolation_forest,0,0.0,0.5000000000000007
+surface,isolation_forest,0,0.0,0.5000000000000007
+t2m,isolation_forest,100,0.1,0.5563466381094496
+msl,isolation_forest,100,0.1,0.5515771418738187
+sst,isolation_forest,100,0.1,0.5533824110921299
+sp,isolation_forest,100,0.1,0.5441000792720901
+quality_score,isolation_forest,0,0.0,0.5000000000000007

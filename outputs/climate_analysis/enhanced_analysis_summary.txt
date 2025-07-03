@@ -1,0 +1,21 @@
+增强版历史气候模式分析摘要
+==================================================
+
+数据时间跨度: 1970-2023
+数据点数量: 648 个月
+分析变量: temperature, precipitation, humidity, wind_speed, pressure, sea_surface_temp, decade
+
+显著趋势:
+
+异常检测:
+  precipitation: 20 个异常点 (3.09%)
+  wind_speed: 15 个异常点 (2.31%)
+
+极端事件:
+  temperature heatwave: 26 次
+  temperature coldwave: 27 次
+  precipitation drought: 30 次
+  precipitation flood: 55 次
+  humidity drought: 42 次
+  sea_surface_temp heatwave: 27 次
+  sea_surface_temp coldwave: 27 次

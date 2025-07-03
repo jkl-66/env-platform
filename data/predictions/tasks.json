@@ -1,0 +1,50 @@
+{
+  "pred_t2m_20250703_111116": {
+    "task_id": "pred_t2m_20250703_111116",
+    "config": {
+      "prediction_type": "real_time",
+      "target_variable": "t2m",
+      "prediction_horizon": 1,
+      "spatial_resolution": null,
+      "temporal_resolution": "daily",
+      "confidence_interval": 0.95,
+      "ensemble_methods": null,
+      "preprocessing_steps": null
+    },
+    "status": "completed",
+    "model_ids": [
+      "temperature_prediction_rf_20250703_105653"
+    ],
+    "input_data_path": "data\\predictions\\pred_t2m_20250703_111116_input.pkl",
+    "output_path": "data\\predictions\\pred_t2m_20250703_111116_result.pkl",
+    "progress": 100.0,
+    "error_message": null,
+    "created_at": "2025-07-03T11:11:16.941652",
+    "started_at": "2025-07-03T11:11:16.943659",
+    "completed_at": "2025-07-03T11:11:16.952660"
+  },
+  "pred_t2m_20250703_114115": {
+    "task_id": "pred_t2m_20250703_114115",
+    "config": {
+      "prediction_type": "real_time",
+      "target_variable": "t2m",
+      "prediction_horizon": 1,
+      "spatial_resolution": null,
+      "temporal_resolution": "daily",
+      "confidence_interval": 0.95,
+      "ensemble_methods": null,
+      "preprocessing_steps": null
+    },
+    "status": "completed",
+    "model_ids": [
+      "temperature_prediction_rf_20250703_112511"
+    ],
+    "input_data_path": "data\\predictions\\pred_t2m_20250703_114115_input.pkl",
+    "output_path": "data\\predictions\\pred_t2m_20250703_114115_result.pkl",
+    "progress": 100.0,
+    "error_message": null,
+    "created_at": "2025-07-03T11:41:15.726243",
+    "started_at": "2025-07-03T11:41:15.727243",
+    "completed_at": "2025-07-03T11:41:15.736243"
+  }
+}

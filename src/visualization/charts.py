@@ -52,13 +52,21 @@ except ImportError:
 
 from src.utils.logger import get_logger
 from src.utils.config import get_config
+from src.utils.font_config import format_number, format_percentage
 
 logger = get_logger(__name__)
 config = get_config()
 
 # 设置中文字体和样式
-plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans']
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'Arial Unicode MS', 'DejaVu Sans', 'sans-serif']
 plt.rcParams['axes.unicode_minus'] = False
+plt.rcParams['font.size'] = 10
+plt.rcParams['figure.titlesize'] = 14
+plt.rcParams['axes.titlesize'] = 12
+plt.rcParams['axes.labelsize'] = 10
+plt.rcParams['xtick.labelsize'] = 9
+plt.rcParams['ytick.labelsize'] = 9
+plt.rcParams['legend.fontsize'] = 9
 sns.set_style("whitegrid")
 sns.set_palette("husl")
 
@@ -385,7 +393,25 @@ class ChartGenerator:
             ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
         
         # 格式化时间轴
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        import locale
+        try:
+            # 尝试设置为中文环境，如果失败则使用默认
+            locale.setlocale(locale.LC_ALL, 'C')
+        except:
+            pass
+        
+        # 使用数字格式化确保正确显示
+        from matplotlib.ticker import FuncFormatter
+        
+        def format_date(x, pos):
+            """自定义日期格式化函数"""
+            try:
+                date = mdates.num2date(x)
+                return date.strftime('%Y-%m-%d')
+            except:
+                return str(x)
+        
+        ax.xaxis.set_major_formatter(FuncFormatter(format_date))
         ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
         plt.xticks(rotation=45)
         
@@ -667,10 +693,14 @@ class ChartGenerator:
         """创建静态热图"""
         fig, ax = plt.subplots(figsize=(config.width/100, config.height/100), dpi=config.dpi)
         
-        # 创建热图
+        # 创建热图 - 使用自定义格式化确保数字正确显示
+        # 格式化数据标签
+        annot_data = data.map(lambda x: format_number(x, 2) if pd.notna(x) else '')
+        
         sns.heatmap(
             data,
-            annot=True,
+            annot=annot_data,
+            fmt='',  # 使用自定义格式
             cmap='RdYlBu_r',
             center=0,
             square=True,
@@ -695,13 +725,16 @@ class ChartGenerator:
         config: ChartConfig
     ) -> str:
         """创建交互式热图"""
+        # 格式化数值文本，确保正确显示
+        formatted_text = [[format_number(val, 2) for val in row] for row in data.values]
+        
         fig = go.Figure(data=go.Heatmap(
             z=data.values,
             x=data.columns,
             y=data.index,
             colorscale='RdYlBu',
             reversescale=True,
-            text=np.round(data.values, 2),
+            text=formatted_text,
             texttemplate="%{text}",
             textfont={"size": 10},
             hoverongaps=False
