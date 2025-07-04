@@ -1,0 +1,122 @@
+{
+  "environmental_prompts": {
+    "air_pollution": {
+      "base_prompt": "industrial air pollution, smoggy city skyline, thick smoke from factories, poor air quality, environmental warning",
+      "keywords": ["pollution", "smog", "factory", "smoke", "air quality", "雾霾", "空气污染", "工业污染"],
+      "style_suffix": "dramatic lighting, high contrast, warning atmosphere, photorealistic",
+      "negative_prompt": "cartoon, anime, low quality, blurry",
+      "description": "空气污染相关的环境警示图像"
+    },
+    "water_pollution": {
+      "base_prompt": "polluted river with industrial waste, contaminated water, dead fish, environmental disaster, toxic waste",
+      "keywords": ["water pollution", "contaminated", "industrial waste", "toxic", "河流污染", "水污染", "工业废水"],
+      "style_suffix": "dark tones, environmental crisis, documentary style, high detail",
+      "negative_prompt": "clean water, beautiful scenery, cartoon",
+      "description": "水污染相关的环境警示图像"
+    },
+    "deforestation": {
+      "base_prompt": "massive deforestation, cut down trees, environmental destruction, loss of biodiversity, logging equipment",
+      "keywords": ["deforestation", "logging", "forest destruction", "habitat loss", "森林砍伐", "毁林", "生态破坏"],
+      "style_suffix": "before and after contrast, environmental impact, aerial view",
+      "negative_prompt": "lush forest, green trees, cartoon",
+      "description": "森林砍伐相关的环境警示图像"
+    },
+    "climate_change": {
+      "base_prompt": "effects of climate change, melting glaciers, rising sea levels, extreme weather, global warming impact",
+      "keywords": ["climate change", "global warming", "melting ice", "sea level rise", "气候变化", "全球变暖", "冰川融化"],
+      "style_suffix": "dramatic environmental change, scientific documentation, time-lapse effect",
+      "negative_prompt": "stable climate, cartoon, fantasy",
+      "description": "气候变化相关的环境警示图像"
+    },
+    "plastic_pollution": {
+      "base_prompt": "ocean plastic pollution, marine life affected by plastic waste, environmental crisis, microplastics",
+      "keywords": ["plastic pollution", "ocean waste", "marine life", "microplastics", "塑料污染", "海洋垃圾", "海洋污染"],
+      "style_suffix": "underwater scene, environmental awareness, marine documentary style",
+      "negative_prompt": "clean ocean, cartoon, fantasy creatures",
+      "description": "塑料污染相关的环境警示图像"
+    },
+    "renewable_energy": {
+      "base_prompt": "renewable energy solutions, solar panels, wind turbines, clean environment, sustainable future, green technology",
+      "keywords": ["renewable energy", "solar power", "wind energy", "sustainability", "可再生能源", "太阳能", "风能", "绿色能源"],
+      "style_suffix": "bright, hopeful, clean technology, positive environmental message, modern",
+      "negative_prompt": "fossil fuels, pollution, dark atmosphere",
+      "description": "可再生能源相关的正面环境图像"
+    },
+    "waste_management": {
+      "base_prompt": "waste management crisis, overflowing landfills, garbage pollution, recycling solutions",
+      "keywords": ["waste", "garbage", "landfill", "recycling", "垃圾", "废物处理", "垃圾填埋", "回收"],
+      "style_suffix": "environmental awareness, waste crisis documentation, realistic",
+      "negative_prompt": "clean environment, cartoon, fantasy",
+      "description": "废物管理相关的环境警示图像"
+    },
+    "biodiversity_loss": {
+      "base_prompt": "biodiversity loss, endangered species, habitat destruction, ecosystem collapse",
+      "keywords": ["biodiversity", "endangered", "extinction", "habitat loss", "生物多样性", "濒危物种", "栖息地破坏"],
+      "style_suffix": "wildlife documentary, conservation awareness, emotional impact",
+      "negative_prompt": "abundant wildlife, cartoon animals, fantasy",
+      "description": "生物多样性丧失相关的环境警示图像"
+    },
+    "urban_pollution": {
+      "base_prompt": "urban environmental problems, city pollution, traffic emissions, urban heat island effect",
+      "keywords": ["urban pollution", "city smog", "traffic", "heat island", "城市污染", "交通污染", "城市热岛"],
+      "style_suffix": "urban documentary, environmental crisis, modern city problems",
+      "negative_prompt": "clean city, green urban space, cartoon",
+      "description": "城市污染相关的环境警示图像"
+    },
+    "soil_degradation": {
+      "base_prompt": "soil degradation, desertification, agricultural pollution, land erosion",
+      "keywords": ["soil degradation", "desertification", "erosion", "agricultural pollution", "土壤退化", "荒漠化", "土地侵蚀"],
+      "style_suffix": "environmental documentation, agricultural crisis, landscape photography",
+      "negative_prompt": "fertile soil, lush farmland, cartoon",
+      "description": "土壤退化相关的环境警示图像"
+    }
+  },
+  "generation_settings": {
+    "default": {
+      "guidance_scale": 7.5,
+      "num_inference_steps": 28,
+      "height": 1024,
+      "width": 1024,
+      "num_images": 1
+    },
+    "high_quality": {
+      "guidance_scale": 9.0,
+      "num_inference_steps": 35,
+      "height": 1024,
+      "width": 1024,
+      "num_images": 1
+    },
+    "fast": {
+      "guidance_scale": 6.0,
+      "num_inference_steps": 20,
+      "height": 768,
+      "width": 768,
+      "num_images": 1
+    },
+    "batch": {
+      "guidance_scale": 7.5,
+      "num_inference_steps": 25,
+      "height": 768,
+      "width": 768,
+      "num_images": 4
+    }
+  },
+  "style_presets": {
+    "photorealistic": "photorealistic, high detail, professional photography, 4k resolution, sharp focus",
+    "documentary": "documentary style, environmental journalism, real world impact, educational",
+    "artistic": "artistic interpretation, environmental art, creative visualization, expressive",
+    "scientific": "scientific documentation, research quality, data visualization, technical accuracy",
+    "dramatic": "dramatic lighting, high contrast, emotional impact, cinematic composition"
+  },
+  "quality_enhancers": {
+    "base": "high quality, detailed, professional",
+    "environmental": "environmental awareness, conservation message, educational value",
+    "technical": "4k resolution, sharp focus, professional photography, high detail",
+    "emotional": "emotional impact, thought-provoking, awareness raising"
+  },
+  "negative_prompts": {
+    "general": "low quality, blurry, cartoon, anime, fantasy, unrealistic",
+    "environmental": "beautiful nature, pristine environment, fantasy landscape",
+    "technical": "low resolution, pixelated, artifacts, distorted"
+  }
+}

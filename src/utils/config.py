@@ -69,7 +69,7 @@ class Settings(BaseSettings):
     
     # 图像生成模型
     DIFFUSION_MODEL_PATH: str = Field(
-        default="runwayml/stable-diffusion-v1-5",
+        default="stabilityai/stable-diffusion-3.5-large",
         description="扩散模型路径"
     )
     GAN_MODEL_PATH: Optional[str] = Field(
