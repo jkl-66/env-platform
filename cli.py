@@ -29,7 +29,7 @@ try:
     from src.data_processing.data_processor import DataProcessor
     from src.data_processing.grib_processor import GRIBProcessor
     from src.models.historical_climate_analyzer import HistoricalClimateAnalyzer, analyze_climate_data
-    from src.models.ecology_image_generator import EcologyImageGenerator
+    from environmental_image_generator import EnvironmentalImageGenerator
     from src.models.regional_climate_predictor import RegionalClimatePredictor, predict_regional_climate_risk
     from src.ml.model_manager import ModelManager
     from src.ml.prediction_engine import PredictionEngine
@@ -62,7 +62,7 @@ class ClimateInsightCLI:
         self.data_processor = DataProcessor()
         self.grib_processor = GRIBProcessor(self.data_store)
         self.climate_analyzer = HistoricalClimateAnalyzer()
-        self.image_generator = EcologyImageGenerator()
+        self.image_generator = EnvironmentalImageGenerator()
         self.climate_predictor = RegionalClimatePredictor()
         self.model_manager = ModelManager()
         self.prediction_engine = PredictionEngine()
@@ -170,8 +170,14 @@ class ClimateInsightCLI:
             }
             
             # 生成警示图像
-            result = self.image_generator.generate_warning_image(
-                environmental_conditions
+            # 构建环境保护相关的提示词
+            prompt = f"Environmental warning scene: carbon emission {carbon_emission} ppm, pollution index {pollution_index}, deforestation rate {deforestation_rate}%, environmental degradation, climate change impact"
+            
+            result = self.image_generator.generate_image(
+                prompt=prompt,
+                category="pollution",
+                output_dir=output_path,
+                filename_prefix="ecology_warning"
             )
             
             # 保存图像
@@ -181,10 +187,12 @@ class ClimateInsightCLI:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             image_file = output_dir / f"ecology_warning_{timestamp}.png"
             
-            if result and 'image' in result:
-                # 保存图像
-                if hasattr(result['image'], 'save'):
-                    result['image'].save(image_file)
+            if result and result.get('success', False):
+                image_paths = result.get('image_paths', [])
+                if image_paths:
+                    # 使用API生成的图像
+                    image_file = Path(image_paths[0])  # 使用第一张生成的图像
+                    self.logger.info(f"生态警示图像已保存至: {image_file}")
                 else:
                     # 生成示例警示图像
                     import matplotlib.pyplot as plt
@@ -250,12 +258,14 @@ class ClimateInsightCLI:
                 self.logger.info(f"生态警示图像已保存至: {image_file}")
                 
                 # 保存元数据
+                hazard_level = 'high' if pollution_index > 70 else 'medium' if pollution_index > 40 else 'low'
                 metadata = {
                     'generation_time': datetime.now().isoformat(),
                     'environmental_conditions': environmental_conditions,
-                    'hazard_level': result.get('hazard_level', 'unknown'),
-                    'warning_message': result.get('warning_message', ''),
-                    'image_path': str(image_file)
+                    'hazard_level': hazard_level,
+                    'warning_message': f'Environmental warning: {hazard_level} risk level',
+                    'image_path': str(image_file),
+                    'api_result': result
                 }
                 
                 metadata_file = output_dir / f"metadata_{timestamp}.json"

@@ -1,0 +1,65 @@
+{
+  "success": true,
+  "environmental_data": {
+    "carbon_emission": 200.0,
+    "air_quality_index": 6.0,
+    "water_pollution_index": 6.0,
+    "noise_level": 6.0,
+    "deforestation_rate": 6.0,
+    "plastic_waste": 6.0
+  },
+  "analysis": {
+    "overall_severity": "low",
+    "critical_factors": [],
+    "environmental_impacts": [],
+    "severity_scores": {
+      "carbon_emission": {
+        "value": 200.0,
+        "severity": "medium",
+        "score": 2,
+        "unit": "吨CO2当量"
+      },
+      "air_quality_index": {
+        "value": 6.0,
+        "severity": "good",
+        "score": 1,
+        "unit": "AQI"
+      },
+      "water_pollution_index": {
+        "value": 6.0,
+        "severity": "clean",
+        "score": 1,
+        "unit": "WPI"
+      },
+      "noise_level": {
+        "value": 6.0,
+        "severity": "quiet",
+        "score": 1,
+        "unit": "分贝(dB)"
+      },
+      "deforestation_rate": {
+        "value": 6.0,
+        "severity": "low",
+        "score": 1,
+        "unit": "公顷/年"
+      },
+      "plastic_waste": {
+        "value": 6.0,
+        "severity": "low",
+        "score": 1,
+        "unit": "吨/年"
+      }
+    }
+  },
+  "professional_prompt": "**Prompt:**  \nA serene suburban park at sunrise, with clear blue skies and clean water reflecting the green trees. A group of students walks along a path, observing a small sign that reads \"Plastic Waste: 6 Tons/Year\" and \"Forest Loss: 6 Hectares/Year.\" In the background, a few plastic bottles lie on the ground, and a single tree shows signs of damage. The scene is captured in a realistic, documentary-style photography with soft morning light and vibrant colors. The image highlights the subtle but growing environmental challenges, while emphasizing the importance of individual and collective action for a sustainable future.",
+  "saved_paths": [
+    "outputs\\environmental_images\\env_warning_carbon_emission_2000_air_quali_20250705_191738_1_dashscope.png"
+  ],
+  "generation_time": 14.248135,
+  "target_audience": "students",
+  "timestamp": "2025-07-05T19:17:38.508911",
+  "models_used": {
+    "chat_model": "qwen-turbo",
+    "image_model": "flux-schnell"
+  }
+}

@@ -28,7 +28,7 @@ from .dependencies import (
     DBSession, RedisClient, CurrentUser, AuthenticatedUser,
     NormalRateLimit, StrictRateLimit
 )
-from ..models import EcologyImageGenerator
+from ..models import EnvironmentalImageGenerator
 from ..utils.logger import logger
 from ..utils.config import get_settings
 
@@ -52,7 +52,7 @@ async def generate_ecology_image(
         settings = get_settings()
         
         # 初始化图像生成器
-        generator = EcologyImageGenerator()
+        generator = EnvironmentalImageGenerator()
         
         # 构建生成参数
         generation_params = {

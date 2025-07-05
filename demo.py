@@ -32,7 +32,7 @@ try:
         TrendMethod,
         AnomalyMethod
     )
-    from src.models.ecology_image_generator import EcologyImageGenerator
+    from environmental_image_generator import EnvironmentalImageGenerator
     from src.models.regional_climate_predictor import (
         RegionalClimatePredictor,
         predict_regional_climate_risk,
@@ -60,7 +60,7 @@ class ClimateInsightDemo:
         
         # 初始化组件
         self.climate_analyzer = HistoricalClimateAnalyzer()
-        self.image_generator = EcologyImageGenerator()
+        self.image_generator = EnvironmentalImageGenerator()
         self.climate_predictor = RegionalClimatePredictor()
         
         self.logger.info("气候洞察平台演示初始化完成")
@@ -247,25 +247,35 @@ class ClimateInsightDemo:
                 }
                 
                 # 生成警示图像
-                result = self.image_generator.generate_warning_image(environmental_conditions)
+                # 构建环境保护相关的提示词
+                prompt = f"Environmental warning scene showing {scenario['name'].lower()}: pollution index {scenario['pollution_index']}, carbon emission {scenario['carbon_emission']} ppm, deforestation rate {scenario['deforestation_rate']}%, environmental degradation, climate change impact"
                 
-                if result:
-                    # 创建可视化图像
-                    image_path = self._create_warning_visualization(
-                        scenario, environmental_conditions, i
-                    )
-                    
-                    generated_images.append({
-                        'scenario': scenario['name'],
-                        'image_path': image_path,
-                        'hazard_level': result.get('hazard_level', 'unknown'),
-                        'warning_message': result.get('warning_message', '')
-                    })
-                    
-                    print(f"   ✅ 图像生成成功: {image_path}")
-                    print(f"   ⚠️  危害等级: {result.get('hazard_level', 'unknown')}")
+                result = self.image_generator.generate_image(
+                    prompt=prompt,
+                    category="pollution",
+                    output_dir=str(self.output_dir),
+                    filename_prefix=f"scenario_{i}"
+                )
+                
+                if result and result.get('success', False):
+                    image_paths = result.get('image_paths', [])
+                    if image_paths:
+                        image_path = image_paths[0]  # 使用第一张生成的图像
+                        
+                        generated_images.append({
+                            'scenario': scenario['name'],
+                            'image_path': image_path,
+                            'hazard_level': 'high' if scenario['pollution_index'] > 70 else 'medium' if scenario['pollution_index'] > 40 else 'low',
+                            'warning_message': f"Environmental warning for {scenario['name']}"
+                        })
+                        
+                        print(f"   ✅ 图像生成成功: {image_path}")
+                        print(f"   ⚠️  危害等级: {'high' if scenario['pollution_index'] > 70 else 'medium' if scenario['pollution_index'] > 40 else 'low'}")
+                    else:
+                        print(f"   ❌ 图像生成失败: 未返回图像路径")
                 else:
-                    print(f"   ❌ 图像生成失败")
+                    error_msg = result.get('error', '未知错误') if result else '生成器返回空结果'
+                    print(f"   ❌ 图像生成失败: {error_msg}")
             
             # 保存生成结果摘要
             summary_file = self.output_dir / "ecology_images_summary.json"

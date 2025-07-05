@@ -4,13 +4,11 @@
 """
 
 from .climate_analysis import ClimateAnalysisModel
-from .ecology_image_generator import EcologyImageGenerator
 from .regional_prediction import RegionalPredictionModel
 from .base_model import BaseModel
 
 __all__ = [
     "BaseModel",
     "ClimateAnalysisModel",
-    "EcologyImageGenerator", 
     "RegionalPredictionModel"
 ]

@@ -1,0 +1,59 @@
+{
+  "success": true,
+  "environmental_data": {
+    "carbon_emission": 1200,
+    "air_quality_index": 160,
+    "water_pollution_index": 75
+  },
+  "analysis": {
+    "overall_severity": "medium",
+    "critical_factors": [
+      {
+        "type": "carbon_emission",
+        "name": "碳排放量",
+        "value": 1200,
+        "unit": "吨CO2当量",
+        "severity": "critical"
+      },
+      {
+        "type": "air_quality_index",
+        "name": "空气质量指数",
+        "value": 160,
+        "unit": "AQI",
+        "severity": "unhealthy"
+      }
+    ],
+    "environmental_impacts": [],
+    "severity_scores": {
+      "carbon_emission": {
+        "value": 1200,
+        "severity": "critical",
+        "score": 4,
+        "unit": "吨CO2当量"
+      },
+      "air_quality_index": {
+        "value": 160,
+        "severity": "unhealthy",
+        "score": 4,
+        "unit": "AQI"
+      },
+      "water_pollution_index": {
+        "value": 75,
+        "severity": "moderately_polluted",
+        "score": 3,
+        "unit": "WPI"
+      }
+    }
+  },
+  "professional_prompt": "**Prompt:**  \nA realistic, educational image of a heavily industrialized area at sunrise. Thick smog hangs in the air, with a visible haze reducing visibility. The sky is gray and dull, reflecting the high AQI of 160. A river nearby shows signs of pollution, with floating debris and murky water, indicating a WPI of 75. Workers in protective masks walk along a polluted street, while children play nearby, unaware of the health risks. Factories emit dark smoke into the sky, and a carbon dioxide meter reads 1200 tons CO2 equivalent. The scene is captured in a professional documentary style, using muted tones with occasional bright highlights to emphasize hope. A small tree planted in a concrete lot symbolizes resilience and the potential for change.",
+  "saved_paths": [
+    "outputs\\environmental_images\\env_warning_carbon_emission_1200_air_quali_20250705_191415_1_dashscope.png"
+  ],
+  "generation_time": 14.061445,
+  "target_audience": "educators",
+  "timestamp": "2025-07-05T19:14:16.189167",
+  "models_used": {
+    "chat_model": "qwen-turbo",
+    "image_model": "flux-schnell"
+  }
+}

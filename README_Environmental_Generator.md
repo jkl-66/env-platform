@@ -1,15 +1,16 @@
-# 环境保护图像生成器
+# 环境保护警示图像生成器 (API版本)
 
-基于 Stable Diffusion 3.5 Large Turbo 模型的环境保护警示图像生成工具
+基于 Hugging Face Inference API 的环境保护主题图像生成工具，通过云端 Stable Diffusion 3.5 模型生成具有环境警示意义的图像。
 
 ## 功能特点
 
-- 🌍 **环境主题专用**: 专门针对环境保护主题优化的图像生成
-- 🗣️ **自然语言输入**: 支持中文和英文自然语言描述
-- 📋 **内置提示词模板**: 10+ 种环境主题的预设模板
-- 🎨 **多种风格预设**: 纪实、艺术、科学等多种视觉风格
-- ⚙️ **可调节参数**: 支持质量、速度、尺寸等参数调整
-- 📁 **批量生成**: 支持批量生成多个主题的图像
+- 🎨 **云端图像生成**: 基于 Hugging Face Inference API 调用 Stable Diffusion 3.5 Large Turbo 模型
+- 🌍 **环境主题优化**: 专门针对环境保护场景优化的提示词模板
+- 🔧 **自动提示词增强**: 根据用户输入自动生成专业的环境警示提示词
+- 📊 **多类别支持**: 支持海洋污染、森林破坏、空气污染等多种环境问题
+- 💾 **完整记录**: 自动保存生成图像和详细的生成报告
+- ⚡ **快速启动**: 无需本地模型下载，即开即用
+- 💰 **资源节省**: 无需本地GPU，节省硬件成本
 
 ## 环境主题
 
@@ -26,14 +27,52 @@
 | 城市污染 | 交通污染、城市热岛、空气质量 | 城市污染、交通污染、城市环境 |
 | 土壤退化 | 荒漠化、土地侵蚀、农业污染 | 土壤退化、荒漠化、土地侵蚀 |
 
-## 安装要求
+## 环境要求
 
+### 硬件要求
+- **网络**: 稳定的互联网连接
+- **内存**: 4GB+ 系统内存
+- **存储**: 1GB+ 可用空间（用于输出图像）
+
+### 软件要求
+- Python 3.8+
+- Hugging Face Token (免费注册获取)
+
+## 安装步骤
+
+### 1. 克隆项目
 ```bash
-# 安装依赖
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install diffusers transformers accelerate pillow
+git clone <repository-url>
+cd env-platform
+```
 
-# 确保有足够的 GPU 内存 (推荐 8GB+)
+### 2. 安装依赖
+```bash
+# 安装基本依赖
+pip install requests pillow
+
+# 或安装完整依赖
+pip install -r requirements.txt
+```
+
+### 3. 获取 Hugging Face Token
+
+1. 访问 [Hugging Face](https://huggingface.co/)
+2. 注册/登录账户
+3. 进入 Settings → Access Tokens
+4. 创建新的 Token (选择 "Read" 权限)
+5. 复制生成的 Token
+
+### 4. 配置环境变量
+
+**Windows:**
+```cmd
+set HF_TOKEN=your_token_here
+```
+
+**Linux/macOS:**
+```bash
+export HF_TOKEN="your_token_here"
 ```
 
 ## 快速开始
@@ -43,45 +82,50 @@ pip install diffusers transformers accelerate pillow
 ```python
 from environmental_image_generator import EnvironmentalImageGenerator
 
-# 初始化生成器
-generator = EnvironmentalImageGenerator(
-    model_id="stabilityai/stable-diffusion-3.5-large-turbo",
-    device="auto"
-)
+# 初始化生成器 (API版本)
+generator = EnvironmentalImageGenerator()
 
-# 生成图像
-results = generator.generate_image(
-    user_input="工厂排放黑烟污染空气的场景",
-    guidance_scale=7.5,
-    num_inference_steps=28,
-    height=1024,
-    width=1024
-)
-
-if results['success']:
-    print(f"图像已保存到: {results['image_paths'][0]}")
+# 测试API连接
+if generator.test_api_connection():
+    print("API连接成功！")
+    
+    # 生成图像
+    results = generator.generate_image(
+        user_input="工厂排放黑烟污染空气的场景"
+    )
+    
+    if results['success']:
+        print(f"图像已保存到: {results['image_paths'][0]}")
+        print(f"生成时间: {results['generation_time']}秒")
+    else:
+        print(f"生成失败: {results['error']}")
 else:
-    print(f"生成失败: {results['error']}")
+    print("API连接失败，请检查Token设置")
 ```
 
 ### 2. 使用演示脚本
 
 ```bash
-# 运行交互式演示
-python demo_environmental_generator.py
+# 运行交互式演示 (API版本)
+python environmental_image_generator.py
+```
+
+```bash
+# 运行功能演示 (无需Token)
+python demo_without_token.py
 ```
 
 演示脚本提供以下功能：
-- 预设模板生成
+- API连接测试
 - 自然语言输入生成
-- 批量生成演示
-- 配置信息查看
+- 环境类别检测
+- 提示词增强演示
 
 ### 3. 运行测试
 
 ```bash
-# 运行功能测试
-python test_environmental_generator.py
+# 运行API版本测试 (需要HF_TOKEN)
+python test_api_generator.py
 ```
 
 ## 配置文件
@@ -176,35 +220,38 @@ outputs/environmental_images/
 
 ### 常见问题
 
-1. **CUDA 内存不足**
-   ```python
-   # 使用较小的图像尺寸
-   generator.generate_image(prompt, height=512, width=512)
+1. **API连接失败**
+   ```bash
+   # 检查Token设置
+   echo $HF_TOKEN  # Linux/macOS
+   echo %HF_TOKEN%  # Windows
+   
+   # 重新设置Token
+   export HF_TOKEN="your_valid_token"  # Linux/macOS
+   set HF_TOKEN=your_valid_token  # Windows
    ```
 
-2. **模型下载失败**
-   ```python
-   # 检查网络连接和 Hugging Face 访问
-   # 确保有足够的磁盘空间 (模型约 8GB)
-   ```
+2. **生成失败 (401错误)**
+   - 检查Token是否有效
+   - 确认Token有模型访问权限
+   - 重新生成Token
 
-3. **生成速度慢**
-   ```python
-   # 使用快速设置
-   generator.generate_image(
-       prompt, 
-       num_inference_steps=20,
-       height=768, 
-       width=768
-   )
-   ```
+3. **生成速度慢 (503错误)**
+   - 模型正在冷启动，请稍后重试
+   - 避免频繁调用API
+   - 检查网络连接稳定性
+
+4. **请求频率限制 (429错误)**
+   - 降低API调用频率
+   - 等待一段时间后重试
+   - 考虑升级Hugging Face账户
 
 ### 性能优化
 
-- 使用 GPU 加速 (CUDA)
-- 调整推理步数和图像尺寸
-- 批量生成多张图像
-- 使用混合精度 (自动启用)
+- 稳定的网络连接
+- 合理的API调用频率
+- 优化提示词长度
+- 批量处理多个请求
 
 ## 许可证
 

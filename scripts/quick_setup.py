@@ -112,9 +112,9 @@ class ProjectSetup:
             "src/main.py",
             "src/models/climate_analysis.py",
             "src/models/regional_prediction.py",
-            "src/models/ecology_image_generator.py",
             "src/data_processing/data_collector.py",
             "src/data_processing/data_storage.py",
+            "environmental_image_generator.py",
             "requirements.txt"
         ]
         
@@ -323,7 +323,7 @@ class ProjectSetup:
                 "src.data_processing.data_storage",
                 "src.models.climate_analysis",
                 "src.models.regional_prediction",
-                "src.models.ecology_image_generator"
+                "src.models.environmental_image_generator"
             ]
             
             for module_name in test_imports:

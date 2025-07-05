@@ -33,7 +33,7 @@
 ### AI模型
 - **时间序列分析**: Prophet, LSTM
 - **异常检测**: Isolation Forest, Autoencoder
-- **图像生成**: StyleGAN3, Stable Diffusion
+- **图像生成**: Hugging Face Inference API (Stable Diffusion 3.5)
 - **预测模型**: XGBoost, Transformer, GNN
 
 ## 项目结构
@@ -58,7 +58,8 @@ research_fair/
 ### 环境要求
 - Python 3.9+
 - Docker & Docker Compose
-- CUDA 11.8+ (GPU训练)
+- 网络连接 (用于API调用)
+- Hugging Face Token (用于图像生成)
 
 ### 安装依赖
 ```bash

@@ -64,17 +64,13 @@ class Settings(BaseSettings):
     UPLOAD_MAX_SIZE: int = 104857600
     
     # AI模型配置
-    # 设备配置
-    DEVICE: str = Field(default="cpu", description="计算设备 (cpu/cuda)")
+    # Hugging Face API配置
+    HF_TOKEN: Optional[str] = Field(default=None, description="Hugging Face API Token")
     
     # 图像生成模型
-    DIFFUSION_MODEL_PATH: str = Field(
-        default="stabilityai/stable-diffusion-3.5-large",
-        description="扩散模型路径"
-    )
-    GAN_MODEL_PATH: Optional[str] = Field(
-        default=None,
-        description="GAN模型路径"
+    DIFFUSION_MODEL_ID: str = Field(
+        default="stabilityai/stable-diffusion-3.5-large-turbo",
+        description="扩散模型ID"
     )
     
     # 时间序列模型

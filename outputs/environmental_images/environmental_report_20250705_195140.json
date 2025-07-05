@@ -1,0 +1,183 @@
+{
+  "success": true,
+  "environmental_data": {
+    "carbon_emission": 300.0,
+    "air_quality_index": 80.0,
+    "water_pollution_index": 50.0,
+    "noise_level": 70.0,
+    "deforestation_rate": 600.0,
+    "plastic_waste": 400.0
+  },
+  "analysis": {
+    "overall_severity": "low",
+    "critical_factors": [],
+    "environmental_impacts": [],
+    "severity_scores": {
+      "carbon_emission": {
+        "value": 300.0,
+        "severity": "medium",
+        "score": 2,
+        "unit": "吨CO2当量"
+      },
+      "air_quality_index": {
+        "value": 80.0,
+        "severity": "moderate",
+        "score": 2,
+        "unit": "AQI"
+      },
+      "water_pollution_index": {
+        "value": 50.0,
+        "severity": "slightly_polluted",
+        "score": 2,
+        "unit": "WPI"
+      },
+      "noise_level": {
+        "value": 70.0,
+        "severity": "loud",
+        "score": 3,
+        "unit": "分贝(dB)"
+      },
+      "deforestation_rate": {
+        "value": 600.0,
+        "severity": "low",
+        "score": 1,
+        "unit": "公顷/年"
+      },
+      "plastic_waste": {
+        "value": 400.0,
+        "severity": "medium",
+        "score": 2,
+        "unit": "吨/年"
+      }
+    },
+    "deviation_analysis": {
+      "primary_concerns": [
+        {
+          "type": "carbon_emission",
+          "name": "碳排放量",
+          "current_value": 300.0,
+          "default_value": 150,
+          "deviation_ratio": 1.0,
+          "deviation_score": 1.0,
+          "unit": "吨CO2当量"
+        }
+      ],
+      "secondary_concerns": [
+        {
+          "type": "deforestation_rate",
+          "name": "森林砍伐率",
+          "current_value": 600.0,
+          "default_value": 3000,
+          "deviation_ratio": -0.8,
+          "deviation_score": 0.8,
+          "unit": "公顷/年"
+        },
+        {
+          "type": "plastic_waste",
+          "name": "塑料废物量",
+          "current_value": 400.0,
+          "default_value": 250,
+          "deviation_ratio": 0.6,
+          "deviation_score": 0.6,
+          "unit": "吨/年"
+        },
+        {
+          "type": "water_pollution_index",
+          "name": "水污染指数",
+          "current_value": 50.0,
+          "default_value": 35,
+          "deviation_ratio": 0.42857142857142855,
+          "deviation_score": 0.42857142857142855,
+          "unit": "WPI"
+        }
+      ],
+      "normal_factors": [
+        {
+          "type": "air_quality_index",
+          "name": "空气质量指数",
+          "current_value": 80.0,
+          "default_value": 75,
+          "deviation_ratio": 0.06666666666666667,
+          "deviation_score": 0.06666666666666667,
+          "unit": "AQI"
+        },
+        {
+          "type": "noise_level",
+          "name": "噪音水平",
+          "current_value": 70.0,
+          "default_value": 55,
+          "deviation_ratio": 0.2727272727272727,
+          "deviation_score": 0.2727272727272727,
+          "unit": "分贝(dB)"
+        }
+      ],
+      "deviation_scores": {
+        "carbon_emission": {
+          "type": "carbon_emission",
+          "name": "碳排放量",
+          "current_value": 300.0,
+          "default_value": 150,
+          "deviation_ratio": 1.0,
+          "deviation_score": 1.0,
+          "unit": "吨CO2当量"
+        },
+        "air_quality_index": {
+          "type": "air_quality_index",
+          "name": "空气质量指数",
+          "current_value": 80.0,
+          "default_value": 75,
+          "deviation_ratio": 0.06666666666666667,
+          "deviation_score": 0.06666666666666667,
+          "unit": "AQI"
+        },
+        "water_pollution_index": {
+          "type": "water_pollution_index",
+          "name": "水污染指数",
+          "current_value": 50.0,
+          "default_value": 35,
+          "deviation_ratio": 0.42857142857142855,
+          "deviation_score": 0.42857142857142855,
+          "unit": "WPI"
+        },
+        "noise_level": {
+          "type": "noise_level",
+          "name": "噪音水平",
+          "current_value": 70.0,
+          "default_value": 55,
+          "deviation_ratio": 0.2727272727272727,
+          "deviation_score": 0.2727272727272727,
+          "unit": "分贝(dB)"
+        },
+        "deforestation_rate": {
+          "type": "deforestation_rate",
+          "name": "森林砍伐率",
+          "current_value": 600.0,
+          "default_value": 3000,
+          "deviation_ratio": -0.8,
+          "deviation_score": 0.8,
+          "unit": "公顷/年"
+        },
+        "plastic_waste": {
+          "type": "plastic_waste",
+          "name": "塑料废物量",
+          "current_value": 400.0,
+          "default_value": 250,
+          "deviation_ratio": 0.6,
+          "deviation_score": 0.6,
+          "unit": "吨/年"
+        }
+      }
+    }
+  },
+  "professional_prompt": "A vibrant and engaging cartoon illustration depicting a forested area under environmental stress. The main focus is a large, dark smokestack emitting thick plumes of gray smoke into the sky, representing the high carbon emissions (300 tons CO2 equivalent). This element occupies 65% of the visual space, symbolizing the primary environmental concern. Behind it, a polluted river flows through the scene, with floating plastic waste and murky water, reflecting the moderate water pollution index (50 WPI) and medium plastic waste level (400 tons/year), taking up 25% of the visual emphasis.\n\nIn the background, a few trees are being cut down, showing the ongoing deforestation at a low rate (600 hectares/year), making up 10% of the composition. The sky is hazy, and the air appears slightly polluted, with a faint orange tint to suggest the moderate AQI (80). A few birds fly overhead, unaware of the changes around them, emphasizing the impact on wildlife without showing any human figures.\n\nThe style is bright and colorful, with exaggerated cartoon elements to engage students. Soft lighting highlights the contrast between the natural environment and the pollutants. No text, people, or human elements are included. The image aims to educate and inspire action while maintaining a hopeful tone.",
+  "saved_paths": [
+    "outputs\\environmental_images\\env_warning_carbon_emission_3000_air_quali_20250705_195140_1_dashscope.png"
+  ],
+  "generation_time": 13.801677,
+  "target_audience": "students",
+  "timestamp": "2025-07-05T19:51:40.394712",
+  "models_used": {
+    "chat_model": "qwen-turbo",
+    "image_model": "flux-schnell"
+  }
+}

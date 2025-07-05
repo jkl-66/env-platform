@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-环境保护图像生成器 - 离线演示
-当无法连接到Hugging Face时的功能展示
+环境保护图像生成器 - API版本演示
+展示API版本的功能特性
 """
 
 import os
@@ -38,37 +38,37 @@ def enhance_prompt(user_input, config):
     
     return user_input, None
 
-def simulate_image_generation(prompt, category=None):
-    """模拟图像生成过程"""
-    print(f"🎨 模拟生成图像...")
+def simulate_api_generation(prompt, category=None):
+    """模拟API图像生成过程"""
+    print(f"🎨 模拟API生成图像...")
     print(f"📝 增强后的提示词: {prompt}")
     if category:
         print(f"🏷️  检测到的环境主题: {category}")
     
-    # 模拟生成参数
-    params = {
-        "guidance_scale": 7.5,
-        "num_inference_steps": 20,
-        "height": 512,
-        "width": 512,
-        "seed": 42
+    # API生成信息
+    api_info = {
+        "model_id": "stabilityai/stable-diffusion-3.5-large-turbo",
+        "api_url": "https://api-inference.huggingface.co/models/",
+        "method": "POST",
+        "content_type": "application/json"
     }
     
-    print(f"⚙️  生成参数: {params}")
-    print(f"⏱️  预计生成时间: 15-30秒 (实际硬件)")
+    print(f"🌐 API信息: {api_info['model_id']}")
+    print(f"⏱️  预计生成时间: 5-15秒 (云端处理)")
     print(f"💾 输出路径: outputs/environmental_images/")
+    print(f"☁️  无需本地GPU资源")
     
     return {
         "status": "success",
         "prompt": prompt,
         "category": category,
-        "params": params,
+        "api_info": api_info,
         "timestamp": datetime.now().isoformat()
     }
 
 def main():
     print("="*60)
-    print("🌍 环境保护图像生成器 - 离线功能演示")
+    print("🌍 环境保护图像生成器 - API版本功能演示")
     print("="*60)
     print()
     
@@ -108,25 +108,26 @@ def main():
         # 提示词增强
         enhanced_prompt, category = enhance_prompt(user_input, config)
         
-        # 模拟生成
-        result = simulate_image_generation(enhanced_prompt, category)
+        # 模拟API生成
+        result = simulate_api_generation(enhanced_prompt, category)
         
         print(f"✅ 模拟生成完成")
         print()
     
-    print("🎉 离线演示完成！")
+    print("🎉 API版本演示完成！")
     print()
     print("📌 实际使用说明:")
-    print("  1. 确保网络连接正常")
-    print("  2. 首次运行会下载约8GB的模型文件")
-    print("  3. 推荐使用8GB+显存的GPU")
-    print("  4. 运行 demo_environmental_generator.py 进行实际生成")
+    print("  1. 获取Hugging Face Token")
+    print("  2. 设置HF_TOKEN环境变量")
+    print("  3. 确保网络连接正常")
+    print("  4. 运行 environmental_image_generator.py 进行实际生成")
     print()
     print("🔧 项目文件结构:")
-    print("  • environmental_image_generator.py - 核心生成器")
+    print("  • environmental_image_generator.py - 核心生成器 (API版本)")
     print("  • config/environmental_prompts.json - 配置文件")
-    print("  • demo_environmental_generator.py - 交互式演示")
-    print("  • test_environmental_generator.py - 功能测试")
+    print("  • test_api_generator.py - API功能测试")
+    print("  • demo_without_token.py - 无Token演示")
+    print("  • API_USAGE_GUIDE.md - API使用指南")
     print("  • README_Environmental_Generator.md - 详细文档")
 
 if __name__ == "__main__":

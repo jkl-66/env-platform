@@ -53,7 +53,7 @@ class MockModelLoader(ModelLoader):
     def load_model(self, model_id: str) -> Any:
         return MockPipeline()
 
-class EcologyImageGenerator:
+class EnvironmentalImageGenerator:
     def __init__(self, model_loader: ModelLoader = None):
         self.model_loader = model_loader or HuggingFaceModelLoader()
 ```
@@ -99,15 +99,15 @@ class ExampleStrategy(GenerationStrategy):
 **建议**: 为每个核心方法添加单元测试
 
 ```python
-# tests/test_ecology_image_generator.py
+# tests/test_environmental_image_generator.py
 import pytest
 from unittest.mock import Mock, patch
-from src.models.ecology_image_generator import EcologyImageGenerator
+from src.models.environmental_image_generator import EnvironmentalImageGenerator
 
-class TestEcologyImageGenerator:
+class TestEnvironmentalImageGenerator:
     @pytest.fixture
     def generator(self):
-        return EcologyImageGenerator()
+        return EnvironmentalImageGenerator()
     
     def test_list_supported_models(self, generator):
         models = generator.list_supported_models()
@@ -121,18 +121,18 @@ class TestEcologyImageGenerator:
         generator.set_model(new_model)
         assert generator.model_id == new_model
     
-    @patch('src.models.ecology_image_generator.StableDiffusionPipeline')
-    def test_load_model_success(self, mock_pipeline, generator):
-        mock_pipeline.from_pretrained.return_value = Mock()
-        result = generator.load_model_from_huggingface()
-        assert result is True
-        assert generator.diffusion_pipeline is not None
+    @patch('src.models.environmental_image_generator.requests')
+    def test_api_connection_success(self, mock_requests, generator):
+        mock_requests.get.return_value.status_code = 200
+        result = generator.test_api_connection()
+        assert result['success'] is True
+        assert result['status_code'] == 200
     
     def test_enhance_environmental_prompt(self, generator):
         original = "城市污染"
-        enhanced = generator._enhance_environmental_prompt(original)
-        assert "environmental warning" in enhanced
-        assert original in enhanced
+        enhanced = generator.enhance_prompt(original)
+        assert len(enhanced) > len(original)
+        assert "environmental" in enhanced.lower()
 ```
 
 ### 2. 集成测试
@@ -142,18 +142,18 @@ class TestEcologyImageGenerator:
 class TestIntegration:
     def test_full_generation_pipeline(self):
         """测试完整的图像生成流程"""
-        generator = EcologyImageGenerator()
+        generator = EnvironmentalImageGenerator()
         
         # 测试数据
         input_data = {"prompt": "工业污染警示"}
         
         # 执行生成
-        result = generator.predict(input_data)
+        result = generator.generate_image(input_data["prompt"])
         
         # 验证结果
-        assert "generated_images" in result
-        assert "generation_mode" in result
-        assert len(result["generated_images"]) > 0
+        assert "success" in result
+        assert "images" in result
+        assert result["success"] is True
 ```
 
 ### 3. 性能测试
@@ -169,8 +169,8 @@ class TestPerformance:
         process = psutil.Process()
         initial_memory = process.memory_info().rss
         
-        generator = EcologyImageGenerator()
-        generator.build_model()
+        generator = EnvironmentalImageGenerator()
+        # API版本不需要本地模型构建
         
         peak_memory = process.memory_info().rss
         memory_increase = peak_memory - initial_memory
@@ -180,10 +180,10 @@ class TestPerformance:
     
     def test_generation_speed(self):
         """测试生成速度"""
-        generator = EcologyImageGenerator()
+        generator = EnvironmentalImageGenerator()
         
         start_time = time.time()
-        result = generator.predict({"prompt": "测试提示"})
+        result = generator.generate_image("测试提示")
         end_time = time.time()
         
         generation_time = end_time - start_time
@@ -198,19 +198,19 @@ class TestPerformance:
 
 ```python
 # src/exceptions.py
-class EcologyImageGeneratorError(Exception):
-    """生态图像生成器基础异常"""
+class EnvironmentalImageGeneratorError(Exception):
+    """环境图像生成器基础异常"""
     pass
 
-class ModelLoadError(EcologyImageGeneratorError):
-    """模型加载异常"""
+class APIConnectionError(EnvironmentalImageGeneratorError):
+    """API连接异常"""
     pass
 
-class GenerationError(EcologyImageGeneratorError):
+class GenerationError(EnvironmentalImageGeneratorError):
     """图像生成异常"""
     pass
 
-class NetworkError(EcologyImageGeneratorError):
+class NetworkError(EnvironmentalImageGeneratorError):
     """网络连接异常"""
     pass
 ```
@@ -244,10 +244,10 @@ def retry(max_attempts=3, delay=1.0, backoff=2.0):
         return wrapper
     return decorator
 
-class EcologyImageGenerator:
+class EnvironmentalImageGenerator:
     @retry(max_attempts=3, delay=2.0)
-    def load_model_from_huggingface(self, model_id: Optional[str] = None) -> bool:
-        # 现有的加载逻辑
+    def test_api_connection(self) -> Dict[str, Any]:
+        # 现有的API连接逻辑
         pass
 ```
 
@@ -288,13 +288,13 @@ import structlog
 
 logger = structlog.get_logger()
 
-class EcologyImageGenerator:
-    def load_model_from_huggingface(self, model_id: Optional[str] = None) -> bool:
+class EnvironmentalImageGenerator:
+    def generate_image(self, user_input: str, **kwargs) -> Dict[str, Any]:
         logger.info(
-            "开始加载模型",
-            model_id=model_id or self.model_id,
-            device=self.device,
-            memory_available=self._get_available_memory()
+            "开始生成图像",
+            prompt_length=len(user_input),
+            model_id=self.model_id,
+            api_endpoint=self.api_url
         )
         
         try:
@@ -480,7 +480,7 @@ class PluginManager:
 import asyncio
 from typing import AsyncGenerator
 
-class AsyncEcologyImageGenerator:
+class AsyncEnvironmentalImageGenerator:
     async def load_model_async(self, model_id: str) -> bool:
         """异步加载模型"""
         loop = asyncio.get_event_loop()

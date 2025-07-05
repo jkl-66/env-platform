@@ -12,7 +12,7 @@ from pathlib import Path
 # 添加项目根目录到路径
 sys.path.append(str(Path(__file__).parent.parent))
 
-from src.models.ecology_image_generator import EcologyImageGenerator
+from environmental_image_generator import EnvironmentalImageGenerator
 from src.utils.logger import setup_logger, get_logger
 
 # 设置日志
@@ -26,8 +26,8 @@ def test_warning_level_fix():
     
     try:
         # 初始化生成器
-        print("\n1. 初始化生态图像生成器...")
-        generator = EcologyImageGenerator()
+        print("\n1. 初始化环境图像生成器...")
+        generator = EnvironmentalImageGenerator()
         print("✅ 生成器初始化成功")
         
         # 测试环境指标
@@ -44,10 +44,12 @@ def test_warning_level_fix():
         
         # 生成警示图像
         print("\n3. 生成警示图像...")
-        result = generator.generate_warning_image(
-            environmental_indicators=test_indicators,
-            style='realistic',
-            num_images=1
+        # 构建环境警示提示词
+        prompt = f"Environmental warning image showing pollution levels: CO2 {test_indicators['co2_level']}ppm, PM2.5 {test_indicators['pm25_level']}μg/m³, temperature {test_indicators['temperature']}°C"
+        result = generator.generate_image(
+            user_input=prompt,
+            width=512,
+            height=512
         )
         
         print("✅ 图像生成成功")
@@ -55,13 +57,11 @@ def test_warning_level_fix():
         # 检查返回结果的结构
         print("\n4. 检查返回结果结构:")
         required_fields = [
-            'warning_level',
-            'template_used', 
-            'environmental_assessment',
-            'generation_mode',
-            'style',
-            'generated_images',
-            'environmental_indicators'
+            'success',
+            'images',
+            'image_paths',
+            'prompt',
+            'generation_time'
         ]
         
         missing_fields = []
@@ -76,51 +76,50 @@ def test_warning_level_fix():
             print(f"\n❌ 缺失字段: {missing_fields}")
             return False
         
-        # 详细检查warning_level
-        print("\n5. 详细检查warning_level:")
-        warning_level = result['warning_level']
-        print(f"   类型: {type(warning_level)}")
-        print(f"   值: {warning_level}")
-        
-        if isinstance(warning_level, int) and 1 <= warning_level <= 5:
-            print("✅ warning_level格式正确")
-        else:
-            print("❌ warning_level格式错误")
+        # 检查生成是否成功
+        if not result.get('success', False):
+            print(f"❌ 图像生成失败: {result.get('error', '未知错误')}")
             return False
         
-        # 检查environmental_assessment
-        print("\n6. 检查environmental_assessment:")
-        assessment = result['environmental_assessment']
-        assessment_fields = ['overall_risk', 'risk_score', 'primary_concerns', 'recommendations']
+        # 检查生成时间
+        print("\n5. 检查生成时间:")
+        generation_time = result.get('generation_time', 0)
+        print(f"   生成时间: {generation_time} 秒")
         
-        for field in assessment_fields:
-            if field in assessment:
-                print(f"✅ {field}: {assessment[field]}")
-            else:
-                print(f"❌ {field}: 缺失")
-                return False
+        if generation_time > 0:
+            print("✅ 生成时间记录正确")
+        else:
+            print("⚠️ 生成时间未记录或为0")
         
-        # 检查generated_images
-        print("\n7. 检查generated_images:")
-        images = result['generated_images']
+        # 检查图像数据
+        print("\n6. 检查图像数据:")
+        images = result.get('images', [])
+        image_paths = result.get('image_paths', [])
+        
         if isinstance(images, list) and len(images) > 0:
-            print(f"✅ 生成了 {len(images)} 张图像")
-            
-            # 检查第一张图像的结构
-            first_image = images[0]
-            image_fields = ['description', 'style', 'quality_score', 'generation_time']
-            
-            for field in image_fields:
-                if field in first_image:
-                    print(f"✅ 图像.{field}: {first_image[field]}")
-                else:
-                    print(f"❌ 图像.{field}: 缺失")
-                    return False
+            print(f"✅ 生成了 {len(images)} 张图像对象")
         else:
-            print("❌ generated_images格式错误")
+            print("⚠️ 未生成图像对象")
+        
+        if isinstance(image_paths, list) and len(image_paths) > 0:
+            print(f"✅ 保存了 {len(image_paths)} 个图像文件")
+            for i, path in enumerate(image_paths):
+                print(f"   图像{i+1}: {path}")
+        else:
+            print("⚠️ 未保存图像文件")
+        
+        # 检查提示词
+        print("\n7. 检查提示词:")
+        used_prompt = result.get('prompt', '')
+        print(f"   使用的提示词: {used_prompt[:100]}...")
+        
+        if used_prompt and len(used_prompt) > 0:
+            print("✅ 提示词记录正确")
+        else:
+            print("❌ 提示词缺失")
             return False
         
-        print("\n🎉 所有测试通过！warning_level错误已修复")
+        print("\n🎉 所有测试通过！API版本图像生成功能正常")
         return True
         
     except Exception as e:
@@ -163,25 +162,30 @@ def test_multiple_scenarios():
     }
     
     try:
-        generator = EcologyImageGenerator()
+        generator = EnvironmentalImageGenerator()
         
         for scenario_name, indicators in scenarios.items():
             print(f"\n测试场景: {scenario_name}")
             
-            result = generator.generate_warning_image(
-                environmental_indicators=indicators,
-                style='realistic',
-                num_images=1
+            # 构建场景特定的提示词
+            prompt = f"Environmental warning image for {scenario_name}: CO2 {indicators['co2_level']}ppm, PM2.5 {indicators['pm25_level']}μg/m³, temperature {indicators['temperature']}°C, forest coverage {indicators['forest_coverage']}%"
+            
+            result = generator.generate_image(
+                user_input=prompt,
+                width=512,
+                height=512
             )
             
-            warning_level = result['warning_level']
-            risk = result['environmental_assessment']['overall_risk']
-            template = result['template_used']
-            
-            print(f"  警示等级: {warning_level}/5")
-            print(f"  风险评估: {risk}")
-            print(f"  使用模板: {template}")
-            print(f"  ✅ 场景测试通过")
+            if result.get('success', False):
+                generation_time = result.get('generation_time', 0)
+                image_count = len(result.get('images', []))
+                
+                print(f"  生成时间: {generation_time:.2f}秒")
+                print(f"  图像数量: {image_count}")
+                print(f"  ✅ 场景测试通过")
+            else:
+                print(f"  ❌ 场景测试失败: {result.get('error', '未知错误')}")
+                return False
         
         print("\n🎉 多场景测试全部通过！")
         return True
