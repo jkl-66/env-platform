@@ -1,0 +1,50 @@
+{
+  "total_datasets": 4,
+  "successful_imports": 4,
+  "failed_imports": 0,
+  "skipped_imports": 0,
+  "details": [
+    {
+      "dataset_name": "hot-dry",
+      "dataset_path": "D:\\用户\\jin\\桌面\\全球0.5°逐年复合极端气候事件数据集（1951-2022年）-数据实体\\global_hot-dry_[tasmax_p_95_all_7_1]-[pr_p_5_+0_0_1]_1_1~12",
+      "status": "success",
+      "files_processed": 5,
+      "total_records": 266774,
+      "error_message": null,
+      "record_ids": [],
+      "processing_time": 0.584941
+    },
+    {
+      "dataset_name": "hot-dry-windy",
+      "dataset_path": "D:\\用户\\jin\\桌面\\全球0.5°逐年复合极端气候事件数据集（1951-2022年）-数据实体\\global_hot-dry-windy_[tasmax_p_95_all_7_1]-[pr_p_5_+0_0_1]-[sfcwind_p_95_+0.5_0_1]_1_1~12",
+      "status": "success",
+      "files_processed": 5,
+      "total_records": 73566,
+      "error_message": null,
+      "record_ids": [],
+      "processing_time": 0.315389
+    },
+    {
+      "dataset_name": "hot-wet",
+      "dataset_path": "D:\\用户\\jin\\桌面\\全球0.5°逐年复合极端气候事件数据集（1951-2022年）-数据实体\\global_hot-wet_[tasmax_p_95_all_7_1]-[pr_p_95_+1_0_1]_1_1~12",
+      "status": "success",
+      "files_processed": 5,
+      "total_records": 132617,
+      "error_message": null,
+      "record_ids": [],
+      "processing_time": 0.374489
+    },
+    {
+      "dataset_name": "wet-windy",
+      "dataset_path": "D:\\用户\\jin\\桌面\\全球0.5°逐年复合极端气候事件数据集（1951-2022年）-数据实体\\global_wet-windy_[pr_p_95_+1_0_1]-[sfcwind_p_95_+0.5_0_1]_1_1~12",
+      "status": "success",
+      "files_processed": 5,
+      "total_records": 241393,
+      "error_message": null,
+      "record_ids": [],
+      "processing_time": 0.376968
+    }
+  ],
+  "start_time": "2025-07-07T18:50:34.484647",
+  "end_time": "2025-07-07T18:50:36.147572"
+}

@@ -1,0 +1,9 @@
+method,accuracy,precision,recall,f1_score,method_type,description
+Frequency Threshold,0.750328270455659,1.0,0.2602345972940015,0.41299389471259074,Traditional,Event frequency-based anomaly detection using 90th percentile
+Duration Threshold,0.7336207741303282,1.0,0.2107310841414552,0.34810551558753,Traditional,Maximum duration-based anomaly detection using 90th percentile
+Severity Threshold,0.7624987751102401,1.0,0.2962952209511643,0.4571415772616301,Traditional,Peak severity-based anomaly detection using 90th percentile
+Composite Climate Index,0.7610541051305383,0.9927766501014909,0.29415497689697795,0.4538394836959131,Traditional,Multi-variable composite climate index using standardized Euclidean distance
+Statistical Outlier (3-sigma),0.6786561209491145,1.0,0.04787344355313695,0.09137256764673285,Traditional,Statistical outlier detection using 3-sigma rule for frequency
+Random Forest,1.0,1.0,1.0,1.0,AI/ML,Random Forest classifier with balanced class weights for climate events
+Logistic Regression,0.9017195119105947,0.8203804619538047,0.9074908749032187,0.8617398382522844,AI/ML,Logistic Regression with balanced class weights for climate events
+Isolation Forest,0.826550943748396,0.910664641981077,0.53894757217122,0.6771472992104783,AI/ML,Isolation Forest unsupervised anomaly detection (contamination=0.20)

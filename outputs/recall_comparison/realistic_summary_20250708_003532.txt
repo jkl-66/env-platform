@@ -1,0 +1,20 @@
+Realistic Climate Extreme Events Detection Analysis
+==================================================
+
+Analysis Date: 2025-07-08 00:35:32
+Total Samples: 100,000
+Features Used: temperature, precipitation, wind_speed, humidity, pressure
+
+Traditional Methods Performance:
+  Temperature Threshold: Recall=0.385, Precision=1.000, F1=0.556
+  Precipitation Threshold: Recall=0.193, Precision=1.000, F1=0.323
+  Wind Threshold: Recall=0.181, Precision=1.000, F1=0.307
+  Pressure Threshold: Recall=0.372, Precision=1.000, F1=0.543
+  Composite Index: Recall=0.369, Precision=0.984, F1=0.536
+
+AI/ML Methods Performance:
+  Random Forest: Recall=1.000, Precision=1.000, F1=1.000
+  Logistic Regression: Recall=0.515, Precision=0.421, F1=0.463
+  Isolation Forest: Recall=0.565, Precision=0.764, F1=0.650
+
+Recall Improvement (AI vs Traditional): +0.393 (+131.2%)

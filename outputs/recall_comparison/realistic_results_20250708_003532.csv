@@ -1,0 +1,9 @@
+method,accuracy,precision,recall,f1_score,method_type,description
+Temperature Threshold,0.8359,1.0,0.3850093691442848,0.5559664471904031,Traditional,Temperature-based extreme detection (< 1.9°C or > 38.2°C)
+Precipitation Threshold,0.7845666666666666,1.0,0.19262960649594005,0.323033413637792,Traditional,Precipitation-based extreme detection (> 8.8mm)
+Wind Threshold,0.7815,1.0,0.1811367895065584,0.30671602326811215,Traditional,Wind-based extreme detection (> 18.9m/s)
+Pressure Threshold,0.8325,1.0,0.37226733291692693,0.542558033682294,Traditional,Pressure-based extreme detection (< 985.7hPa or > 1040.4hPa)
+Composite Index,0.8299,0.9836666666666667,0.36864459712679576,0.5363016810540664,Traditional,Multi-variable composite meteorological index
+Random Forest,0.9999666666666667,0.9998750936797401,1.0,0.9999375429392292,AI/ML,Random Forest classifier using raw climate features
+Logistic Regression,0.6815333333333333,0.42088058024313,0.5146783260462211,0.4630774418343262,AI/ML,Logistic Regression using raw climate features
+Isolation Forest,0.8373333333333334,0.7637130801687764,0.5652717051842598,0.6496769562096196,AI/ML,Isolation Forest unsupervised anomaly detection (contamination=0.20)

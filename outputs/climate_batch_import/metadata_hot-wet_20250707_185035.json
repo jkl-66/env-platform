@@ -1,0 +1,35 @@
+{
+  "source": "Global Climate NetCDF Batch - hot-wet",
+  "data_type": "extreme_events",
+  "location": "Global",
+  "time_range": "1951-2022",
+  "file_path": "outputs\\climate_batch_import\\climate_batch_hot-wet_20250707_185035.parquet",
+  "file_format": "parquet",
+  "file_size": 3081119,
+  "variables": [
+    "time",
+    "latitude",
+    "longitude",
+    "frequency",
+    "maximum_duration",
+    "minimum_duration",
+    "total_duration",
+    "average_duration",
+    "peak_severity",
+    "average_severity",
+    "start_date",
+    "end_date",
+    "source_file",
+    "dataset_type",
+    "year"
+  ],
+  "description": "全球0.5°极端气候事件数据集 - hot-wet",
+  "resolution": "0.5度",
+  "event_type": "hot-wet",
+  "files_processed": 5,
+  "total_files": 5,
+  "data_shape": [
+    132617,
+    15
+  ]
+}

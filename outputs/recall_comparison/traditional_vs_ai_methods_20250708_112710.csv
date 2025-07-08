@@ -1,0 +1,9 @@
+method,accuracy,precision,recall,f1_score,method_type,description
+Frequency Threshold,0.77548353981475,1.0,0.33312543312543313,0.49976607579144355,Traditional,基于频率阈值的异常检测 (阈值=7.000)
+Duration Threshold,0.7005062877674343,1.0,0.11042273042273042,0.19888413195701288,Traditional,基于持续时间阈值的异常检测 (阈值=4.807)
+Severity Threshold,0.759982268262523,1.0,0.2870824670824671,0.44609801535595445,Traditional,基于严重程度阈值的异常检测 (优化阈值=4.530)
+Composite Climate Index,0.6633303002729755,0.0,0.0,0.0,Traditional,复合气候指数异常检测 (优化阈值=0.65)
+Statistical Outlier (3-sigma),0.6796248337649612,1.0,0.0483991683991684,0.09232965812643769,Traditional,统计异常值检测 (3-sigma规则)
+AutoEncoder,0.6795688388045076,0.5801031212595525,0.17465003465003465,0.2684719618203511,AI/ML,Deep AutoEncoder with 6-Layer Architecture and Advanced Optimization (threshold: 0.6055)
+3-Sigma,0.8657380835724785,0.923281094478815,0.6556895356895357,0.7668106557310619,AI/ML,Statistical 3-Sigma Rule Anomaly Detection
+Fusion_3Sigma_AE,0.8464664846830452,0.7034851768512086,0.9402910602910602,0.8048307402112855,AI/ML,"右上角极致融合模型: AutoEncoder主导六层智能异常检测 (AE权重:0.85, 3Sigma权重:0.15, 总检测:96437)"

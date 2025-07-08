@@ -1,0 +1,26 @@
+[
+  {
+    "path": "D:\\用户\\jin\\桌面\\全球0.5°逐年复合极端气候事件数据集（1951-2022年）-数据实体\\global_hot-dry_[tasmax_p_95_all_7_1]-[pr_p_5_+0_0_1]_1_1~12",
+    "type": "hot-dry",
+    "record_id": null,
+    "status": "skipped"
+  },
+  {
+    "path": "D:\\用户\\jin\\桌面\\全球0.5°逐年复合极端气候事件数据集（1951-2022年）-数据实体\\global_hot-dry-windy_[tasmax_p_95_all_7_1]-[pr_p_5_+0_0_1]-[sfcwind_p_95_+0.5_0_1]_1_1~12",
+    "type": "hot-dry-windy",
+    "record_id": null,
+    "status": "skipped"
+  },
+  {
+    "path": "D:\\用户\\jin\\桌面\\全球0.5°逐年复合极端气候事件数据集（1951-2022年）-数据实体\\global_hot-wet_[tasmax_p_95_all_7_1]-[pr_p_95_+1_0_1]_1_1~12",
+    "type": "hot-wet",
+    "record_id": null,
+    "status": "skipped"
+  },
+  {
+    "path": "D:\\用户\\jin\\桌面\\全球0.5°逐年复合极端气候事件数据集（1951-2022年）-数据实体\\global_wet-windy_[pr_p_95_+1_0_1]-[sfcwind_p_95_+0.5_0_1]_1_1~12",
+    "type": "wet-windy",
+    "record_id": null,
+    "status": "skipped"
+  }
+]

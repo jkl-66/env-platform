@@ -1,0 +1,22 @@
+气候异常检测: 传统方法 vs AutoEncoder 性能对比
+================================================================================
+
+分析日期: 2025-07-08 01:02:23
+
+数据集概览:
+- 总样本数: 714,350
+- 异常事件: 240,985 (33.7%)
+- 正常事件: 473,365
+
+性能对比总结:
+传统方法 - 平均召回率: 0.098
+AutoEncoder - 平均召回率: 0.368
+召回率提升: +0.270 (+274.5%)
+
+方法详情:
+Frequency Threshold (Traditional): 召回率=0.333, 精确率=1.000, F1=0.500
+Duration Threshold (Traditional): 召回率=0.110, 精确率=1.000, F1=0.199
+Severity Threshold (Traditional): 召回率=0.000, 精确率=0.000, F1=0.000
+Composite Climate Index (Traditional): 召回率=0.000, 精确率=0.000, F1=0.000
+Statistical Outlier (3-sigma) (Traditional): 召回率=0.048, 精确率=1.000, F1=0.092
+AutoEncoder (AI/ML): 召回率=0.368, 精确率=0.787, F1=0.502

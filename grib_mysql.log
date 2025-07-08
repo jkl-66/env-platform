@@ -1,0 +1,58 @@
+2025-07-08 14:25:50,506 - ERROR - skipping variable: paramId==228 shortName='tp'
+Traceback (most recent call last):
+  File "D:\code\anaconda\envs\env-platform\Lib\site-packages\cfgrib\dataset.py", line 725, in build_dataset_components
+    dict_merge(variables, coord_vars)
+  File "D:\code\anaconda\envs\env-platform\Lib\site-packages\cfgrib\dataset.py", line 641, in dict_merge
+    raise DatasetBuildError(
+cfgrib.dataset.DatasetBuildError: key present and new value is different: key='time' value=Variable(dimensions=('time',), data=array([-936266400, -936180000, -936093600, ..., 1724940000, 1725026400,
+       1725112800])) new_value=Variable(dimensions=('time',), data=array([-936295200, -936208800, -936122400, ..., 1724911200, 1724997600,
+       1725084000]))
+2025-07-08 16:14:17,392 - ERROR - skipping variable: paramId==228 shortName='tp'
+Traceback (most recent call last):
+  File "D:\code\anaconda\envs\env-platform\Lib\site-packages\cfgrib\dataset.py", line 725, in build_dataset_components
+    dict_merge(variables, coord_vars)
+  File "D:\code\anaconda\envs\env-platform\Lib\site-packages\cfgrib\dataset.py", line 641, in dict_merge
+    raise DatasetBuildError(
+cfgrib.dataset.DatasetBuildError: key present and new value is different: key='time' value=Variable(dimensions=('time',), data=array([-936266400, -936180000, -936093600, ..., 1724940000, 1725026400,
+       1725112800])) new_value=Variable(dimensions=('time',), data=array([-936295200, -936208800, -936122400, ..., 1724911200, 1724997600,
+       1725084000]))
+2025-07-08 16:22:53,155 - INFO - ✅ 数据库 'summer_predict' 已创建或已存在
+2025-07-08 16:22:53,157 - INFO - ✅ MySQL数据库 'summer_predict' 连接成功
+2025-07-08 16:22:53,157 - INFO - 🔧 正在创建数据库表结构...
+2025-07-08 16:22:53,158 - INFO - ✅ 主数据表创建成功
+2025-07-08 16:22:53,159 - INFO - ✅ 元数据表创建成功
+2025-07-08 16:22:53,159 - INFO - 📂 正在加载GRIB文件: data.grib
+2025-07-08 16:22:54,004 - ERROR - skipping variable: paramId==228 shortName='tp'
+Traceback (most recent call last):
+  File "D:\code\anaconda\envs\env-platform\Lib\site-packages\cfgrib\dataset.py", line 725, in build_dataset_components
+    dict_merge(variables, coord_vars)
+  File "D:\code\anaconda\envs\env-platform\Lib\site-packages\cfgrib\dataset.py", line 641, in dict_merge
+    raise DatasetBuildError(
+cfgrib.dataset.DatasetBuildError: key present and new value is different: key='time' value=Variable(dimensions=('time',), data=array([-936266400, -936180000, -936093600, ..., 1724940000, 1725026400,
+       1725112800])) new_value=Variable(dimensions=('time',), data=array([-936295200, -936208800, -936122400, ..., 1724911200, 1724997600,
+       1725084000]))
+2025-07-08 16:22:54,069 - INFO - ✅ GRIB文件加载成功
+2025-07-08 16:22:54,069 - INFO - 📊 数据变量: ['u10', 'v10', 'd2m', 't2m', 'msl', 'sst', 'sp']
+2025-07-08 16:22:54,070 - INFO - 📊 数据维度: {'time': 10455, 'latitude': 197, 'longitude': 249}
+2025-07-08 16:22:54,070 - INFO - 🔧 正在处理GRIB数据...
+2025-07-08 16:22:54,070 - INFO - 📊 处理变量: u10
+2025-07-08 16:26:04,668 - INFO - ✅ 数据库 'summer_predict' 已创建或已存在
+2025-07-08 16:26:04,689 - INFO - ✅ MySQL数据库 'summer_predict' 连接成功
+2025-07-08 16:26:04,689 - INFO - 🔧 正在创建数据库表结构...
+2025-07-08 16:26:04,691 - INFO - ✅ 主数据表创建成功
+2025-07-08 16:26:04,693 - INFO - ✅ 元数据表创建成功
+2025-07-08 16:26:04,693 - INFO - 📂 正在加载GRIB文件: data.grib
+2025-07-08 16:26:54,265 - ERROR - skipping variable: paramId==228 shortName='tp'
+Traceback (most recent call last):
+  File "D:\code\anaconda\envs\env-platform\Lib\site-packages\cfgrib\dataset.py", line 725, in build_dataset_components
+    dict_merge(variables, coord_vars)
+  File "D:\code\anaconda\envs\env-platform\Lib\site-packages\cfgrib\dataset.py", line 641, in dict_merge
+    raise DatasetBuildError(
+cfgrib.dataset.DatasetBuildError: key present and new value is different: key='time' value=Variable(dimensions=('time',), data=array([-936266400, -936180000, -936093600, ..., 1724940000, 1725026400,
+       1725112800])) new_value=Variable(dimensions=('time',), data=array([-936295200, -936208800, -936122400, ..., 1724911200, 1724997600,
+       1725084000]))
+2025-07-08 16:26:54,381 - INFO - ✅ GRIB文件加载成功
+2025-07-08 16:26:54,383 - INFO - 📊 数据变量: ['u10', 'v10', 'd2m', 't2m', 'msl', 'sst', 'sp']
+2025-07-08 16:26:54,383 - INFO - 📊 数据维度: {'time': 10455, 'latitude': 197, 'longitude': 249}
+2025-07-08 16:26:54,384 - INFO - 🔧 正在处理GRIB数据...
+2025-07-08 16:26:54,384 - INFO - 📊 处理变量: u10

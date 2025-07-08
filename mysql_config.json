@@ -1,0 +1,19 @@
+{
+  "mysql": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "jkl",
+    "password": "922920",
+    "database": "summer_predict"
+  },
+  "grib_settings": {
+    "batch_size": 5000,
+    "table_name": "grib_weather_data",
+    "metadata_table": "grib_metadata"
+  },
+  "processing": {
+    "enable_mock_data": true,
+    "mock_data_years": 5,
+    "spatial_resolution": 0.5
+  }
+}

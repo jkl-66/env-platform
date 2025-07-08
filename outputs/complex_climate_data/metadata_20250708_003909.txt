@@ -1,0 +1,6 @@
+Complex Climate Data Generation Report
+Generated: 2025-07-08 00:39:09
+Samples: 100,000
+Extreme events: 28,306 (28.3%)
+Features: date, day_of_year, year, climate_zone, temperature, precipitation, wind_speed, humidity, pressure, heat_index, wind_chill, pressure_tendency, extreme_event
+Random seed: 42

@@ -1,0 +1,25 @@
+{
+  "source": "Global Climate Dataset",
+  "data_type": "extreme_events",
+  "location": "Global",
+  "start_time": "1951-01-01",
+  "end_time": "2022-12-31",
+  "file_path": "outputs\\climate_analysis\\climate_extreme_events_20250707_161017.parquet",
+  "file_format": "parquet",
+  "file_size": 73474,
+  "variables": [
+    "year",
+    "month",
+    "latitude",
+    "longitude",
+    "temperature",
+    "precipitation",
+    "wind_speed",
+    "humidity",
+    "pressure",
+    "extreme_event"
+  ],
+  "description": "全球0.5°逐年复合极端气候事件数据集（1951-2022年）",
+  "resolution": "0.5度",
+  "temporal_coverage": "1951-2022"
+}

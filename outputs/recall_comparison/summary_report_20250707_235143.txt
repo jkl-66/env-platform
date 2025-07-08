@@ -1,0 +1,14 @@
+Weather Anomaly Detection: Traditional vs AI Methods Recall Comparison
+================================================================================
+
+Analysis Date: 2025-07-07 23:51:43
+
+Dataset Overview:
+- Total samples: 714,350
+- Anomalies: 241,094 (33.8%)
+- Normal events: 473,256
+
+Performance Summary:
+Traditional Methods - Average Recall: 0.222
+AI/ML Methods - Average Recall: 0.815
+Improvement: +0.594 (+267.6%)

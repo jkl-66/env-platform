@@ -1,0 +1,64 @@
+2025-07-08 13:25:46,866 - INFO - 
+==================================================
+2025-07-08 13:25:46,866 - INFO - 步骤1: 加载GRIB数据到MySQL数据库
+2025-07-08 13:25:46,866 - INFO - ==================================================
+2025-07-08 13:25:46,868 - ERROR - Traceback (most recent call last):
+  File "D:\code\codebase\env-platform\climate_prediction_example.py", line 42, in load_grib_data_to_mysql
+    processor = GRIBToMySQLProcessor()
+                ^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GRIBToMySQLProcessor.__init__() missing 1 required positional argument: 'mysql_config'
+
+2025-07-08 13:25:46,868 - INFO - 
+==================================================
+2025-07-08 13:25:46,868 - INFO - 步骤2: 运行气候预测系统
+2025-07-08 13:25:46,869 - INFO - ==================================================
+2025-07-08 13:25:46,871 - ERROR - Traceback (most recent call last):
+  File "D:\code\codebase\env-platform\climate_prediction_example.py", line 92, in run_climate_prediction
+    prediction_system = ClimatePredictionSystem()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: ClimatePredictionSystem.__init__() missing 1 required positional argument: 'mysql_config'
+
+2025-07-08 13:25:46,871 - INFO - 
+==================================================
+2025-07-08 13:25:46,871 - INFO - ==================================================
+2025-07-08 13:25:46,872 - INFO - - 模型文件: models/climate_prediction/
+2025-07-08 13:25:46,872 - INFO - - 预测结果: outputs/
+2025-07-08 13:25:46,872 - INFO - - 可视化图表: outputs/
+2025-07-08 13:25:46,872 - INFO - - 日志文件: 当前目录
+2025-07-08 13:27:07,595 - INFO - 气候预测系统演示开始
+2025-07-08 13:27:07,596 - INFO - 目标区域: 东经120°52′至122°12′，北纬30°40′至31°53′
+2025-07-08 13:27:07,596 - INFO - 使用模型: XGBoost + Transformer
+2025-07-08 13:27:07,596 - INFO - 
+==================================================
+2025-07-08 13:27:07,596 - INFO - 步骤1: 加载GRIB数据到MySQL数据库
+2025-07-08 13:27:07,596 - INFO - ==================================================
+2025-07-08 13:27:07,596 - INFO - 开始加载GRIB数据到MySQL数据库...
+2025-07-08 13:27:07,596 - ERROR - GRIB数据加载失败: GRIBToMySQLProcessor.__init__() missing 1 required positional argument: 'mysql_config'
+2025-07-08 13:27:07,597 - ERROR - Traceback (most recent call last):
+  File "D:\code\codebase\env-platform\climate_prediction_simple.py", line 42, in load_grib_data_to_mysql
+    processor = GRIBToMySQLProcessor()
+                ^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GRIBToMySQLProcessor.__init__() missing 1 required positional argument: 'mysql_config'
+
+2025-07-08 13:27:07,597 - INFO - 
+==================================================
+2025-07-08 13:27:07,597 - INFO - 步骤2: 运行气候预测系统
+2025-07-08 13:27:07,597 - INFO - ==================================================
+2025-07-08 13:27:07,597 - INFO - 开始运行气候预测系统...
+2025-07-08 13:27:07,597 - ERROR - 气候预测系统运行出错: ClimatePredictionSystem.__init__() missing 1 required positional argument: 'mysql_config'
+2025-07-08 13:27:07,597 - ERROR - Traceback (most recent call last):
+  File "D:\code\codebase\env-platform\climate_prediction_simple.py", line 92, in run_climate_prediction
+    prediction_system = ClimatePredictionSystem()
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: ClimatePredictionSystem.__init__() missing 1 required positional argument: 'mysql_config'
+
+2025-07-08 13:27:07,598 - INFO - 
+==================================================
+2025-07-08 13:27:07,598 - INFO - 气候预测系统演示完成!
+2025-07-08 13:27:07,598 - INFO - ==================================================
+2025-07-08 13:27:07,598 - INFO - 
+输出文件位置:
+2025-07-08 13:27:07,598 - INFO - - 模型文件: models/climate_prediction/
+2025-07-08 13:27:07,598 - INFO - - 预测结果: outputs/
+2025-07-08 13:27:07,598 - INFO - - 可视化图表: outputs/
+2025-07-08 13:27:07,598 - INFO - - 日志文件: 当前目录
