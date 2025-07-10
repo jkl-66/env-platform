@@ -1,0 +1,128 @@
+{
+  "success": true,
+  "environmental_data": {
+    "carbon_emission": 1500,
+    "air_quality_index": 180,
+    "water_pollution_index": 85
+  },
+  "analysis": {
+    "overall_severity": "high",
+    "critical_factors": [
+      {
+        "type": "carbon_emission",
+        "name": "Carbon Emissions",
+        "value": 1500,
+        "unit": "billion tons",
+        "severity": "critical"
+      },
+      {
+        "type": "air_quality_index",
+        "name": "Air Quality Index",
+        "value": 180,
+        "unit": "AQI",
+        "severity": "unhealthy"
+      },
+      {
+        "type": "water_pollution_index",
+        "name": "Water Pollution Index",
+        "value": 85,
+        "unit": "WPI",
+        "severity": "heavily_polluted"
+      }
+    ],
+    "environmental_impacts": [],
+    "severity_scores": {
+      "carbon_emission": {
+        "value": 1500,
+        "severity": "critical",
+        "score": 4,
+        "unit": "billion tons"
+      },
+      "air_quality_index": {
+        "value": 180,
+        "severity": "unhealthy",
+        "score": 4,
+        "unit": "AQI"
+      },
+      "water_pollution_index": {
+        "value": 85,
+        "severity": "heavily_polluted",
+        "score": 4,
+        "unit": "WPI"
+      }
+    },
+    "deviation_analysis": {
+      "primary_concerns": [
+        {
+          "type": "carbon_emission",
+          "name": "Carbon Emissions",
+          "current_value": 1500,
+          "default_value": 416,
+          "deviation_ratio": 2.605769230769231,
+          "deviation_score": 2.605769230769231,
+          "unit": "billion tons"
+        },
+        {
+          "type": "water_pollution_index",
+          "name": "Water Pollution Index",
+          "current_value": 85,
+          "default_value": 35,
+          "deviation_ratio": 1.4285714285714286,
+          "deviation_score": 1.4285714285714286,
+          "unit": "WPI"
+        },
+        {
+          "type": "air_quality_index",
+          "name": "Air Quality Index",
+          "current_value": 180,
+          "default_value": 75,
+          "deviation_ratio": 1.4,
+          "deviation_score": 1.4,
+          "unit": "AQI"
+        }
+      ],
+      "secondary_concerns": [],
+      "normal_factors": [],
+      "deviation_scores": {
+        "carbon_emission": {
+          "type": "carbon_emission",
+          "name": "Carbon Emissions",
+          "current_value": 1500,
+          "default_value": 416,
+          "deviation_ratio": 2.605769230769231,
+          "deviation_score": 2.605769230769231,
+          "unit": "billion tons"
+        },
+        "air_quality_index": {
+          "type": "air_quality_index",
+          "name": "Air Quality Index",
+          "current_value": 180,
+          "default_value": 75,
+          "deviation_ratio": 1.4,
+          "deviation_score": 1.4,
+          "unit": "AQI"
+        },
+        "water_pollution_index": {
+          "type": "water_pollution_index",
+          "name": "Water Pollution Index",
+          "current_value": 85,
+          "default_value": 35,
+          "deviation_ratio": 1.4285714285714286,
+          "deviation_score": 1.4285714285714286,
+          "unit": "WPI"
+        }
+      }
+    }
+  },
+  "professional_prompt": "A professional educational illustration depicting a heavily industrialized area engulfed in thick, dark smog. The sky is hazy with dense clouds of pollutants, casting a dull, grayish light over the scene. In the foreground, towering smokestacks emit continuous plumes of dark exhaust, clearly visible against the muted sky. The air appears thick and polluted, with visible particulate matter drifting through the atmosphere. \n\nIn the mid-ground, a river flows sluggishly, its surface covered in oil slicks and debris, reflecting the murky sky above. Several aquatic animals, such as fish and frogs, are shown struggling to survive in the contaminated water, emphasizing the impact of water pollution. \n\nThe background features a landscape of deforested areas and barren land, indicating long-term environmental degradation. The color scheme uses muted grays, deep blues, and browns to convey the severity of the situation, while maintaining a balanced and instructional tone. The image focuses primarily on the pollution sources (60% focus), with the affected ecosystems serving as secondary elements (30% focus), and normal environmental features as minimal background elements (10% focus). The style is realistic and educational, designed to raise awareness without inducing fear.",
+  "saved_paths": [
+    "outputs\\environmental_images\\env_warning_carbon_emission_1500_air_quali_20250709_204026_1_dashscope.png"
+  ],
+  "generation_time": 11.281781,
+  "target_audience": "educators",
+  "timestamp": "2025-07-09T20:40:26.704221",
+  "models_used": {
+    "chat_model": "qwen-turbo",
+    "image_model": "flux-schnell"
+  }
+}

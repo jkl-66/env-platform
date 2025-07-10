@@ -47,6 +47,10 @@ def interactive_demo():
         data_types = generator.get_supported_data_types()
         for i, (data_type, config) in enumerate(data_types.items(), 1):
             print(f"  {i}. {config['name']} ({config['unit']})")
+            if 'description' in config:
+                print(f"     说明: {config['description']}")
+            print(f"     默认值: {config['default_value']} {config['unit']}")
+            print()
         
         while True:
             print("\n" + "=" * 50)
@@ -154,9 +158,14 @@ def demo_with_custom_data(generator):
     
     for data_type, config in data_types.items():
         default_value = config.get('default_value', 0)
+        print(f"\n📋 {config['name']} ({config['unit']})")
+        if 'description' in config:
+            print(f"   说明: {config['description']}")
+        print(f"   默认值: {default_value} {config['unit']}")
+        
         while True:
             try:
-                value_input = input(f"  {config['name']} ({config['unit']}) [默认: {default_value}]: ").strip()
+                value_input = input(f"   请输入数值 [默认: {default_value}]: ").strip()
                 if not value_input:
                     environmental_data[data_type] = default_value
                     break
@@ -289,10 +298,12 @@ def quick_demo():
             "1": {
                 "name": "重度空气污染",
                 "data": {
-                    "carbon_emission": 2580,
+                    "carbon_emission": 480,  # 亿吨
                     "air_quality_index": 280,
                     "water_pollution_index": 45,
-                    "noise_level": 75
+                    "noise_level": 75,
+                    "deforestation_rate": 800,  # 万公顷/年
+                    "plastic_waste": 1350  # 万吨/年
                 },
                 "description": "城市工业区严重空气污染场景",
                 "audience": "general"
@@ -300,10 +311,12 @@ def quick_demo():
             "2": {
                 "name": "水体污染危机", 
                 "data": {
-                    "carbon_emission": 1230,
+                    "carbon_emission": 416,  # 亿吨 (2024年全球碳排放量)
                     "air_quality_index": 120,
                     "water_pollution_index": 85,
-                    "noise_level": 65
+                    "noise_level": 65,
+                    "deforestation_rate": 660,  # 万公顷/年
+                    "plastic_waste": 1116.8  # 万吨/年
                 },
                 "description": "河流湖泊受到工业废水污染",
                 "audience": "educators"
@@ -311,10 +324,12 @@ def quick_demo():
             "3": {
                 "name": "学生环保教育场景",
                 "data": {
-                    "carbon_emission": 1850,
+                    "carbon_emission": 380,  # 亿吨
                     "air_quality_index": 180,
                     "water_pollution_index": 60,
-                    "noise_level": 80
+                    "noise_level": 80,
+                    "deforestation_rate": 580,  # 万公顷/年
+                    "plastic_waste": 980  # 万吨/年
                 },
                 "description": "适合学生的环保教育内容",
                 "audience": "students"
@@ -322,10 +337,12 @@ def quick_demo():
             "4": {
                 "name": "综合环境恶化",
                 "data": {
-                    "carbon_emission": 3520,
+                    "carbon_emission": 520,  # 亿吨
                     "air_quality_index": 320,
                     "water_pollution_index": 78,
-                    "noise_level": 95
+                    "noise_level": 95,
+                    "deforestation_rate": 900,  # 万公顷/年
+                    "plastic_waste": 1500  # 万吨/年
                 },
                 "description": "多种污染源造成的环境危机",
                 "audience": "parents"

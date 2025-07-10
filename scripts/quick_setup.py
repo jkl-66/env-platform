@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-快速项目设置脚本
 Quick Project Setup Script
 
-此脚本用于快速设置整个气候数据分析项目，包括环境检查、数据库初始化、数据下载等。
 This script quickly sets up the entire climate data analysis project, including environment checks, database initialization, data download, etc.
 """
 
@@ -35,7 +33,7 @@ logger = logging.getLogger("quick_setup")
 
 
 class ProjectSetup:
-    """项目设置管理器"""
+    """Project Setup Manager"""
     
     def __init__(self):
         self.project_root = project_root
@@ -43,7 +41,7 @@ class ProjectSetup:
         self.requirements_file = self.project_root / "requirements.txt"
         self.env_file = self.project_root / ".env"
         
-        # 设置步骤状态
+        # Setup step status
         self.setup_steps = {
             "environment_check": False,
             "dependencies_install": False,
@@ -55,59 +53,57 @@ class ProjectSetup:
         }
     
     def print_banner(self):
-        """打印项目横幅"""
+        """Print project banner"""
         banner = """
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║                    气候数据分析与生态警示系统                                    ║
 ║                Climate Data Analysis and Ecological Warning System           ║
 ║                                                                              ║
-║                              快速设置向导                                      ║
 ║                            Quick Setup Wizard                               ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
         """
         print(banner)
-        print(f"项目路径: {self.project_root}")
-        print(f"设置时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"Project Path: {self.project_root}")
+        print(f"Setup Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("="*80)
     
     def check_environment(self) -> bool:
-        """检查环境要求"""
-        logger.info("🔍 检查环境要求...")
+        """Check environment requirements"""
+        logger.info("🔍 Checking environment requirements...")
         
         checks = {
-            "Python版本": self._check_python_version(),
-            "项目文件": self._check_project_files(),
-            "系统依赖": self._check_system_dependencies()
+            "Python Version": self._check_python_version(),
+            "Project Files": self._check_project_files(),
+            "System Dependencies": self._check_system_dependencies()
         }
         
         all_passed = all(checks.values())
         
         for check_name, passed in checks.items():
             status = "✅" if passed else "❌"
-            logger.info(f"{status} {check_name}: {'通过' if passed else '失败'}")
+            logger.info(f"{status} {check_name}: {'Passed' if passed else 'Failed'}")
         
         if all_passed:
-            logger.info("✅ 环境检查通过")
+            logger.info("✅ Environment check passed")
             self.setup_steps["environment_check"] = True
         else:
-            logger.error("❌ 环境检查失败，请解决上述问题后重试")
+            logger.error("❌ Environment check failed, please resolve the above issues and try again")
         
         return all_passed
     
     def _check_python_version(self) -> bool:
-        """检查Python版本"""
+        """Check Python version"""
         version = sys.version_info
         required_version = (3, 8)
         
         if version >= required_version:
-            logger.info(f"Python版本: {version.major}.{version.minor}.{version.micro}")
+            logger.info(f"Python version: {version.major}.{version.minor}.{version.micro}")
             return True
         else:
-            logger.error(f"需要Python {required_version[0]}.{required_version[1]}+，当前版本: {version.major}.{version.minor}")
+            logger.error(f"Python {required_version[0]}.{required_version[1]}+ required, current version: {version.major}.{version.minor}")
             return False
     
     def _check_project_files(self) -> bool:
-        """检查项目文件"""
+        """Check project files"""
         required_files = [
             "src/main.py",
             "src/models/climate_analysis.py",
@@ -124,31 +120,31 @@ class ProjectSetup:
                 missing_files.append(file_path)
         
         if missing_files:
-            logger.error(f"缺少必要文件: {missing_files}")
+            logger.error(f"Missing required files: {missing_files}")
             return False
         
         return True
     
     def _check_system_dependencies(self) -> bool:
-        """检查系统依赖"""
-        # 这里可以检查系统级依赖，如Docker、PostgreSQL等
-        # 暂时返回True
+        """Check system dependencies"""
+        # Here you can check system-level dependencies like Docker, PostgreSQL, etc.
+        # Currently returns True
         return True
     
     def install_dependencies(self) -> bool:
-        """安装Python依赖"""
-        logger.info("📦 安装Python依赖包...")
+        """Install Python dependencies"""
+        logger.info("📦 Installing Python dependencies...")
         
         if not self.requirements_file.exists():
-            logger.error(f"requirements.txt文件不存在: {self.requirements_file}")
+            logger.error(f"requirements.txt file does not exist: {self.requirements_file}")
             return False
         
         try:
-            # 升级pip
+            # Upgrade pip
             subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], 
                          check=True, capture_output=True)
             
-            # 安装依赖
+            # Install dependencies
             result = subprocess.run(
                 [sys.executable, "-m", "pip", "install", "-r", str(self.requirements_file)],
                 check=True,
@@ -156,128 +152,128 @@ class ProjectSetup:
                 text=True
             )
             
-            logger.info("✅ 依赖包安装完成")
+            logger.info("✅ Dependencies installation completed")
             self.setup_steps["dependencies_install"] = True
             return True
             
         except subprocess.CalledProcessError as e:
-            logger.error(f"❌ 依赖包安装失败: {e.stderr}")
+            logger.error(f"❌ Dependencies installation failed: {e.stderr}")
             return False
     
     def setup_environment_config(self) -> bool:
-        """设置环境配置"""
-        logger.info("⚙️ 设置环境配置...")
+        """Setup environment configuration"""
+        logger.info("⚙️ Setting up environment configuration...")
         
         if not self.env_file.exists():
-            logger.error(f".env文件不存在: {self.env_file}")
-            logger.info("请确保.env文件已创建并配置了必要的API密钥")
+            logger.error(f".env file does not exist: {self.env_file}")
+            logger.info("Please ensure .env file is created and configured with necessary API keys")
             return False
         
-        # 检查关键配置
+        # Check key configurations
         try:
             from src.utils.config import get_settings
             settings = get_settings()
             
             config_checks = {
-                "NOAA API密钥": bool(settings.NOAA_API_KEY and settings.NOAA_API_KEY != "your_noaa_api_key_here"),
-                "ECMWF API密钥": bool(settings.ECMWF_API_KEY and settings.ECMWF_API_KEY != "your_ecmwf_api_key_here"),
-                "数据库配置": bool(settings.POSTGRES_PASSWORD != "your_postgres_password")
+                "NOAA API Key": bool(settings.NOAA_API_KEY and settings.NOAA_API_KEY != "your_noaa_api_key_here"),
+                "ECMWF API Key": bool(settings.ECMWF_API_KEY and settings.ECMWF_API_KEY != "your_ecmwf_api_key_here"),
+                "Database Config": bool(settings.POSTGRES_PASSWORD != "your_postgres_password")
             }
             
             for config_name, is_configured in config_checks.items():
                 status = "✅" if is_configured else "⚠️"
-                logger.info(f"{status} {config_name}: {'已配置' if is_configured else '需要配置'}")
+                logger.info(f"{status} {config_name}: {'Configured' if is_configured else 'Needs configuration'}")
             
             if any(config_checks.values()):
-                logger.info("✅ 环境配置检查完成")
+                logger.info("✅ Environment configuration check completed")
                 self.setup_steps["env_config"] = True
                 return True
             else:
-                logger.warning("⚠️ 请配置API密钥后重新运行")
+                logger.warning("⚠️ Please configure API keys and run again")
                 return False
                 
         except Exception as e:
-            logger.error(f"❌ 环境配置检查失败: {e}")
+            logger.error(f"❌ Environment configuration check failed: {e}")
             return False
     
     async def initialize_databases(self) -> bool:
-        """初始化数据库"""
-        logger.info("🗄️ 初始化数据库...")
+        """Initialize databases"""
+        logger.info("🗄️ Initializing databases...")
         
         try:
-            # 运行数据库初始化脚本
+            # Run database initialization script
             init_script = self.scripts_dir / "init_database.py"
             if not init_script.exists():
-                logger.error(f"数据库初始化脚本不存在: {init_script}")
+                logger.error(f"Database initialization script does not exist: {init_script}")
                 return False
             
-            # 导入并运行初始化
+            # Import and run initialization
             sys.path.insert(0, str(self.scripts_dir))
             from init_database import DatabaseManager
             
             manager = DatabaseManager()
             await manager.initialize_all()
             
-            # 检查数据库状态
+            # Check database status
             status = manager.check_status()
             
             if status['postgresql']:
-                logger.info("✅ PostgreSQL数据库初始化完成")
+                logger.info("✅ PostgreSQL database initialization completed")
             else:
-                logger.warning("⚠️ PostgreSQL数据库连接失败")
+                logger.warning("⚠️ PostgreSQL database connection failed")
             
             if status['influxdb']:
-                logger.info("✅ InfluxDB数据库初始化完成")
+                logger.info("✅ InfluxDB database initialization completed")
             else:
-                logger.warning("⚠️ InfluxDB数据库连接失败")
+                logger.warning("⚠️ InfluxDB database connection failed")
             
             self.setup_steps["database_init"] = True
             return True
             
         except Exception as e:
-            logger.error(f"❌ 数据库初始化失败: {e}")
+            logger.error(f"❌ Database initialization failed: {e}")
             return False
     
     async def download_sample_data(self) -> bool:
-        """下载示例数据"""
-        logger.info("📊 下载示例气候数据...")
+        """Download sample data"""
+        logger.info("📊 Downloading sample climate data...")
         
         try:
-            # 运行数据下载脚本
+            # Run data download script
             download_script = self.scripts_dir / "download_climate_data.py"
             if not download_script.exists():
-                logger.error(f"数据下载脚本不存在: {download_script}")
+                logger.error(f"Data download script does not exist: {download_script}")
                 return False
             
-            # 导入并运行数据下载（限制数据量）
+            # Import and run data download (limited data volume)
             sys.path.insert(0, str(self.scripts_dir))
             from download_climate_data import ClimateDataManager
             
             manager = ClimateDataManager()
             
-            # 下载最近1个月的数据作为示例
+            # Download last 1 month of data as example
             end_date = datetime.now().strftime("%Y-%m-%d")
             start_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
             
-            logger.info(f"下载时间范围: {start_date} 到 {end_date}")
+            logger.info(f"Download time range: {start_date} to {end_date}")
             await manager.download_all_data(start_date, end_date)
             
-            logger.info("✅ 示例数据下载完成")
+            logger.info("✅ Sample data download completed")
             self.setup_steps["data_download"] = True
             return True
             
         except Exception as e:
-            logger.error(f"❌ 数据下载失败: {e}")
-            logger.info("可以稍后手动运行数据下载脚本")
-            # 数据下载失败不阻止后续步骤
+            logger.error(f"❌ Data download failed: {e}")
+            logger.info("You can manually run the data download script later")
+            # Data download failure does not block subsequent steps
             return True
     
     def setup_models(self) -> bool:
-        """设置AI模型"""
-        logger.info("🤖 设置AI模型...")
+        """Setup AI models"""
+        logger.info("🤖 Setting up AI models...")
         
         try:
-            # 创建模型目录
+            # Create model directories
             model_dirs = [
                 self.project_root / "models" / "trained",
                 self.project_root / "models" / "checkpoints",
@@ -287,7 +283,7 @@ class ProjectSetup:
             for model_dir in model_dirs:
                 model_dir.mkdir(parents=True, exist_ok=True)
             
-            # 检查模型文件（如果存在）
+            # Check model files (if they exist)
             model_files = [
                 "models/trained/climate_analysis.pkl",
                 "models/trained/regional_prediction.pth",
@@ -300,24 +296,24 @@ class ProjectSetup:
                     existing_models.append(model_file)
             
             if existing_models:
-                logger.info(f"✅ 发现已有模型: {existing_models}")
+                logger.info(f"✅ Found existing models: {existing_models}")
             else:
-                logger.info("ℹ️ 未发现预训练模型，将在首次运行时自动训练")
+                logger.info("ℹ️ No pre-trained models found, will auto-train on first run")
             
-            logger.info("✅ 模型设置完成")
+            logger.info("✅ Model setup completed")
             self.setup_steps["model_setup"] = True
             return True
             
         except Exception as e:
-            logger.error(f"❌ 模型设置失败: {e}")
+            logger.error(f"❌ Model setup failed: {e}")
             return False
     
     async def run_system_test(self) -> bool:
-        """运行系统测试"""
-        logger.info("🧪 运行系统测试...")
+        """Run system test"""
+        logger.info("🧪 Running system test...")
         
         try:
-            # 测试导入主要模块
+            # Test importing main modules
             test_imports = [
                 "src.utils.config",
                 "src.data_processing.data_storage",
@@ -329,80 +325,80 @@ class ProjectSetup:
             for module_name in test_imports:
                 try:
                     __import__(module_name)
-                    logger.info(f"✅ 模块导入成功: {module_name}")
+                    logger.info(f"✅ Module import successful: {module_name}")
                 except ImportError as e:
-                    logger.error(f"❌ 模块导入失败: {module_name} - {e}")
+                    logger.error(f"❌ Module import failed: {module_name} - {e}")
                     return False
             
-            # 测试配置加载
+            # Test configuration loading
             from src.utils.config import get_settings
             settings = get_settings()
-            logger.info(f"✅ 配置加载成功: {settings.APP_NAME}")
+            logger.info(f"✅ Configuration loading successful: {settings.APP_NAME}")
             
-            # 测试数据存储初始化
+            # Test data storage initialization
             from src.data_processing.data_storage import DataStorage
             storage = DataStorage()
             await storage.initialize()
             await storage.close()
-            logger.info("✅ 数据存储测试通过")
+            logger.info("✅ Data storage test passed")
             
-            logger.info("✅ 系统测试完成")
+            logger.info("✅ System test completed")
             self.setup_steps["system_test"] = True
             return True
             
         except Exception as e:
-            logger.error(f"❌ 系统测试失败: {e}")
+            logger.error(f"❌ System test failed: {e}")
             return False
     
     def print_setup_summary(self):
-        """打印设置摘要"""
+        """Print setup summary"""
         print("\n" + "="*80)
-        print("📋 设置摘要 / Setup Summary")
+        print("📋 Setup Summary")
         print("="*80)
         
         for step_name, completed in self.setup_steps.items():
             status = "✅" if completed else "❌"
             step_display = {
-                "environment_check": "环境检查",
-                "dependencies_install": "依赖安装",
-                "env_config": "环境配置",
-                "database_init": "数据库初始化",
-                "data_download": "数据下载",
-                "model_setup": "模型设置",
-                "system_test": "系统测试"
+                "environment_check": "Environment Check",
+                "dependencies_install": "Dependencies Installation",
+                "env_config": "Environment Configuration",
+                "database_init": "Database Initialization",
+                "data_download": "Data Download",
+                "model_setup": "Model Setup",
+                "system_test": "System Test"
             }
             print(f"{status} {step_display.get(step_name, step_name)}")
         
         completed_steps = sum(self.setup_steps.values())
         total_steps = len(self.setup_steps)
         
-        print(f"\n完成进度: {completed_steps}/{total_steps} ({completed_steps/total_steps*100:.1f}%)")
+        print(f"\nCompletion Progress: {completed_steps}/{total_steps} ({completed_steps/total_steps*100:.1f}%)")
         
         if completed_steps == total_steps:
-            print("\n🎉 项目设置完成！")
-            print("\n下一步操作:")
-            print("1. 启动系统: python src/main.py")
-            print("2. 访问API文档: http://localhost:8000/docs")
-            print("3. 查看日志: tail -f logs/app.log")
+            print("\n🎉 Project setup completed!")
+            print("\nNext steps:")
+            print("1. Start system: python src/main.py")
+            print("2. Access API docs: http://localhost:8000/docs")
+            print("3. View logs: tail -f logs/app.log")
         else:
-            print("\n⚠️ 项目设置未完全完成，请检查失败的步骤")
+            print("\n⚠️ Project setup not fully completed, please check failed steps")
     
     async def run_full_setup(self):
-        """运行完整设置流程"""
+        """Run full setup process"""
         self.print_banner()
         
         setup_functions = [
-            ("环境检查", self.check_environment),
-            ("安装依赖", self.install_dependencies),
-            ("环境配置", self.setup_environment_config),
-            ("数据库初始化", self.initialize_databases),
-            ("下载数据", self.download_sample_data),
-            ("模型设置", self.setup_models),
-            ("系统测试", self.run_system_test)
+            ("Environment Check", self.check_environment),
+            ("Install Dependencies", self.install_dependencies),
+            ("Environment Configuration", self.setup_environment_config),
+            ("Database Initialization", self.initialize_databases),
+            ("Download Data", self.download_sample_data),
+            ("Model Setup", self.setup_models),
+            ("System Test", self.run_system_test)
         ]
         
         for step_name, setup_func in setup_functions:
-            print(f"\n🚀 开始: {step_name}")
+            print(f"\n🚀 Starting: {step_name}")
             start_time = time.time()
             
             try:
@@ -414,20 +410,20 @@ class ProjectSetup:
                 elapsed_time = time.time() - start_time
                 
                 if success:
-                    print(f"✅ {step_name} 完成 ({elapsed_time:.1f}s)")
+                    print(f"✅ {step_name} completed ({elapsed_time:.1f}s)")
                 else:
-                    print(f"❌ {step_name} 失败 ({elapsed_time:.1f}s)")
+                    print(f"❌ {step_name} failed ({elapsed_time:.1f}s)")
                     
             except Exception as e:
                 elapsed_time = time.time() - start_time
-                print(f"❌ {step_name} 异常 ({elapsed_time:.1f}s): {e}")
-                logger.exception(f"{step_name} 执行异常")
+                print(f"❌ {step_name} exception ({elapsed_time:.1f}s): {e}")
+                logger.exception(f"{step_name} execution exception")
         
         self.print_setup_summary()
 
 
 async def main():
-    """主函数"""
+    """Main function"""
     setup = ProjectSetup()
     await setup.run_full_setup()
 

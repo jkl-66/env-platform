@@ -403,7 +403,7 @@ class ClimateDatasetAnalyzer:
         chart_path.parent.mkdir(parents=True, exist_ok=True)
         plt.savefig(chart_path, dpi=300, bbox_inches='tight')
         
-        logger.info(f"对比图表已保存: {chart_path}")
+        logger.info(f"Comparison chart saved: {chart_path}")
         
         # 显示图表
         plt.show()
@@ -412,65 +412,65 @@ class ClimateDatasetAnalyzer:
         results_path = chart_path.parent / f'method_comparison_data_{timestamp}.csv'
         df_results.to_csv(results_path, index=False, encoding='utf-8-sig')
         
-        logger.info(f"结果数据已保存: {results_path}")
+        logger.info(f"Result data saved: {results_path}")
         
         return chart_path, results_path
     
     def print_summary(self, meteorological_results: Dict, ai_results: Dict):
-        """打印分析摘要"""
+        """Print analysis summary"""
         print("\n" + "="*80)
-        print("全球极端气候事件数据集分析结果摘要")
+        print("Global Extreme Climate Events Dataset Analysis Summary")
         print("="*80)
         
-        print("\n📊 传统气象研究方法结果:")
+        print("\n📊 Traditional Meteorological Research Methods Results:")
         for method, metrics in meteorological_results.items():
             print(f"\n  {method}:")
-            print(f"    准确率: {metrics['accuracy']:.3f}")
-            print(f"    精确率: {metrics['precision']:.3f}")
-            print(f"    召回率: {metrics['recall']:.3f}")
-            print(f"    F1分数: {metrics['f1']:.3f}")
+            print(f"    Accuracy: {metrics['accuracy']:.3f}")
+            print(f"    Precision: {metrics['precision']:.3f}")
+            print(f"    Recall: {metrics['recall']:.3f}")
+            print(f"    F1 Score: {metrics['f1']:.3f}")
         
-        print("\n🤖 AI方法结果:")
+        print("\n🤖 AI Methods Results:")
         for method, metrics in ai_results.items():
             print(f"\n  {method}:")
-            print(f"    准确率: {metrics['accuracy']:.3f}")
-            print(f"    精确率: {metrics['precision']:.3f}")
-            print(f"    召回率: {metrics['recall']:.3f}")
-            print(f"    F1分数: {metrics['f1']:.3f}")
+            print(f"    Accuracy: {metrics['accuracy']:.3f}")
+            print(f"    Precision: {metrics['precision']:.3f}")
+            print(f"    Recall: {metrics['recall']:.3f}")
+            print(f"    F1 Score: {metrics['f1']:.3f}")
         
-        # 找出最佳方法
+        # Find the best method
         all_results = {**meteorological_results, **ai_results}
         best_method = max(all_results.keys(), key=lambda x: all_results[x]['f1'])
         best_f1 = all_results[best_method]['f1']
         
-        print(f"\n🏆 最佳方法: {best_method} (F1分数: {best_f1:.3f})")
+        print(f"\n🏆 Best Method: {best_method} (F1 Score: {best_f1:.3f})")
         print("="*80)
     
     async def run_analysis(self):
-        """运行完整分析流程"""
+        """Run complete analysis process"""
         try:
-            # 初始化
+            # Initialize
             await self.initialize()
             
-            # 加载数据集
+            # Load dataset
             self.load_dataset()
             
-            # 导入数据库
+            # Import to database
             record_id = await self.import_to_database()
             
-            # 数据预处理
+            # Data preprocessing
             X, y = self.preprocess_data()
             
-            # 传统气象方法分析
+            # Traditional meteorological methods analysis
             meteorological_results = self.meteorological_method_analysis(X, y)
             
-            # AI方法分析
+            # AI methods analysis
             ai_results = self.ai_method_analysis(X, y)
             
-            # 创建对比图表
+            # Create comparison chart
             chart_path, results_path = self.create_comparison_chart(meteorological_results, ai_results)
             
-            # 打印摘要
+            # Print summary
             self.print_summary(meteorological_results, ai_results)
             
             return {
@@ -482,45 +482,45 @@ class ClimateDatasetAnalyzer:
             }
             
         except Exception as e:
-            logger.error(f"分析过程中发生错误: {e}", exc_info=True)
+            logger.error(f"Error occurred during analysis: {e}", exc_info=True)
             raise
         finally:
             if USE_PROJECT_MODULES and self.data_storage:
                 await self.data_storage.close()
 
 def create_sample_data():
-    """创建示例极端气候事件数据集用于演示"""
-    print("📊 正在生成示例极端气候事件数据集...")
+    """Create sample extreme climate events dataset for demonstration"""
+    print("📊 Generating sample extreme climate events dataset...")
     
-    # 创建data目录
+    # Create data directory
     data_dir = Path('data')
     data_dir.mkdir(exist_ok=True)
     
-    # 生成示例数据
+    # Generate sample data
     np.random.seed(42)
     n_samples = 1000
     
-    # 生成时间序列（1951-2022年）
+    # Generate time series (1951-2022)
     years = np.random.randint(1951, 2023, n_samples)
     months = np.random.randint(1, 13, n_samples)
     
-    # 生成地理坐标（全球0.5度网格）
+    # Generate geographic coordinates (global 0.5 degree grid)
     latitudes = np.random.uniform(-90, 90, n_samples)
     longitudes = np.random.uniform(-180, 180, n_samples)
     
-    # 生成气象变量
-    temperatures = np.random.normal(15, 10, n_samples)  # 温度 (°C)
-    precipitation = np.random.exponential(50, n_samples)  # 降水量 (mm)
-    wind_speed = np.random.gamma(2, 5, n_samples)  # 风速 (m/s)
-    humidity = np.random.uniform(30, 100, n_samples)  # 湿度 (%)
-    pressure = np.random.normal(1013, 20, n_samples)  # 气压 (hPa)
+    # Generate meteorological variables
+    temperatures = np.random.normal(15, 10, n_samples)  # Temperature (°C)
+    precipitation = np.random.exponential(50, n_samples)  # Precipitation (mm)
+    wind_speed = np.random.gamma(2, 5, n_samples)  # Wind speed (m/s)
+    humidity = np.random.uniform(30, 100, n_samples)  # Humidity (%)
+    pressure = np.random.normal(1013, 20, n_samples)  # Pressure (hPa)
     
-    # 生成极端事件标识（基于多个条件）
+    # Generate extreme event identification (based on multiple conditions)
     extreme_temp = (temperatures > np.percentile(temperatures, 95)) | (temperatures < np.percentile(temperatures, 5))
     extreme_precip = precipitation > np.percentile(precipitation, 95)
     extreme_wind = wind_speed > np.percentile(wind_speed, 90)
     
-    # 综合极端事件判断
+    # Comprehensive extreme event determination
     extreme_event = (extreme_temp | extreme_precip | extreme_wind).astype(int)
     
     # 创建DataFrame

@@ -1,0 +1,181 @@
+{
+  "success": true,
+  "environmental_data": {
+    "carbon_emission": 500.0,
+    "air_quality_index": 75,
+    "water_pollution_index": 35,
+    "noise_level": 55,
+    "deforestation_rate": 660,
+    "plastic_waste": 1116.8
+  },
+  "analysis": {
+    "overall_severity": "low",
+    "critical_factors": [],
+    "environmental_impacts": [],
+    "severity_scores": {
+      "carbon_emission": {
+        "value": 500.0,
+        "severity": "high",
+        "score": 3,
+        "unit": "亿吨"
+      },
+      "air_quality_index": {
+        "value": 75,
+        "severity": "moderate",
+        "score": 2,
+        "unit": "AQI"
+      },
+      "water_pollution_index": {
+        "value": 35,
+        "severity": "slightly_polluted",
+        "score": 2,
+        "unit": "WPI"
+      },
+      "noise_level": {
+        "value": 55,
+        "severity": "moderate",
+        "score": 2,
+        "unit": "分贝(dB)"
+      },
+      "deforestation_rate": {
+        "value": 660,
+        "severity": "high",
+        "score": 3,
+        "unit": "万公顷/年"
+      },
+      "plastic_waste": {
+        "value": 1116.8,
+        "severity": "high",
+        "score": 3,
+        "unit": "万吨/年"
+      }
+    },
+    "deviation_analysis": {
+      "primary_concerns": [],
+      "secondary_concerns": [],
+      "normal_factors": [
+        {
+          "type": "carbon_emission",
+          "name": "碳排放量",
+          "current_value": 500.0,
+          "default_value": 416,
+          "deviation_ratio": 0.20192307692307693,
+          "deviation_score": 0.20192307692307693,
+          "unit": "亿吨"
+        },
+        {
+          "type": "air_quality_index",
+          "name": "空气质量指数",
+          "current_value": 75,
+          "default_value": 75,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "AQI"
+        },
+        {
+          "type": "water_pollution_index",
+          "name": "水污染指数",
+          "current_value": 35,
+          "default_value": 35,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "WPI"
+        },
+        {
+          "type": "noise_level",
+          "name": "噪音水平",
+          "current_value": 55,
+          "default_value": 55,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "分贝(dB)"
+        },
+        {
+          "type": "deforestation_rate",
+          "name": "森林砍伐面积",
+          "current_value": 660,
+          "default_value": 660,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "万公顷/年"
+        },
+        {
+          "type": "plastic_waste",
+          "name": "塑料废物量",
+          "current_value": 1116.8,
+          "default_value": 1116.8,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "万吨/年"
+        }
+      ],
+      "deviation_scores": {
+        "carbon_emission": {
+          "type": "carbon_emission",
+          "name": "碳排放量",
+          "current_value": 500.0,
+          "default_value": 416,
+          "deviation_ratio": 0.20192307692307693,
+          "deviation_score": 0.20192307692307693,
+          "unit": "亿吨"
+        },
+        "air_quality_index": {
+          "type": "air_quality_index",
+          "name": "空气质量指数",
+          "current_value": 75,
+          "default_value": 75,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "AQI"
+        },
+        "water_pollution_index": {
+          "type": "water_pollution_index",
+          "name": "水污染指数",
+          "current_value": 35,
+          "default_value": 35,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "WPI"
+        },
+        "noise_level": {
+          "type": "noise_level",
+          "name": "噪音水平",
+          "current_value": 55,
+          "default_value": 55,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "分贝(dB)"
+        },
+        "deforestation_rate": {
+          "type": "deforestation_rate",
+          "name": "森林砍伐面积",
+          "current_value": 660,
+          "default_value": 660,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "万公顷/年"
+        },
+        "plastic_waste": {
+          "type": "plastic_waste",
+          "name": "塑料废物量",
+          "current_value": 1116.8,
+          "default_value": 1116.8,
+          "deviation_ratio": 0.0,
+          "deviation_score": 0.0,
+          "unit": "万吨/年"
+        }
+      }
+    }
+  },
+  "professional_prompt": "A vibrant and engaging cartoon illustration depicting a lush forest under threat from rising carbon emissions and plastic waste. The central focus is a large, polluted river flowing through the scene, with floating plastic debris and dark, murky water. The river is surrounded by trees with partially burned or wilted leaves, symbolizing the impact of high carbon emissions and deforestation. In the background, a dense layer of smog hovers above the forest, subtly altering the sky's color to a dull gray. A few animals, such as a bird and a small mammal, are shown in the foreground, looking concerned as they move through the affected area. The overall atmosphere is educational and visually striking, using bright and vibrant colors to highlight the contrast between the natural environment and the pollution it faces. The image emphasizes the urgency of environmental protection while offering a hopeful message through the presence of greenery and wildlife. The composition ensures that the polluted river takes up 60-70% of the visual space, with the forest and smog making up the remaining elements. No human figures, text, or labels are included.",
+  "saved_paths": [
+    "outputs\\environmental_images\\env_warning_carbon_emission_5000_air_quali_20250709_192005_1_dashscope.png"
+  ],
+  "generation_time": 12.65674,
+  "target_audience": "students",
+  "timestamp": "2025-07-09T19:20:05.478293",
+  "models_used": {
+    "chat_model": "qwen-turbo",
+    "image_model": "flux-schnell"
+  }
+}

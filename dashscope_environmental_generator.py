@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-基于阿里云 DashScope 的环境保护警示图像生成器
+Environmental Protection Warning Image Generator based on Alibaba Cloud DashScope
 
-使用 Qwen 聊天模型生成专业的环境警示 prompt
-使用 Flux 图像生成模型生成高质量的环境警示图像
-支持用户输入碳排放量、污染指数等环境数据
+Uses Qwen chat model to generate professional environmental warning prompts
+Uses Flux image generation model to generate high-quality environmental warning images
+Supports user input of carbon emissions, pollution indices and other environmental data
 """
 
 import os
@@ -24,73 +24,75 @@ from http import HTTPStatus
 from urllib.parse import urlparse, unquote
 from pathlib import PurePosixPath
 
-# 导入 DashScope
+# Import DashScope
 try:
     from dashscope import Generation, ImageSynthesis
 except ImportError:
-    print("❌ 请安装 dashscope: pip install dashscope")
+    print("❌ Please install dashscope: pip install dashscope")
     sys.exit(1)
 
-# 加载环境变量
+# Load environment variables
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
     pass
 
-# 导入配置
+# Import configuration
 try:
     from src.utils.config import get_settings
     settings = get_settings()
 except ImportError:
     settings = None
 
-# 配置日志
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class DashScopeEnvironmentalGenerator:
-    """基于阿里云 DashScope 的环境保护警示图像生成器"""
+    """Environmental Protection Warning Image Generator based on Alibaba Cloud DashScope"""
     
     def __init__(self, 
                  dashscope_api_key: Optional[str] = None,
                  chat_model: str = "qwen-turbo",
                  image_model: str = "flux-schnell"):
         """
-        初始化 DashScope 环境图像生成器
+        Initialize DashScope Environmental Image Generator
         
         Args:
             dashscope_api_key: DashScope API Key
-            chat_model: 聊天模型名称
-            image_model: 图像生成模型名称
+            chat_model: Chat model name
+            image_model: Image generation model name
         """
         self.api_key = dashscope_api_key or os.getenv('DASHSCOPE_API_KEY')
         self.chat_model = chat_model
         self.image_model = image_model
         
         if not self.api_key:
-            raise ValueError("❌ 未设置 DASHSCOPE_API_KEY，请在 .env 文件中配置")
+            raise ValueError("❌ DASHSCOPE_API_KEY not set, please configure it in .env file")
         
-        # 设置 API Key
+        # Set API Key
         os.environ['DASHSCOPE_API_KEY'] = self.api_key
         
-        # 环境数据类型定义（包含当前世界正常数据作为默认值）
+        # Environmental data type definitions (including current world normal data as default values)
         self.environmental_data_types = {
             "carbon_emission": {
-                "name": "碳排放量",
-                "unit": "吨CO2当量",
-                "default_value": 150,  # 当前世界平均碳排放量
+                "name": "Carbon Emissions",
+                "unit": "billion tons",
+                "default_value": 416,  # Global carbon emissions in 2024
+                "description": "Global carbon emissions, approximately 41.6 billion tons in 2024",
                 "thresholds": {
-                    "low": 100,
-                    "medium": 500,
-                    "high": 1000,
-                    "critical": 2000
+                    "low": 300,
+                    "medium": 400,
+                    "high": 500,
+                    "critical": 600
                 }
             },
             "air_quality_index": {
-                "name": "空气质量指数",
+                "name": "Air Quality Index",
                 "unit": "AQI",
-                "default_value": 75,  # 当前世界平均AQI
+                "default_value": 75,  # Current world average AQI
+                "description": "Air quality levels: Good(AQI≤50), Moderate(AQI≤100), Unhealthy for Sensitive Groups(AQI≤150), Unhealthy(AQI≤200), Very Unhealthy(AQI≤300), Hazardous(AQI>300)",
                 "thresholds": {
                     "good": 50,
                     "moderate": 100,
@@ -101,9 +103,10 @@ class DashScopeEnvironmentalGenerator:
                 }
             },
             "water_pollution_index": {
-                "name": "水污染指数",
+                "name": "Water Pollution Index",
                 "unit": "WPI",
-                "default_value": 35,  # 当前世界平均水污染指数
+                "default_value": 35,  # Current world average water pollution index
+                "description": "Below 60 is suitable for most normal aquatic ecosystems and general water use needs",
                 "thresholds": {
                     "clean": 25,
                     "slightly_polluted": 50,
@@ -112,9 +115,10 @@ class DashScopeEnvironmentalGenerator:
                 }
             },
             "noise_level": {
-                "name": "噪音水平",
-                "unit": "分贝(dB)",
-                "default_value": 55,  # 当前世界平均噪音水平
+                "name": "Noise Level",
+                "unit": "decibels(dB)",
+                "default_value": 55,  # Current world average noise level
+                "description": "30-40 decibels is a relatively quiet normal environment; over 50 decibels affects sleep and rest. Above 70 decibels interferes with conversation, causes irritability, lack of concentration, affects work efficiency, and may even cause accidents; long-term work or living in noise environments above 90 decibels will seriously affect hearing and cause other diseases",
                 "thresholds": {
                     "quiet": 40,
                     "moderate": 55,
@@ -124,131 +128,60 @@ class DashScopeEnvironmentalGenerator:
                 }
             },
             "deforestation_rate": {
-                "name": "森林砍伐率",
-                "unit": "公顷/年",
-                "default_value": 3000,  # 当前世界平均森林砍伐率
+                "name": "Deforestation Area",
+                "unit": "10k hectares/year",
+                "default_value": 660,  # Current world deforestation area
+                "description": "Global annual deforestation area, currently about 6.6 million hectares/year",
                 "thresholds": {
-                    "low": 1000,
-                    "medium": 5000,
-                    "high": 10000,
-                    "critical": 20000
+                    "low": 300,
+                    "medium": 500,
+                    "high": 800,
+                    "critical": 1000
                 }
             },
             "plastic_waste": {
-                "name": "塑料废物量",
-                "unit": "吨/年",
-                "default_value": 250,  # 当前世界平均塑料废物量
+                "name": "Plastic Waste",
+                "unit": "10k tons/year",
+                "default_value": 1116.8,  # Current world plastic waste amount
+                "description": "Global annual plastic waste generation, currently about 11.168 million tons/year",
                 "thresholds": {
-                    "low": 100,
-                    "medium": 500,
-                    "high": 1000,
-                    "critical": 2000
+                    "low": 500,
+                    "medium": 800,
+                    "high": 1200,
+                    "critical": 1500
                 }
             }
         }
         
-        # 图像风格定义
+        # Image style definitions
         self.image_styles = {
-            "general": {
-                "style": "realistic environmental documentary photography",
-                "mood": "serious and informative",
-                "color_palette": "natural colors with dramatic contrast"
-            },
-            "educators": {
-                "style": "professional educational illustration",
-                "mood": "clear and instructional",
-                "color_palette": "balanced colors with good visibility"
-            },
-            "parents": {
-                "style": "approachable realistic photography",
-                "mood": "concerning but not frightening",
-                "color_palette": "warm tones with clear messaging"
-            },
-            "students": {
-                "style": "cartoon illustration, animated style",
-                "mood": "engaging and educational",
-                "color_palette": "bright and vibrant colors"
-            }
+            "realistic": "Realistic style",
+            "artistic": "Artistic style", 
+            "scientific": "Scientific visualization",
+            "infographic": "Infographic style"
         }
         
-        logger.info(f"✅ DashScope 环境图像生成器初始化完成")
-        logger.info(f"🤖 聊天模型: {self.chat_model}")
-        logger.info(f"🎨 图像模型: {self.image_model}")
+        logger.info(f"✅ DashScope Environmental Image Generator initialization completed")
+        logger.info(f"🤖 Chat model: {self.chat_model}")
+        logger.info(f"🎨 Image model: {self.image_model}")
     
-    def _calculate_deviation_analysis(self, data: Dict[str, Union[float, int]]) -> Dict[str, Any]:
-        """
-        计算环境数据与默认值的偏差分析
-        
-        Args:
-            data: 环境数据字典
-            
-        Returns:
-            偏差分析结果
-        """
-        deviation_analysis = {
-            "primary_concerns": [],  # 主要关注点（偏差最大的）
-            "secondary_concerns": [],  # 次要关注点
-            "normal_factors": [],  # 正常范围内的因素
-            "deviation_scores": {}  # 偏差分数
-        }
-        
-        for data_type, value in data.items():
-            if data_type not in self.environmental_data_types:
-                continue
-                
-            default_value = self.environmental_data_types[data_type]["default_value"]
-            
-            # 计算偏差比例
-            if default_value > 0:
-                deviation_ratio = (value - default_value) / default_value
-            else:
-                deviation_ratio = value / 100  # 避免除零错误
-            
-            # 计算偏差分数（绝对值，用于排序）
-            deviation_score = abs(deviation_ratio)
-            
-            deviation_info = {
-                "type": data_type,
-                "name": self.environmental_data_types[data_type]["name"],
-                "current_value": value,
-                "default_value": default_value,
-                "deviation_ratio": deviation_ratio,
-                "deviation_score": deviation_score,
-                "unit": self.environmental_data_types[data_type]["unit"]
-            }
-            
-            deviation_analysis["deviation_scores"][data_type] = deviation_info
-            
-            # 分类偏差程度
-            if deviation_score >= 1.0:  # 偏差100%以上
-                deviation_analysis["primary_concerns"].append(deviation_info)
-            elif deviation_score >= 0.3:  # 偏差30%以上
-                deviation_analysis["secondary_concerns"].append(deviation_info)
-            else:
-                deviation_analysis["normal_factors"].append(deviation_info)
-        
-        # 按偏差分数排序
-        deviation_analysis["primary_concerns"].sort(key=lambda x: x["deviation_score"], reverse=True)
-        deviation_analysis["secondary_concerns"].sort(key=lambda x: x["deviation_score"], reverse=True)
-        
-        return deviation_analysis
+
     
     def _analyze_environmental_data(self, data: Dict[str, Union[float, int]]) -> Dict[str, Any]:
         """
-        分析环境数据，确定污染等级和影响
+        Analyze environmental data to determine pollution levels and impacts
         
         Args:
-            data: 环境数据字典，键为数据类型，值为数值
+            data: Environmental data dictionary, keys are data types, values are numerical values
             
         Returns:
-            分析结果字典
+            Analysis result dictionary
         """
         analysis = {
             "overall_severity": "low",
             "critical_factors": [],
             "environmental_impacts": [],
-            "severity_scores": {},
-            "deviation_analysis": self._calculate_deviation_analysis(data)  # 添加偏差分析
+            "severity_scores": {}
         }
         
         total_severity_score = 0
@@ -256,13 +189,13 @@ class DashScopeEnvironmentalGenerator:
         
         for data_type, value in data.items():
             if data_type not in self.environmental_data_types:
-                logger.warning(f"⚠️ 未知的环境数据类型: {data_type}")
+                logger.warning(f"⚠️ Unknown environmental data type: {data_type}")
                 continue
             
             data_config = self.environmental_data_types[data_type]
             thresholds = data_config["thresholds"]
             
-            # 确定严重程度
+            # Determine severity level
             if data_type == "air_quality_index":
                 if value <= thresholds["good"]:
                     severity = "good"
@@ -283,7 +216,7 @@ class DashScopeEnvironmentalGenerator:
                     severity = "hazardous"
                     score = 6
             else:
-                # 通用阈值判断
+                # Generic threshold assessment
                 threshold_keys = list(thresholds.keys())
                 if value <= thresholds[threshold_keys[0]]:
                     severity = threshold_keys[0]
@@ -308,7 +241,7 @@ class DashScopeEnvironmentalGenerator:
             total_severity_score += score
             valid_factors += 1
             
-            # 识别关键因素
+            # Identify critical factors
             if score >= 4:
                 analysis["critical_factors"].append({
                     "type": data_type,
@@ -318,7 +251,7 @@ class DashScopeEnvironmentalGenerator:
                     "severity": severity
                 })
         
-        # 计算总体严重程度
+        # Calculate overall severity
         if valid_factors > 0:
             avg_score = total_severity_score / valid_factors
             if avg_score >= 5:
@@ -332,111 +265,194 @@ class DashScopeEnvironmentalGenerator:
         
         return analysis
     
+    def _calculate_data_deviations(self, environmental_data: Dict[str, Union[float, int]]) -> Dict[str, Any]:
+        """
+        Calculate deviations from default values for each environmental factor
+        
+        Args:
+            environmental_data: Environmental data dictionary
+            
+        Returns:
+            Deviation analysis results
+        """
+        deviations = []
+        
+        for data_type, value in environmental_data.items():
+            if data_type in self.environmental_data_types:
+                data_config = self.environmental_data_types[data_type]
+                default_val = data_config['default_value']
+                
+                # Calculate absolute and percentage deviation
+                abs_deviation = abs(value - default_val)
+                pct_deviation = abs((value - default_val) / default_val) * 100
+                
+                deviations.append({
+                    'data_type': data_type,
+                    'name': data_config['name'],
+                    'value': value,
+                    'default_value': default_val,
+                    'abs_deviation': abs_deviation,
+                    'pct_deviation': pct_deviation,
+                    'unit': data_config['unit'],
+                    'is_above_default': value > default_val
+                })
+        
+        # Sort by percentage deviation (highest first)
+        deviations.sort(key=lambda x: x['pct_deviation'], reverse=True)
+        
+        # Build top deviations text
+        top_deviations_text = []
+        for i, dev in enumerate(deviations[:3]):  # Top 3 deviations
+            direction = "above" if dev['is_above_default'] else "below"
+            top_deviations_text.append(
+                f"{i+1}. {dev['name']}: {dev['pct_deviation']:.1f}% {direction} normal "
+                f"({dev['value']} vs {dev['default_value']} {dev['unit']})"
+            )
+        
+        return {
+            'deviations': deviations,
+            'top_deviations': deviations[:3],
+            'top_deviations_text': '\n'.join(top_deviations_text)
+        }
+    
+    def _build_emphasis_instructions(self, deviation_analysis: Dict[str, Any]) -> str:
+        """
+        Build visual emphasis instructions based on data deviations
+        
+        Args:
+            deviation_analysis: Deviation analysis results
+            
+        Returns:
+            Visual emphasis instructions string
+        """
+        instructions = []
+        
+        for i, deviation in enumerate(deviation_analysis['top_deviations']):
+            data_type = deviation['data_type']
+            name = deviation['name']
+            pct_dev = deviation['pct_deviation']
+            is_above = deviation['is_above_default']
+            
+            # Generate specific visual instructions based on data type and severity
+            if data_type == 'carbon_emission':
+                if is_above and pct_dev > 20:
+                    instructions.append(f"- HEAVILY emphasize thick, dark smoke and industrial pollution covering the sky")
+                elif is_above:
+                    instructions.append(f"- Show visible air pollution and smog in the atmosphere")
+            
+            elif data_type == 'air_quality_index':
+                if is_above and pct_dev > 50:
+                    instructions.append(f"- Make the air visibly thick with smog, reduced visibility, hazy atmosphere")
+                elif is_above:
+                    instructions.append(f"- Show polluted air with visible particles and reduced clarity")
+            
+            elif data_type == 'water_pollution_index':
+                if is_above and pct_dev > 30:
+                    instructions.append(f"- Show severely contaminated water bodies with visible pollution, dead fish, toxic colors")
+                elif is_above:
+                    instructions.append(f"- Display polluted water with murky, discolored appearance")
+            
+            elif data_type == 'noise_level':
+                if is_above and pct_dev > 25:
+                    instructions.append(f"- Emphasize industrial noise sources, heavy machinery, urban chaos")
+                elif is_above:
+                    instructions.append(f"- Show busy, noisy urban environment with traffic and construction")
+            
+            elif data_type == 'deforestation_rate':
+                if is_above and pct_dev > 40:
+                    instructions.append(f"- PROMINENTLY show massive deforestation, clear-cut areas, destroyed forest landscapes")
+                elif is_above:
+                    instructions.append(f"- Display areas of forest loss and environmental degradation")
+            
+            elif data_type == 'plastic_waste':
+                if is_above and pct_dev > 35:
+                    instructions.append(f"- Show overwhelming plastic waste pollution, garbage-filled landscapes")
+                elif is_above:
+                    instructions.append(f"- Include visible plastic waste and pollution in the environment")
+        
+        # Add priority instruction
+        if instructions:
+            priority_instruction = f"HIGHEST PRIORITY: Focus most prominently on {deviation_analysis['top_deviations'][0]['name']} ({deviation_analysis['top_deviations'][0]['pct_deviation']:.1f}% deviation)"
+            instructions.insert(0, priority_instruction)
+        
+        return '\n'.join(instructions) if instructions else "Show general environmental warning imagery"
+    
     def _generate_professional_prompt(self, 
                                     environmental_data: Dict[str, Union[float, int]],
                                     user_description: Optional[str] = None,
                                     target_audience: str = "general") -> str:
         """
-        使用 Qwen 模型生成专业的环境警示图像 prompt
+        Generate professional environmental warning image prompt using Qwen model
         
         Args:
-            environmental_data: 环境数据
-            user_description: 用户描述
-            target_audience: 目标受众 (general, educators, parents, students)
+            environmental_data: Environmental data
+            user_description: User description
+            target_audience: Target audience (general, educators, parents, students)
             
         Returns:
-            生成的专业 prompt
+            Generated professional prompt
         """
-        # 分析环境数据
+        # Analyze environmental data
         analysis = self._analyze_environmental_data(environmental_data)
         
-        # 获取偏差分析和图像风格
-        deviation_analysis = analysis.get("deviation_analysis", {})
-        style_config = self.image_styles.get(target_audience, self.image_styles["general"])
+        # Calculate deviation from default values and build emphasis instructions
+        deviation_analysis = self._calculate_data_deviations(environmental_data)
+        emphasis_instructions = self._build_emphasis_instructions(deviation_analysis)
         
-        # 构建主次关注点描述
-        primary_concerns = deviation_analysis.get("primary_concerns", [])
-        secondary_concerns = deviation_analysis.get("secondary_concerns", [])
-        
-        primary_desc = ""
-        secondary_desc = ""
-        
-        if primary_concerns:
-            primary_items = []
-            for concern in primary_concerns[:2]:  # 最多取前2个主要关注点
-                deviation_pct = abs(concern["deviation_ratio"]) * 100
-                primary_items.append(f"{concern['name']} (偏差{deviation_pct:.0f}%)")
-            primary_desc = f"主要关注点：{', '.join(primary_items)}"
-        
-        if secondary_concerns:
-            secondary_items = []
-            for concern in secondary_concerns[:3]:  # 最多取前3个次要关注点
-                deviation_pct = abs(concern["deviation_ratio"]) * 100
-                secondary_items.append(f"{concern['name']} (偏差{deviation_pct:.0f}%)")
-            secondary_desc = f"次要关注点：{', '.join(secondary_items)}"
-        
-        # 构建系统提示
+        # Build enhanced system prompt with data-driven visual emphasis
         system_prompt = f"""
-你是一位专业的环境保护教育专家和视觉设计师。你的任务是根据提供的环境数据，生成一个专业的、具有教育意义的环境警示图像描述prompt。
+You are a professional environmental protection education expert and visual designer. Please generate a professional environmental warning image description prompt based on the provided environmental data.
 
-要求：
-1. 基于具体的环境数据数值，创建真实可信的场景
-2. 突出环境问题的严重性和紧迫性
-3. 适合教育用途，能够引起观众的环保意识
-4. 描述要具体、生动，包含视觉细节
-5. 避免过于恐怖或极端的内容
-6. 包含希望和解决方案的元素
-7. **重要限制：图像中绝对不能包含人物、人脸、人体或任何人类形象**
-8. **重要限制：图像中不能包含任何文字、标签、标识或文本元素**
-9. 图像风格：{style_config['style']}
-10. 情绪氛围：{style_config['mood']}
-11. 色彩搭配：{style_config['color_palette']}
+CRITICAL REQUIREMENTS:
+1. Create realistic and credible scenes that DIRECTLY reflect the specific environmental data values provided
+2. The image MUST visually emphasize environmental factors that deviate most from normal levels
+3. Use the deviation analysis to determine which environmental issues should be most prominent in the image
+4. Generate WARNING imagery that clearly shows environmental damage and consequences
+5. Make the image educational and impactful for raising environmental awareness
+6. Descriptions should be specific, vivid, and include detailed visual elements
+7. Images cannot contain people, faces or human bodies
+8. Images cannot contain any text, labels or text elements
+9. Focus on creating a sense of urgency and environmental crisis
 
-prompt应该包含：
-- 具体的环境场景描述
-- 污染或环境问题的视觉表现
-- 对动物或生态系统的影响（不包含人类）
-- 专业的摄影风格描述
-- 适当的色彩和光线描述
+VISUAL EMPHASIS INSTRUCTIONS:
+{emphasis_instructions}
 
-图像主次控制：
-- 如果有主要关注点，应该在图像中占据主导地位（60-70%的视觉重点）
-- 次要关注点作为背景或辅助元素（20-30%的视觉重点）
-- 正常范围内的因素可以作为环境背景（10%的视觉重点）
-
-请用英文生成prompt，长度控制在200-300个单词。
+Please generate the prompt in English, keeping the length between 200-300 words.
 """
         
-        # 构建用户输入
+        # Build enhanced user input with detailed data analysis
         data_description = []
-        for data_type, score_info in analysis["severity_scores"].items():
-            data_config = self.environmental_data_types[data_type]
-            data_description.append(
-                f"{data_config['name']}: {score_info['value']} {score_info['unit']} (严重程度: {score_info['severity']})"
-            )
+        for data_type, value in environmental_data.items():
+            if data_type in self.environmental_data_types:
+                data_config = self.environmental_data_types[data_type]
+                default_val = data_config['default_value']
+                deviation_pct = ((value - default_val) / default_val) * 100
+                severity_info = analysis['severity_scores'].get(data_type, {})
+                
+                data_description.append(
+                    f"{data_config['name']}: {value} {data_config['unit']} "
+                    f"(Default: {default_val}, Deviation: {deviation_pct:+.1f}%, "
+                    f"Severity: {severity_info.get('severity', 'unknown')})"
+                )
         
         user_input = f"""
-环境数据分析结果：
+DETAILED ENVIRONMENTAL DATA ANALYSIS:
 {chr(10).join(data_description)}
 
-总体严重程度：{analysis['overall_severity']}
-关键问题因素：{len(analysis['critical_factors'])}个
+Overall Environmental Severity: {analysis['overall_severity']}
+Critical Factors Requiring Visual Emphasis: {', '.join([f['name'] for f in analysis['critical_factors']])}
 
-偏差分析结果：
-{primary_desc}
-{secondary_desc}
-
-目标受众：{target_audience}
-图像风格要求：{style_config['style']} 风格，{style_config['mood']} 氛围，{style_config['color_palette']} 色调
+Most Significant Deviations from Normal Levels:
+{deviation_analysis['top_deviations_text']}
 """
         
         if user_description:
-            user_input += f"\n\n用户补充描述：{user_description}"
+            user_input += f"\n\nUser's Additional Requirements: {user_description}"
         
-        user_input += "\n\n请生成一个专业的环境警示图像描述prompt（英文），确保图像主次分明，不包含人物和文字。"
+        user_input += "\n\nPlease generate a professional environmental warning image description prompt that emphasizes the most critical environmental issues based on the data provided."
         
         try:
-            logger.info("🤖 正在使用 Qwen 模型生成专业 prompt...")
+            logger.info("🤖 Using Qwen model to generate professional prompt...")
             
             response = Generation.call(
                 model=self.chat_model,
@@ -449,66 +465,47 @@ prompt应该包含：
             
             if response.status_code == HTTPStatus.OK:
                 generated_prompt = response.output.choices[0].message.content.strip()
-                logger.info(f"✅ 专业 prompt 生成成功")
-                logger.info(f"📝 生成的 prompt: {generated_prompt[:100]}...")
+                logger.info(f"✅ Professional prompt generation successful")
+                logger.info(f"📝 Generated prompt: {generated_prompt[:100]}...")
                 return generated_prompt
             else:
-                logger.error(f"❌ Qwen 模型调用失败: {response.message}")
+                logger.error(f"❌ Qwen model call failed: {response.message}")
                 return self._fallback_prompt_generation(environmental_data, analysis)
                 
         except Exception as e:
-            logger.error(f"❌ 生成专业 prompt 时发生错误: {e}")
+            logger.error(f"❌ Error occurred while generating professional prompt: {e}")
             return self._fallback_prompt_generation(environmental_data, analysis)
     
     def _fallback_prompt_generation(self, 
                                   environmental_data: Dict[str, Union[float, int]], 
                                   analysis: Dict[str, Any]) -> str:
         """
-        备用 prompt 生成方法
+        Fallback prompt generation method
         
         Args:
-            environmental_data: 环境数据
-            analysis: 环境数据分析结果
+            environmental_data: Environmental data
+            analysis: Environmental data analysis results
             
         Returns:
-            备用生成的 prompt
+            Fallback generated prompt
         """
-        severity_map = {
-            "low": "mild environmental concern",
-            "medium": "moderate environmental pollution",
-            "high": "severe environmental degradation",
-            "critical": "critical environmental crisis"
-        }
-        
-        base_prompt = f"Environmental warning scene showing {severity_map.get(analysis['overall_severity'], 'environmental issues')}"
-        
-        # 添加具体的环境问题
-        if "carbon_emission" in environmental_data:
-            base_prompt += ", industrial emissions and carbon pollution"
-        if "air_quality_index" in environmental_data:
-            base_prompt += ", smoggy air and poor visibility"
-        if "water_pollution_index" in environmental_data:
-            base_prompt += ", contaminated water bodies"
-        if "deforestation_rate" in environmental_data:
-            base_prompt += ", deforested landscapes"
-        
-        base_prompt += ", professional environmental documentary photography, high contrast, dramatic lighting, educational purpose, realistic style, 4k quality"
-        
+        base_prompt = "Environmental warning scene showing environmental issues"
+        base_prompt += ", professional environmental documentary photography, realistic style, high quality"
         return base_prompt
     
     def _generate_image_with_flux(self, prompt: str, size: str = '1024*1024') -> Optional[Image.Image]:
         """
-        使用 Flux 模型生成图像
+        Generate image using Flux model
         
         Args:
-            prompt: 图像生成 prompt
-            size: 图像尺寸
+            prompt: Image generation prompt
+            size: Image size
             
         Returns:
-            生成的 PIL Image 对象
+            Generated PIL Image object
         """
         try:
-            logger.info(f"🎨 正在使用 Flux 模型生成图像...")
+            logger.info(f"🎨 Generating image using Flux model...")
             logger.info(f"📝 Prompt: {prompt}")
             
             response = ImageSynthesis.call(
@@ -518,10 +515,10 @@ prompt应该包含：
             )
             
             if response.status_code == HTTPStatus.OK:
-                logger.info(f"✅ 图像生成成功")
-                logger.info(f"📊 使用情况: {response.usage}")
+                logger.info(f"✅ Image generation successful")
+                logger.info(f"📊 Usage: {response.usage}")
                 
-                # 下载并处理图像
+                # Download and process image
                 for result in response.output.results:
                     file_name = PurePosixPath(unquote(urlparse(result.url).path)).parts[-1]
                     image_content = requests.get(result.url).content
@@ -529,89 +526,68 @@ prompt应该包含：
                     return image
                     
             else:
-                logger.error(f"❌ Flux 模型调用失败: status_code={response.status_code}, code={response.code}, message={response.message}")
+                logger.error(f"❌ Flux model call failed: status_code={response.status_code}, code={response.code}, message={response.message}")
                 return None
                 
         except Exception as e:
-            logger.error(f"❌ 图像生成时发生错误: {e}")
+            logger.error(f"❌ Error occurred during image generation: {e}")
             return None
     
     def generate_environmental_warning_image(self,
                                            environmental_data: Dict[str, Union[float, int]],
                                            user_description: Optional[str] = None,
-                                           target_audience: str = "general",
-                                           image_size: str = '1024*1024',
-                                           auto_open: bool = True) -> Dict[str, Any]:
+                                           style: str = "realistic",
+                                           image_size: str = '1024*1024') -> Dict[str, Any]:
         """
-        生成环境警示图像
+        Generate environmental warning image
         
         Args:
-            environmental_data: 环境数据字典
-            user_description: 用户补充描述
-            target_audience: 目标受众
-            image_size: 图像尺寸
-            auto_open: 是否自动打开图片
+            environmental_data: Environmental data dictionary
+            user_description: User additional description
+            style: Image style
+            image_size: Image size
             
         Returns:
-            生成结果字典
+            Generation result dictionary
         """
-        start_time = datetime.now()
-        
         try:
-            # 1. 分析环境数据
-            logger.info("📊 分析环境数据...")
+            # Analyze environmental data
             analysis = self._analyze_environmental_data(environmental_data)
             
-            # 2. 生成专业 prompt
-            logger.info("🤖 生成专业 prompt...")
+            # Generate professional prompt
             professional_prompt = self._generate_professional_prompt(
-                environmental_data, user_description, target_audience
+                environmental_data, user_description
             )
             
-            # 3. 生成图像
-            logger.info("🎨 生成环境警示图像...")
+            # Generate image
             image = self._generate_image_with_flux(professional_prompt, image_size)
             
             if not image:
-                return {
-                    "success": False,
-                    "error": "图像生成失败",
-                    "analysis": analysis,
-                    "prompt": professional_prompt
-                }
+                # Use fallback prompt generation
+                fallback_prompt = self._fallback_prompt_generation(environmental_data, analysis)
+                image = self._generate_image_with_flux(fallback_prompt, image_size)
+                
+                if not image:
+                    return {
+                        "success": False,
+                        "error": "Image generation failed",
+                        "analysis": analysis
+                    }
             
-            # 4. 保存图像
+            # Save image
             output_dir = "outputs/environmental_images"
-            saved_paths = self._save_images([image], environmental_data, output_dir, auto_open)
+            saved_paths = self._save_images([image], environmental_data, output_dir)
             
-            end_time = datetime.now()
-            generation_time = (end_time - start_time).total_seconds()
-            
-            # 5. 生成报告
-            result = {
+            return {
                 "success": True,
                 "environmental_data": environmental_data,
                 "analysis": analysis,
-                "professional_prompt": professional_prompt,
                 "image": image,
-                "saved_paths": saved_paths,
-                "generation_time": generation_time,
-                "target_audience": target_audience,
-                "timestamp": datetime.now().isoformat(),
-                "models_used": {
-                    "chat_model": self.chat_model,
-                    "image_model": self.image_model
-                }
+                "saved_paths": saved_paths
             }
             
-            # 保存生成报告
-            self._save_generation_report(result, output_dir)
-            
-            logger.info(f"✅ 环境警示图像生成完成，耗时 {generation_time:.2f} 秒")
-            return result
-            
         except Exception as e:
-            logger.error(f"❌ 生成环境警示图像时发生错误: {e}")
+            logger.error(f"Error occurred while generating environmental warning image: {e}")
             return {
                 "success": False,
                 "error": str(e),
@@ -624,25 +600,25 @@ prompt应该包含：
                     output_dir: str = "outputs/environmental_images",
                     auto_open: bool = True) -> List[str]:
         """
-        保存生成的图像
+        Save generated images
         
         Args:
-            images: 图像列表
-            environmental_data: 环境数据
-            output_dir: 输出目录
-            auto_open: 是否自动打开图片
+            images: Image list
+            environmental_data: Environmental data
+            output_dir: Output directory
+            auto_open: Whether to automatically open images
             
         Returns:
-            保存的文件路径列表
+            List of saved file paths
         """
         if not images:
             return []
         
-        # 创建输出目录
+        # Create output directory
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
         
-        # 生成文件名
+        # Generate filename
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         data_summary = "_".join([f"{k}_{v}" for k, v in list(environmental_data.items())[:2]])
         safe_summary = "".join(c for c in data_summary if c.isalnum() or c in ('_', '-'))[:30]
@@ -656,20 +632,20 @@ prompt应该包含：
             image.save(file_path, "PNG")
             saved_paths.append(str(file_path))
             
-            logger.info(f"图像已保存: {file_path}")
+            logger.info(f"Image saved: {file_path}")
             
-            # 自动打开图片
-            if auto_open and i == 1:  # 只打开第一张图片
+            # Automatically open image if requested
+            if auto_open:
                 self._open_image(file_path)
         
         return saved_paths
     
     def _open_image(self, file_path: Path):
         """
-        自动打开图片文件
+        Automatically open image file
         
         Args:
-            file_path: 图片文件路径
+            file_path: Image file path
         """
         try:
             system = platform.system()
@@ -680,20 +656,20 @@ prompt应该包含：
             elif system == "Linux":
                 subprocess.run(["xdg-open", str(file_path)])
             else:
-                logger.warning(f"不支持的操作系统: {system}，无法自动打开图片")
+                logger.warning(f"Unsupported operating system: {system}, cannot automatically open image")
                 return
             
-            logger.info(f"已自动打开图片: {file_path}")
+            logger.info(f"Image automatically opened: {file_path}")
         except Exception as e:
-            logger.warning(f"无法自动打开图片 {file_path}: {e}")
+            logger.warning(f"Cannot automatically open image {file_path}: {e}")
     
     def _save_generation_report(self, result: Dict[str, Any], output_dir: str):
         """
-        保存生成报告
+        Save generation report
         
         Args:
-            result: 生成结果
-            output_dir: 输出目录
+            result: Generation results
+            output_dir: Output directory
         """
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
@@ -701,34 +677,183 @@ prompt应该包含：
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         report_file = output_path / f"environmental_report_{timestamp}.json"
         
-        # 准备报告数据（移除不能序列化的对象）
+        # Prepare report data (remove non-serializable objects)
         report_data = result.copy()
         if "image" in report_data:
-            del report_data["image"]  # PIL Image 对象不能序列化
+            del report_data["image"]  # PIL Image objects cannot be serialized
         
         with open(report_file, 'w', encoding='utf-8') as f:
             json.dump(report_data, f, ensure_ascii=False, indent=2)
         
-        logger.info(f"生成报告已保存: {report_file}")
+        logger.info(f"Generation report saved: {report_file}")
     
     def get_supported_data_types(self) -> Dict[str, Dict[str, Any]]:
         """
-        获取支持的环境数据类型
+        Get supported environmental data types
         
         Returns:
-            环境数据类型字典
+            Environmental data types dictionary
         """
         return self.environmental_data_types
     
-    def test_connection(self) -> Dict[str, Any]:
+    def get_default_environmental_data(self):
+        """Get default environmental data"""
+        environmental_data = {}
+        for data_type, config in self.environmental_data_types.items():
+            environmental_data[data_type] = config['default_value']
+        return environmental_data
+    
+    def interactive_data_input(self):
+        """Interactive environmental data input function"""
+        print("\n=== Environmental Data Input Mode Selection ===")
+        print("1. Interactive Input - Enter environmental data item by item")
+        print("2. Quick Mode - Use current world average data")
+        print("3. View Data Descriptions")
+        
+        while True:
+            try:
+                choice = input("\nPlease select mode (1/2/3): ").strip()
+                
+                if choice == "1":
+                    return self._detailed_interactive_input()
+                elif choice == "2":
+                    return self._quick_mode_input()
+                elif choice == "3":
+                    self._show_data_descriptions()
+                    continue
+                else:
+                    print("Please enter a valid choice (1/2/3)")
+                    
+            except KeyboardInterrupt:
+                print("\nUser cancelled input")
+                return None
+    
+    def _show_data_descriptions(self):
+        """Show data descriptions"""
+        print("\n=== Environmental Data Descriptions ===")
+        for data_type, config in self.environmental_data_types.items():
+            print(f"\n📊 {config['name']} ({config['unit']})")
+            print(f"   Description: {config['description']}")
+            print(f"   Current world average: {config['default_value']}")
+            print("   Reference thresholds:")
+            for level, value in config['thresholds'].items():
+                level_name = {
+                    'low': 'Low', 'medium': 'Medium', 'high': 'High', 'critical': 'Critical',
+                    'good': 'Good', 'moderate': 'Moderate', 'unhealthy_sensitive': 'Unhealthy for Sensitive',
+                    'unhealthy': 'Unhealthy', 'very_unhealthy': 'Very Unhealthy', 'hazardous': 'Hazardous',
+                    'clean': 'Clean', 'slightly_polluted': 'Slightly Polluted', 'moderately_polluted': 'Moderately Polluted',
+                    'heavily_polluted': 'Heavily Polluted', 'quiet': 'Quiet', 'loud': 'Loud', 'very_loud': 'Very Loud',
+                    'harmful': 'Harmful'
+                }.get(level, level)
+                print(f"     {level_name}: {value}")
+    
+    def _quick_mode_input(self):
+        """Quick mode - use default values"""
+        print("\n=== Quick Mode - Using Current World Average Data ===")
+        environmental_data = self.get_default_environmental_data()
+        
+        print("Environmental data to be used:")
+        for data_type, value in environmental_data.items():
+            config = self.environmental_data_types[data_type]
+            print(f"  {config['name']}: {value} {config['unit']}")
+        
+        confirm = input("\nConfirm using this data? (y/n): ").strip().lower()
+        if confirm in ['y', 'yes', '']:
+            return environmental_data
+        else:
+            return None
+    
+    def _detailed_interactive_input(self):
+        """Detailed interactive input"""
+        print("\n=== Environmental Data Interactive Input ===")
+        print("Please enter environmental data, press Enter to use default values\n")
+        
+        environmental_data = {}
+        
+        for data_type, config in self.environmental_data_types.items():
+            print(f"\n--- {config['name']} ---")
+            print(f"Description: {config['description']}")
+            print(f"Unit: {config['unit']}")
+            print(f"Default value: {config['default_value']}")
+            
+            # Show threshold references
+            print("Reference thresholds:")
+            for level, value in config['thresholds'].items():
+                level_name = {
+                    'low': 'Low', 'medium': 'Medium', 'high': 'High', 'critical': 'Critical',
+                    'good': 'Good', 'moderate': 'Moderate', 'unhealthy_sensitive': 'Unhealthy for Sensitive',
+                    'unhealthy': 'Unhealthy', 'very_unhealthy': 'Very Unhealthy', 'hazardous': 'Hazardous',
+                    'clean': 'Clean', 'slightly_polluted': 'Slightly Polluted', 'moderately_polluted': 'Moderately Polluted',
+                    'heavily_polluted': 'Heavily Polluted', 'quiet': 'Quiet', 'loud': 'Loud', 'very_loud': 'Very Loud',
+                    'harmful': 'Harmful'
+                }.get(level, level)
+                print(f"  {level_name}: {value}")
+            
+            while True:
+                try:
+                    user_input = input(f"\nPlease enter {config['name']} value (default: {config['default_value']}): ").strip()
+                    
+                    if user_input == "":
+                        # Use default value
+                        environmental_data[data_type] = config['default_value']
+                        print(f"Using default value: {config['default_value']} {config['unit']}")
+                        break
+                    else:
+                        # Try to convert user input
+                        value = float(user_input)
+                        environmental_data[data_type] = value
+                        print(f"Set: {value} {config['unit']}")
+                        break
+                        
+                except ValueError:
+                    print("Please enter a valid numeric value!")
+                except KeyboardInterrupt:
+                    print("\nUser cancelled input")
+                    return None
+        
+        print("\n=== Input Complete ===")
+        print("Final environmental data:")
+        for data_type, value in environmental_data.items():
+            config = self.environmental_data_types[data_type]
+            print(f"{config['name']}: {value} {config['unit']}")
+        
+        return environmental_data
+    
+    def get_additional_prompt(self):
         """
-        测试 DashScope 连接
+        Get additional user prompt for image generation
         
         Returns:
-            测试结果
+            Additional prompt string or None
+        """
+        print("\n=== Additional Prompt Input (Optional) ===")
+        print("You can add additional descriptions to customize the generated image.")
+        print("For example: 'Show a city skyline', 'Include people wearing masks', 'Dark and apocalyptic style', etc.")
+        print("Press Enter to skip this step.")
+        
+        try:
+            additional_prompt = input("\nPlease enter additional prompt: ").strip()
+            
+            if additional_prompt:
+                print(f"Additional prompt added: {additional_prompt}")
+                return additional_prompt
+            else:
+                print("No additional prompt added")
+                return None
+                
+        except KeyboardInterrupt:
+            print("\nUser cancelled input")
+            return None
+    
+    def test_connection(self) -> Dict[str, Any]:
+        """
+        Test DashScope connection
+        
+        Returns:
+            Test results
         """
         try:
-            # 测试聊天模型
+            # Test chat model
             chat_response = Generation.call(
                 model=self.chat_model,
                 messages=[{"role": "user", "content": "Hello"}],
@@ -737,7 +862,7 @@ prompt应该包含：
             
             chat_success = chat_response.status_code == HTTPStatus.OK
             
-            # 测试图像生成模型
+            # Test image generation model
             image_response = ImageSynthesis.call(
                 model=self.image_model,
                 prompt="test image",
@@ -762,63 +887,55 @@ prompt应该包含：
 
 def main():
     """
-    主函数 - 演示基本用法
+    Main function - Interactive environmental data input and image generation
     """
-    print("🌍 基于 DashScope 的环境保护警示图像生成器")
-    print("=" * 60)
+    print("=== DashScope Environmental Warning Image Generator ===")
+    print("This tool can generate warning images based on environmental data")
     
     try:
-        # 初始化生成器
+        # Initialize generator
         generator = DashScopeEnvironmentalGenerator()
         
-        # 测试连接
-        print("🔗 测试 DashScope 连接...")
-        test_result = generator.test_connection()
-        if not test_result["success"]:
-            print(f"❌ 连接测试失败: {test_result.get('error', '未知错误')}")
+        # Test connection
+        print("\nTesting API connection...")
+        connection_result = generator.test_connection()
+        if not connection_result["success"]:
+            print(f"API connection failed: {connection_result.get('error', 'Unknown error')}")
+            return
+        print("API connection successful!")
+        
+        # Interactive data input
+        environmental_data = generator.interactive_data_input()
+        
+        if environmental_data is None:
+            print("User cancelled operation")
             return
         
-        print("✅ DashScope 连接成功！")
-        print(f"🤖 聊天模型状态: {test_result['chat_model_status']}")
-        print(f"🎨 图像模型状态: {test_result['image_model_status']}")
+        # Get additional prompt from user
+        additional_prompt = generator.get_additional_prompt()
         
-        # 显示支持的数据类型
-        print("\n📊 支持的环境数据类型:")
-        for data_type, config in generator.get_supported_data_types().items():
-            print(f"  - {config['name']} ({config['unit']})")
+        print("\nStarting environmental warning image generation...")
         
-        # 示例数据
-        example_data = {
-            "carbon_emission": 1500,  # 吨CO2当量
-            "air_quality_index": 180,  # AQI
-            "water_pollution_index": 85  # WPI
-        }
-        
-        print(f"\n🧪 使用示例数据生成环境警示图像:")
-        for key, value in example_data.items():
-            data_config = generator.get_supported_data_types()[key]
-            print(f"  - {data_config['name']}: {value} {data_config['unit']}")
-        
-        # 生成图像
+        # Generate environmental warning image
         result = generator.generate_environmental_warning_image(
-            environmental_data=example_data,
-            user_description="工业区域的严重污染情况，需要引起公众关注",
-            target_audience="educators"
+            environmental_data, 
+            user_description=additional_prompt
         )
         
         if result["success"]:
-            print(f"\n✅ 图像生成成功！")
-            print(f"📁 保存位置: {result['saved_paths'][0]}")
-            print(f"⏱️  生成时间: {result['generation_time']:.2f} 秒")
-            print(f"🎯 总体严重程度: {result['analysis']['overall_severity']}")
-            print(f"⚠️  关键问题: {len(result['analysis']['critical_factors'])} 个")
+            print(f"\n✅ Image generation successful!")
+            print(f"📁 Saved paths: {result['saved_paths']}")
+            if 'analysis' in result:
+                analysis = result['analysis']
+                print(f"📊 Environmental analysis: Severity level {analysis.get('overall_severity', 'N/A')}, Critical factors: {', '.join([f['name'] for f in analysis.get('critical_factors', [])])}")
         else:
-            print(f"❌ 图像生成失败: {result.get('error', '未知错误')}")
+            print(f"\n❌ Image generation failed: {result.get('error', 'Unknown error')}")
             
+    except KeyboardInterrupt:
+        print("\n\nUser interrupted program")
     except Exception as e:
-        print(f"❌ 发生错误: {e}")
-    
-    print("\n感谢使用 DashScope 环境保护警示图像生成器！")
+        print(f"\nProgram execution error: {str(e)}")
+        logging.error(f"Main function error: {str(e)}")
 
 if __name__ == "__main__":
     main()
